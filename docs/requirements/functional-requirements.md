@@ -16,7 +16,7 @@ Functional requirements define what the system shall do. Each requirement is uni
 
 | ID | Requirement | Actor | Priority |
 |----|-------------|-------|----------|
-| FR-01 | The system shall allow a student to register a new account by providing their name, email address, room number, hostel block, and a password. | Student | High |
+| FR-01 | The system shall allow a student to register a new account by providing their name, email address, room number, hostel block, and a password. **Note:** `roomNumber` and `hostelBlock` are part of the Student profile and must be included in the database design in Phase 2. | Student | High |
 | FR-02 | The system shall allow registered users (Student, Warden, Staff) to log in using their email address and password. | All Roles | High |
 | FR-03 | The system shall identify the authenticated user's role upon login and apply role-specific access accordingly. | System | High |
 | FR-04 | The system shall restrict access to any functionality not permitted for the authenticated user's role. Unauthorized access attempts shall be denied. | System | High |
@@ -28,11 +28,11 @@ Functional requirements define what the system shall do. Each requirement is uni
 | ID | Requirement | Actor | Priority |
 |----|-------------|-------|----------|
 | FR-05 | The system shall allow an authenticated student to create a new complaint. | Student | High |
-| FR-06 | When creating a complaint, the student shall be required to select a complaint category (e.g., Electrical, Plumbing, Cleanliness, Furniture, Internet, Other) and provide a description of the issue. | Student | High |
+| FR-06 | When creating a complaint, the student shall be required to select a complaint category and provide a description of the issue. Complaint categories are fixed for the current version: **ELECTRICAL**, **PLUMBING**, **CLEANING**, **FURNITURE**, **INTERNET**, **OTHER**. | Student | High |
 | FR-07 | The system shall allow a student to optionally attach an image as evidence when submitting a complaint. | Student | Medium |
-| FR-08 | The system shall allow a student to view the list of all complaints they have personally submitted. | Student | High |
-| FR-09 | The system shall allow an authenticated warden to view all complaints submitted by all students. | Warden | High |
-| FR-10 | The system shall allow the warden to approve or reject a complaint that is in **Pending** status. The warden shall provide a reason when rejecting a complaint. | Warden | High |
+| FR-08 | The system shall allow a student to view the list of all complaints they have personally submitted. The system should use reasonable data limits when retrieving complaint lists to avoid unnecessarily large responses. Full pagination may be implemented in a future version. | Student | High |
+| FR-09 | The system shall allow an authenticated warden to view all complaints submitted by all students. The system should use reasonable data limits when retrieving complaint lists to avoid unnecessarily large responses. Full pagination may be implemented in a future version. | Warden | High |
+| FR-10 | The system shall allow the warden to approve or reject a complaint that is in **Pending** status. The warden shall provide a reason when rejecting a complaint. **Note:** The future database design must include a `rejectionReason` field (nullable text) on the Complaint record. This field is only required when a complaint is rejected; it shall be `null` for all other statuses. | Warden | High |
 | FR-11 | The system shall allow the warden to assign an **Approved** complaint to a specific staff member. | Warden | High |
 | FR-12 | The system shall allow an authenticated staff member to view all complaints assigned to them. | Staff | High |
 | FR-13 | The system shall allow a staff member to update the status of a complaint assigned to them (e.g., mark as In Progress or Resolved). | Staff | High |

@@ -52,7 +52,7 @@ Non-functional requirements define the quality attributes and operational constr
 |----|-------------|
 | NFR-03.1 | Standard user operations such as complaint submission, complaint listing, and status updates shall complete within a reasonable response time under normal load conditions. |
 | NFR-03.2 | Dashboard pages shall retrieve only the data required for the current user's role. Unnecessary full-dataset loading shall be avoided. |
-| NFR-03.3 | Complaint listing queries shall be paginated or limited to prevent excessively large data sets from being returned in a single response. |
+| NFR-03.3 | The system should use reasonable data limits when retrieving complaint lists to avoid unnecessarily large responses. Full pagination is not a mandatory evaluation feature and may be implemented in a future version. |
 
 **Rationale:** Poor performance degrades user experience and discourages use of the system. Efficient data retrieval is important even in the academic deployment context.
 
@@ -94,7 +94,7 @@ Non-functional requirements define the quality attributes and operational constr
 |----|-------------|
 | NFR-06.1 | The architecture shall allow additional hostel blocks to be added without requiring fundamental changes to the system design. |
 | NFR-06.2 | The architecture shall allow additional staff members to be registered and assigned complaints without requiring structural changes. |
-| NFR-06.3 | The complaint category list shall be manageable through configuration or database records so that new categories can be added without code changes. |
+| NFR-06.3 | Complaint categories are defined as a fixed set for the current version (ELECTRICAL, PLUMBING, CLEANING, FURNITURE, INTERNET, OTHER). Support for additional categories may be introduced in a future version. |
 
 **Rationale:** While HostelFix is initially scoped to a single hostel environment, a scalable design ensures the system can be extended to support additional blocks, users, or categories in the future without requiring a system rewrite.
 

@@ -81,8 +81,8 @@ Login · View Assigned Complaints · View Complaint Details · Update Assigned C
 
 | Module | FRs | Key Capabilities |
 |--------|-----|-----------------|
-| Authentication | FR-01 – FR-04 | Registration, login, role identification, access enforcement |
-| Complaint Management | FR-05 – FR-15 | Full complaint lifecycle from submission to closure |
+| Authentication | FR-01 – FR-04 | Registration (incl. `roomNumber`, `hostelBlock` as required profile fields), login, role identification, access enforcement |
+| Complaint Management | FR-05 – FR-15 | Full complaint lifecycle; fixed category enum (ELECTRICAL, PLUMBING, CLEANING, FURNITURE, INTERNET, OTHER); rejection requires `rejectionReason` (nullable field); reasonable data limits on complaint lists |
 | Complaint Status Lifecycle | (within FR-05–FR-15) | 7 defined states with enforced transitions |
 | Mess Management | FR-16 – FR-19 | Menu management and student feedback |
 | Dashboard | FR-20 – FR-22 | Role-specific dashboards for all three roles |
