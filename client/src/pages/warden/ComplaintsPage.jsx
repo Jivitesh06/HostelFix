@@ -73,8 +73,50 @@ export default function WardenComplaints() {
   return (
     <AppShell
       title="Hostel Complaints Registry"
-      subtitle="Complete database of all resident maintenance requests, status transitions, and staff assignments"
+      subtitle={`Complete database of resident maintenance requests${user?.hostelName ? ` • ${user.hostelName}` : ''}`}
     >
+      {/* Active Jurisdiction Scope Banner */}
+      {user?.hostelName && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            color: '#334155',
+            padding: '0.75rem 1.25rem',
+            borderRadius: '10px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Building size={18} color="#4f46e5" />
+            <span>
+              Filtered by Hostel Scope: <strong>{user.hostelName}</strong> ({complaints.length} registered {complaints.length === 1 ? 'ticket' : 'tickets'}).
+            </span>
+          </div>
+          <Link
+            to="/warden/profile"
+            style={{
+              fontSize: '0.8rem',
+              color: '#4f46e5',
+              fontWeight: 600,
+              textDecoration: 'none',
+              background: '#ffffff',
+              padding: '0.3rem 0.75rem',
+              borderRadius: '6px',
+              border: '1px solid #cbd5e1',
+            }}
+          >
+            Manage Assignment →
+          </Link>
+        </div>
+      )}
+
       {/* ── Filter Controls & Search Bar ──────────────────────────────── */}
       <div
         style={{

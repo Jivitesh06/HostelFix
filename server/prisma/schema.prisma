@@ -62,6 +62,7 @@ model User {
   roomNumber            String?
   hostelBlock           String?
   hostelName            String?
+  gender                String?
   mobileNumber          String?
   universityRollNumber  String?
   branch                String?

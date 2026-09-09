@@ -18,6 +18,7 @@ import {
   AlertCircle,
   ShieldCheck,
 } from 'lucide-react';
+import { getHostelsByGender } from '../../constants/hostelConfig';
 
 const YEAR_OPTIONS = [
   '1st Year',
@@ -45,6 +46,7 @@ export default function StudentProfilePage() {
   const [editError, setEditError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
+    gender: '',
     mobileNumber: '',
     universityRollNumber: '',
     branch: '',
@@ -63,6 +65,7 @@ export default function StudentProfilePage() {
       // Synchronize edit form with loaded profile
       setFormData({
         name: data.name || '',
+        gender: data.gender || '',
         mobileNumber: data.mobileNumber || '',
         universityRollNumber: data.universityRollNumber || '',
         branch: data.branch || '',
@@ -86,6 +89,7 @@ export default function StudentProfilePage() {
     if (profile) {
       setFormData({
         name: profile.name || '',
+        gender: profile.gender || '',
         mobileNumber: profile.mobileNumber || '',
         universityRollNumber: profile.universityRollNumber || '',
         branch: profile.branch || '',
@@ -102,6 +106,19 @@ export default function StudentProfilePage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (editError) setEditError('');
+  };
+
+  const handleGenderChange = (e) => {
+    const newGender = e.target.value;
+    const currentHostel = formData.hostelName;
+    const allowed = getHostelsByGender(newGender);
+    const stillValid = allowed.includes(currentHostel);
+    setFormData((prev) => ({
+      ...prev,
+      gender: newGender,
+      hostelName: stillValid ? currentHostel : '',
+    }));
     if (editError) setEditError('');
   };
 
@@ -131,6 +148,7 @@ export default function StudentProfilePage() {
     try {
       const updated = await userService.updateProfile({
         name: formData.name.trim(),
+        gender: formData.gender || null,
         mobileNumber: formData.mobileNumber.trim() || null,
         universityRollNumber: formData.universityRollNumber.trim() || null,
         branch: formData.branch.trim() || null,
@@ -422,6 +440,34 @@ export default function StudentProfilePage() {
                 <div>
                   <span style={labelStyle}>Full Name</span>
                   <div style={valueStyle}>{profile.name}</div>
+                </div>
+
+                <div>
+                  <span style={labelStyle}>Gender</span>
+                  <div style={valueStyle}>
+                    {profile.gender ? (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          background: profile.gender === 'FEMALE' ? '#fdf2f8' : '#eff6ff',
+                          color: profile.gender === 'FEMALE' ? '#be185d' : '#1d4ed8',
+                          padding: '0.2rem 0.65rem',
+                          borderRadius: '6px',
+                          fontWeight: 600,
+                          fontSize: '0.8rem',
+                          border: `1px solid ${profile.gender === 'FEMALE' ? '#fbcfe8' : '#bfdbfe'}`,
+                        }}
+                      >
+                        {profile.gender === 'MALE' ? 'Male (Boys Hostels)' : profile.gender === 'FEMALE' ? 'Female (Girls Hostels)' : profile.gender}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                        Not specified (Click Update Details to select)
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -748,7 +794,7 @@ export default function StudentProfilePage() {
             >
               1. Personal Information
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
               <div>
                 <label style={modalLabelStyle}>Full Name *</label>
                 <input
@@ -762,16 +808,29 @@ export default function StudentProfilePage() {
                 />
               </div>
               <div>
-                <label style={modalLabelStyle}>Mobile Contact Number</label>
-                <input
-                  type="tel"
-                  name="mobileNumber"
-                  value={formData.mobileNumber}
-                  onChange={handleInputChange}
-                  placeholder="e.g. 9876543210"
+                <label style={modalLabelStyle}>Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleGenderChange}
                   style={modalInputStyle}
-                />
+                >
+                  <option value="">Select Gender</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                </select>
               </div>
+            </div>
+            <div>
+              <label style={modalLabelStyle}>Mobile Contact Number</label>
+              <input
+                type="tel"
+                name="mobileNumber"
+                value={formData.mobileNumber}
+                onChange={handleInputChange}
+                placeholder="e.g. 9876543210"
+                style={modalInputStyle}
+              />
             </div>
           </div>
 
@@ -846,15 +905,29 @@ export default function StudentProfilePage() {
               3. Hostel Residence Information
             </div>
             <div style={{ marginBottom: '0.85rem' }}>
-              <label style={modalLabelStyle}>Hostel / Hall Name</label>
-              <input
-                type="text"
+              <label style={modalLabelStyle}>
+                Hostel / Hall Name {formData.gender ? `(${formData.gender === 'MALE' ? 'Boys Hostels' : 'Girls Hostels'})` : ''}
+              </label>
+              <select
                 name="hostelName"
                 value={formData.hostelName}
                 onChange={handleInputChange}
-                placeholder="e.g. Aravali Boys Hostel"
                 style={modalInputStyle}
-              />
+              >
+                <option value="">
+                  {formData.gender ? '-- Select Hostel --' : '-- Select Gender First --'}
+                </option>
+                {getHostelsByGender(formData.gender).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+              {!formData.gender && (
+                <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>
+                  Select gender above to filter available hostels.
+                </p>
+              )}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
               <div>

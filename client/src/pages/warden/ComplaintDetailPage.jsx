@@ -600,6 +600,24 @@ export default function WardenComplaintDetail() {
                   <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
                     {complaint.student?.email}
                   </div>
+                  {complaint.student?.gender && (
+                    <div style={{ marginTop: '0.25rem' }}>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          fontSize: '0.7rem',
+                          fontWeight: 600,
+                          padding: '0.1rem 0.45rem',
+                          borderRadius: '4px',
+                          background: complaint.student.gender === 'FEMALE' ? '#fdf2f8' : '#eff6ff',
+                          color: complaint.student.gender === 'FEMALE' ? '#be185d' : '#1d4ed8',
+                          border: `1px solid ${complaint.student.gender === 'FEMALE' ? '#fbcfe8' : '#bfdbfe'}`,
+                        }}
+                      >
+                        {complaint.student.gender === 'MALE' ? 'Male Resident' : 'Female Resident'}
+                      </span>
+                    </div>
+                  )}
                   {complaint.student?.mobileNumber && (
                     <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                       <Phone size={12} color="#64748b" />
@@ -944,6 +962,30 @@ export default function WardenComplaintDetail() {
                   <div style={detailValueStyle}>{studentDetails?.name || complaint?.student?.name}</div>
                 </div>
                 <div>
+                  <span style={detailLabelStyle}>Gender</span>
+                  <div style={detailValueStyle}>
+                    {(studentDetails?.gender || complaint?.student?.gender) ? (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          background: (studentDetails?.gender || complaint?.student?.gender) === 'FEMALE' ? '#fdf2f8' : '#eff6ff',
+                          color: (studentDetails?.gender || complaint?.student?.gender) === 'FEMALE' ? '#be185d' : '#1d4ed8',
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '4px',
+                          fontWeight: 600,
+                          fontSize: '0.75rem',
+                        }}
+                      >
+                        {(studentDetails?.gender || complaint?.student?.gender) === 'MALE' ? 'Male Resident' : (studentDetails?.gender || complaint?.student?.gender) === 'FEMALE' ? 'Female Resident' : (studentDetails?.gender || complaint?.student?.gender)}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                    )}
+                  </div>
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
                   <span style={detailLabelStyle}>Contact Mobile</span>
                   <div style={detailValueStyle}>
                     {studentDetails?.mobileNumber || complaint?.student?.mobileNumber ? (

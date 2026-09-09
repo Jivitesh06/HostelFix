@@ -16,6 +16,7 @@ import {
   BookOpen,
   Calendar,
 } from 'lucide-react';
+import { getHostelsByGender } from '../../constants/hostelConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -37,6 +38,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name: '',
     email: '',
+    gender: '',
     mobileNumber: '',
     universityRollNumber: '',
     branch: '',
@@ -56,6 +58,19 @@ export default function RegisterPage() {
     if (error) setError('');
   };
 
+  const handleGenderChange = (e) => {
+    const newGender = e.target.value;
+    const currentHostel = form.hostelName;
+    const allowed = getHostelsByGender(newGender);
+    const stillValid = allowed.includes(currentHostel);
+    setForm((prev) => ({
+      ...prev,
+      gender: newGender,
+      hostelName: stillValid ? currentHostel : '',
+    }));
+    if (error) setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -63,6 +78,7 @@ export default function RegisterPage() {
     const {
       name,
       email,
+      gender,
       mobileNumber,
       universityRollNumber,
       branch,
@@ -112,6 +128,7 @@ export default function RegisterPage() {
       await api.post('/auth/register', {
         name: name.trim(),
         email: email.trim().toLowerCase(),
+        gender: gender || null,
         roomNumber: roomNumber.trim(),
         hostelBlock: hostelBlock.trim(),
         hostelName: hostelName.trim() || null,
@@ -236,22 +253,23 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={fieldLabelStyle}>College Email *</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Mail size={16} /></div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="student@college.edu"
-                    required
-                    style={inputWithIconStyle}
-                  />
-                </div>
+            <div style={{ marginBottom: '0.85rem' }}>
+              <label style={fieldLabelStyle}>College Email *</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><Mail size={16} /></div>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="student@college.edu"
+                  required
+                  style={inputWithIconStyle}
+                />
               </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
                 <label style={fieldLabelStyle}>Mobile Number</label>
                 <div style={{ position: 'relative' }}>
@@ -264,6 +282,22 @@ export default function RegisterPage() {
                     placeholder="e.g. 9876543210"
                     style={inputWithIconStyle}
                   />
+                </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Gender</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><User size={16} /></div>
+                  <select
+                    name="gender"
+                    value={form.gender}
+                    onChange={handleGenderChange}
+                    style={inputWithIconStyle}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -331,18 +365,32 @@ export default function RegisterPage() {
               3. Hostel Residence
             </div>
             <div style={{ marginBottom: '0.85rem' }}>
-              <label style={fieldLabelStyle}>Hostel / Hall Name</label>
+              <label style={fieldLabelStyle}>
+                Hostel / Hall Name {form.gender ? `(${form.gender === 'MALE' ? 'Boys Hostels' : 'Girls Hostels'})` : ''}
+              </label>
               <div style={{ position: 'relative' }}>
                 <div style={iconWrapperStyle}><Building2 size={16} /></div>
-                <input
-                  type="text"
+                <select
                   name="hostelName"
                   value={form.hostelName}
                   onChange={handleChange}
-                  placeholder="e.g. Aravali Boys Hostel"
                   style={inputWithIconStyle}
-                />
+                >
+                  <option value="">
+                    {form.gender ? '-- Select Hostel --' : '-- Select Gender First --'}
+                  </option>
+                  {getHostelsByGender(form.gender).map((h) => (
+                    <option key={h} value={h}>
+                      {h}
+                    </option>
+                  ))}
+                </select>
               </div>
+              {!form.gender && (
+                <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>
+                  Select your gender above to view available hostels for your accommodation.
+                </p>
+              )}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>

@@ -89,8 +89,14 @@ const getComplaints = async (req, res, next) => {
       where.studentId = req.user.id;
     } else if (req.user.role === 'STAFF') {
       where.assignedStaffId = req.user.id;
+    } else if (req.user.role === 'WARDEN') {
+      // If warden has an assigned hostel, filter to complaints from students in that hostel
+      if (req.user.hostelName) {
+        where.student = {
+          hostelName: req.user.hostelName,
+        };
+      }
     }
-    // WARDEN sees all (where has no user constraint)
 
     // Optional status filter
     if (status) {
@@ -128,6 +134,7 @@ const getComplaints = async (req, res, next) => {
             roomNumber: true,
             hostelBlock: true,
             hostelName: true,
+            gender: true,
             mobileNumber: true,
             universityRollNumber: true,
             branch: true,
@@ -174,6 +181,7 @@ const getComplaintById = async (req, res, next) => {
             roomNumber: true,
             hostelBlock: true,
             hostelName: true,
+            gender: true,
             mobileNumber: true,
             universityRollNumber: true,
             branch: true,
@@ -214,6 +222,15 @@ const getComplaintById = async (req, res, next) => {
 
     if (req.user.role === 'STAFF' && complaint.assignedStaffId !== req.user.id) {
       return sendForbidden(res, 'Access denied. You can only view complaints assigned to you');
+    }
+
+    if (req.user.role === 'WARDEN' && req.user.hostelName) {
+      if (complaint.student?.hostelName && complaint.student.hostelName !== req.user.hostelName) {
+        return sendForbidden(
+          res,
+          `Access denied. This complaint belongs to ${complaint.student.hostelName}. You are assigned to ${req.user.hostelName}.`
+        );
+      }
     }
 
     return sendSuccess(res, complaint);

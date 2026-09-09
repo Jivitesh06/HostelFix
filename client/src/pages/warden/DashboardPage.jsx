@@ -18,6 +18,7 @@ import {
   ChevronRight,
   AlertTriangle,
   FileCheck,
+  Building2,
 } from 'lucide-react';
 
 export default function WardenDashboard() {
@@ -98,6 +99,49 @@ export default function WardenDashboard() {
         </div>
       }
     >
+      {/* Active Jurisdiction Banner */}
+      {user?.hostelName && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            color: '#1e40af',
+            padding: '0.85rem 1.25rem',
+            borderRadius: '10px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <Building2 size={18} color="#2563eb" />
+            <span>
+              Assigned Jurisdiction: <strong>{user.hostelName}</strong>. You are exclusively monitoring complaints submitted by students of <strong>{user.hostelName}</strong>.
+            </span>
+          </div>
+          <Link
+            to="/warden/profile"
+            style={{
+              fontSize: '0.8rem',
+              color: '#2563eb',
+              fontWeight: 600,
+              textDecoration: 'none',
+              background: '#ffffff',
+              padding: '0.35rem 0.75rem',
+              borderRadius: '6px',
+              border: '1px solid #bfdbfe',
+            }}
+          >
+            Manage Assignment →
+          </Link>
+        </div>
+      )}
+
       {/* ── 1. Metric StatCards ───────────────────────────────────────── */}
       <div
         style={{

@@ -45,6 +45,7 @@ const verifyToken = async (req, res, next) => {
         roomNumber: true,
         hostelBlock: true,
         hostelName: true,
+        gender: true,
         mobileNumber: true,
         universityRollNumber: true,
         branch: true,

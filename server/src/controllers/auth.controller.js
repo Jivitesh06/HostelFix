@@ -8,6 +8,11 @@ const {
   sendError,
   sendUnauthorized,
 } = require('../utils/response');
+const {
+  GENDERS,
+  getHostelsByGender,
+  isValidHostelForGender,
+} = require('../utils/hostelConfig');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -27,6 +32,7 @@ const register = async (req, res, next) => {
       roomNumber,
       hostelBlock,
       hostelName,
+      gender,
       mobileNumber,
       universityRollNumber,
       branch,
@@ -62,6 +68,26 @@ const register = async (req, res, next) => {
       );
     }
 
+    // Validate gender if provided
+    let cleanGender = null;
+    if (gender) {
+      cleanGender = gender.trim().toUpperCase();
+      if (!GENDERS.includes(cleanGender)) {
+        return sendError(res, 'Invalid gender. Allowed values: MALE, FEMALE', 400);
+      }
+    }
+
+    // Validate hostel name compatibility with gender if provided
+    if (hostelName && cleanGender) {
+      if (!isValidHostelForGender(hostelName.trim(), cleanGender)) {
+        return sendError(
+          res,
+          `Selected hostel is not valid for ${cleanGender.toLowerCase()} students. Allowed hostels: ${getHostelsByGender(cleanGender).join(', ')}`,
+          400
+        );
+      }
+    }
+
     // Check for duplicate email (HTTP 409 Conflict)
     const existingUser = await prisma.user.findUnique({
       where: { email: cleanEmail },
@@ -88,6 +114,7 @@ const register = async (req, res, next) => {
         roomNumber: roomNumber.trim(),
         hostelBlock: hostelBlock.trim(),
         hostelName: hostelName && typeof hostelName === 'string' ? hostelName.trim() : null,
+        gender: cleanGender,
         mobileNumber: mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
         universityRollNumber: universityRollNumber && typeof universityRollNumber === 'string' ? universityRollNumber.trim() : null,
         branch: branch && typeof branch === 'string' ? branch.trim() : null,
@@ -102,6 +129,7 @@ const register = async (req, res, next) => {
         roomNumber: true,
         hostelBlock: true,
         hostelName: true,
+        gender: true,
         mobileNumber: true,
         universityRollNumber: true,
         branch: true,
@@ -165,6 +193,7 @@ const login = async (req, res, next) => {
       roomNumber: user.roomNumber,
       hostelBlock: user.hostelBlock,
       hostelName: user.hostelName,
+      gender: user.gender,
       mobileNumber: user.mobileNumber,
       universityRollNumber: user.universityRollNumber,
       branch: user.branch,
@@ -196,6 +225,7 @@ const getMe = async (req, res, next) => {
       roomNumber: req.user.roomNumber,
       hostelBlock: req.user.hostelBlock,
       hostelName: req.user.hostelName,
+      gender: req.user.gender,
       mobileNumber: req.user.mobileNumber,
       universityRollNumber: req.user.universityRollNumber,
       branch: req.user.branch,

@@ -34,7 +34,8 @@ async function main() {
       universityRollNumber: 'CUH2024CS001',
       branch: 'Computer Science & Engineering',
       year: '3rd Year',
-      hostelName: 'Aravali Boys Hostel',
+      gender: 'MALE',
+      hostelName: 'Sarabhai Hostel',
       roomNumber: 'A-101',
       hostelBlock: 'Block A',
     },
@@ -45,7 +46,8 @@ async function main() {
       role: 'STUDENT',
       roomNumber: 'A-101',
       hostelBlock: 'Block A',
-      hostelName: 'Aravali Boys Hostel',
+      gender: 'MALE',
+      hostelName: 'Sarabhai Hostel',
       mobileNumber: '9876543210',
       universityRollNumber: 'CUH2024CS001',
       branch: 'Computer Science & Engineering',
@@ -60,7 +62,8 @@ async function main() {
       universityRollNumber: 'CUH2024EC042',
       branch: 'Electronics & Communication',
       year: '2nd Year',
-      hostelName: 'Nilgiri Girls Hostel',
+      gender: 'FEMALE',
+      hostelName: 'Gargi Hostel',
       roomNumber: 'B-205',
       hostelBlock: 'Block B',
     },
@@ -71,7 +74,8 @@ async function main() {
       role: 'STUDENT',
       roomNumber: 'B-205',
       hostelBlock: 'Block B',
-      hostelName: 'Nilgiri Girls Hostel',
+      gender: 'FEMALE',
+      hostelName: 'Gargi Hostel',
       mobileNumber: '9876543211',
       universityRollNumber: 'CUH2024EC042',
       branch: 'Electronics & Communication',
@@ -81,12 +85,37 @@ async function main() {
 
   const warden = await prisma.user.upsert({
     where: { email: 'warden@hostelfix.demo' },
-    update: {},
+    update: {
+      gender: 'MALE',
+      hostelName: 'Sarabhai Hostel',
+      mobileNumber: '9876543200',
+    },
     create: {
       name: 'Demo Warden',
       email: 'warden@hostelfix.demo',
       passwordHash,
       role: 'WARDEN',
+      gender: 'MALE',
+      hostelName: 'Sarabhai Hostel',
+      mobileNumber: '9876543200',
+    },
+  });
+
+  const wardenGirls = await prisma.user.upsert({
+    where: { email: 'warden_girls@hostelfix.demo' },
+    update: {
+      gender: 'FEMALE',
+      hostelName: 'Gargi Hostel',
+      mobileNumber: '9876543201',
+    },
+    create: {
+      name: 'Pooja Warden',
+      email: 'warden_girls@hostelfix.demo',
+      passwordHash,
+      role: 'WARDEN',
+      gender: 'FEMALE',
+      hostelName: 'Gargi Hostel',
+      mobileNumber: '9876543201',
     },
   });
 

@@ -29,6 +29,24 @@ export const userService = {
   },
 
   /**
+   * Fetch current authenticated warden's profile.
+   * Access: WARDEN
+   */
+  getWardenProfile: async () => {
+    const res = await api.get('/users/warden/profile');
+    return res.data.data;
+  },
+
+  /**
+   * Update current authenticated warden's profile.
+   * Access: WARDEN
+   */
+  updateWardenProfile: async (data) => {
+    const res = await api.put('/users/warden/profile', data);
+    return res.data.data;
+  },
+
+  /**
    * Fetch list of maintenance staff members.
    * Access: WARDEN
    */

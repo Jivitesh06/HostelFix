@@ -27,6 +27,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
         { label: 'Dashboard', path: '/warden/dashboard', icon: LayoutDashboard },
         { label: 'All Complaints', path: '/warden/complaints', icon: ClipboardList },
         { label: 'Mess Admin', path: '/warden/mess', icon: Utensils },
+        { label: 'My Profile', path: '/warden/profile', icon: User },
       ];
     }
     if (user?.role === 'STAFF') {
@@ -49,13 +50,15 @@ export default function AppShell({ children, title, subtitle, actions }) {
 
   const getRoleBadge = () => {
     if (user?.role === 'WARDEN') {
-      return { label: 'Warden Admin', bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' };
+      const hostelSnippet = user?.hostelName ? ` • ${user.hostelName}` : '';
+      return { label: `Warden${hostelSnippet}`, bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' };
     }
     if (user?.role === 'STAFF') {
       return { label: `Staff • ${user?.staffCategory || 'Maintenance'}`, bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' };
     }
+    const locSnippet = user?.hostelName ? ` • ${user.hostelName}` : (user?.roomNumber ? ` • Rm ${user.roomNumber}` : '');
     return {
-      label: `Resident • ${user?.roomNumber ? `Rm ${user.roomNumber}` : 'Student'}`,
+      label: `Resident${locSnippet}`,
       bg: '#eff6ff',
       color: '#1d4ed8',
       border: '#bfdbfe',
