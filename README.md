@@ -61,9 +61,9 @@ Student submits → [Pending] → Warden approves → [Approved]
 | **Phase 1** | Requirement Analysis | ✅ Complete |
 | **Phase 2** | System Design & Architecture | ✅ Complete |
 | **Phase 3A** | Foundation & Database Implementation | ✅ Complete |
-| **Phase 3B** | Authentication & Protected Routes | 🔜 Next |
-| **Phase 3C** | Complaint Management Workflow | 🔜 Upcoming |
-| **Phase 3D** | Mess Management & Final Evaluation Polish | 🔜 Upcoming |
+| **Phase 3B** | Authentication & Protected Routes | ✅ Complete (31/31 tests passed) |
+| **Phase 3C** | Complaint Management Workflow | ✅ Complete (39/39 tests passed) |
+| **Phase 3D** | Mess Management & Final Evaluation Polish | ✅ Complete (26/26 tests passed) |
 
 ---
 
@@ -198,7 +198,27 @@ npm install
 npm run build
 ```
 
-### 4. Running the Application
+### 4. Running Automated Verification Suites
+
+With the backend running on port 5001:
+
+```bash
+cd server
+
+# Verify database connection and relational integrity
+node verify-db.js
+
+# Run Authentication & RBAC test suite (31 tests)
+node test-auth.js
+
+# Run Complaint Workflow & Audit Trail test suite (39 tests)
+node test-complaints.js
+
+# Run Mess Menu & Student Feedback test suite (26 tests)
+node test-mess.js
+```
+
+### 5. Running the Application
 
 In terminal 1 (Backend):
 ```bash
@@ -214,6 +234,34 @@ cd client
 npm run dev
 # Frontend runs on http://localhost:5173
 ```
+
+---
+
+## Evaluation Live Demo Walkthrough (3-Role Flow)
+
+To demonstrate the full lifecycle during project evaluation:
+
+1. **Student submits a complaint**:
+   - Log in as `student@hostelfix.demo` (`Demo@1234`).
+   - Navigate to **Raise Complaint**, fill category (e.g. *Electrical*) and description, click Submit.
+   - Observe status is **PENDING** and initial audit log is recorded in the timeline.
+   - Navigate to **Mess Menu**, view weekly schedule, and submit a 5-star rating with comments.
+
+2. **Warden reviews and assigns**:
+   - Log out and log in as `warden@hostelfix.demo` (`Demo@1234`).
+   - Open **All Complaints**, locate the pending complaint.
+   - Click **Approve Complaint** (moves to **APPROVED**).
+   - Select a staff member (e.g. *Ravi Electrician*) and click **Assign Staff** (moves to **ASSIGNED**).
+   - Open **Mess Admin** to show menu schedule editing and review student dining feedback.
+
+3. **Staff resolves**:
+   - Log out and log in as `staff2@hostelfix.demo` (`Demo@1234`).
+   - View assigned complaint, click **Start Work** (moves to **IN_PROGRESS**).
+   - Click **Mark Resolved** with completion note (moves to **RESOLVED**).
+
+4. **Warden closes**:
+   - Switch back to `warden@hostelfix.demo`, view the resolved complaint, and click **Verify & Close Complaint** (moves to **CLOSED**).
+   - Observe the full 6-step audit trail (`PENDING → APPROVED → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED`) with timestamps and actors.
 
 ---
 
