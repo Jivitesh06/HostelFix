@@ -2,7 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import complaintService from '../../services/complaintService';
+import AppShell from '../../components/AppShell';
 import StatusBadge from '../../components/StatusBadge';
+import CategoryBadge from '../../components/CategoryBadge';
+import EmptyState from '../../components/EmptyState';
+import {
+  Wrench,
+  Clock,
+  Home,
+  User,
+  ArrowRight,
+  Filter,
+  AlertCircle,
+} from 'lucide-react';
 
 const STATUS_FILTERS = [
   { label: 'All Tasks', value: '' },
@@ -12,7 +24,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function StaffComplaints() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const [complaints, setComplaints] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -39,120 +51,205 @@ export default function StaffComplaints() {
   }, [selectedStatus]);
 
   return (
-    <div style={styles.page}>
-      {/* Top Navbar */}
-      <nav style={styles.nav}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <strong style={{ color: '#059669', fontSize: '1.25rem' }}>HostelFix</strong>
-          <span style={{ color: '#94a3b8' }}>|</span>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Staff Maintenance Portal</span>
-        </div>
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-          <Link to="/staff/dashboard" style={styles.navLink}>Dashboard</Link>
-          <Link to="/staff/complaints" style={styles.navLinkActive}>My Tasks</Link>
-          <button onClick={logout} style={styles.logoutBtn}>Logout</button>
-        </div>
-      </nav>
+    <AppShell
+      title="My Maintenance Work Tasks"
+      subtitle={`Assigned to ${user?.name} (${user?.staffCategory || 'Maintenance'}) • Dispatch Queue`}
+    >
+      {/* ── Filter Bar ──────────────────────────────────────────────── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          marginBottom: '1.75rem',
+          alignItems: 'center',
+        }}
+      >
+        <span
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginRight: '0.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+          }}
+        >
+          <Filter size={14} /> Filter:
+        </span>
 
-      {/* Main Content */}
-      <div style={styles.content}>
-        <div style={styles.header}>
-          <div>
-            <h1 style={{ margin: '0 0 0.25rem', color: '#1e293b' }}>Assigned Maintenance Tasks</h1>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-              Maintenance Staff: <strong>{user?.name}</strong> ({user?.staffCategory || 'General Maintenance'}) &bull; Assigned: {complaints.length}
-            </p>
-          </div>
-        </div>
-
-        {/* Filter Pills */}
-        <div style={styles.filterBar}>
-          {STATUS_FILTERS.map((f) => (
+        {STATUS_FILTERS.map((f) => {
+          const isActive = selectedStatus === f.value;
+          return (
             <button
               key={f.value}
               onClick={() => setSelectedStatus(f.value)}
-              style={selectedStatus === f.value ? styles.filterBtnActive : styles.filterBtn}
+              style={{
+                padding: '0.4rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.8rem',
+                fontWeight: isActive ? 600 : 500,
+                backgroundColor: isActive ? '#059669' : '#ffffff',
+                color: isActive ? '#ffffff' : '#475569',
+                border: `1px solid ${isActive ? '#059669' : '#e2e8f0'}`,
+                boxShadow: isActive ? '0 1px 2px rgba(5, 150, 105, 0.2)' : 'none',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
             >
               {f.label}
             </button>
-          ))}
+          );
+        })}
+      </div>
+
+      {error && (
+        <div
+          style={{
+            background: '#fff1f2',
+            color: '#9f1239',
+            border: '1px solid #fecdd3',
+            padding: '0.85rem 1rem',
+            borderRadius: '8px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}
+        >
+          <AlertCircle size={16} color="#e11d48" />
+          <span>{error}</span>
         </div>
+      )}
 
-        {error && <div style={styles.error}>{error}</div>}
+      {/* ── Main Task List ────────────────────────────────────────────── */}
+      {loading ? (
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+          Loading assigned work tasks...
+        </div>
+      ) : complaints.length === 0 ? (
+        <EmptyState
+          icon={Wrench}
+          title={selectedStatus ? `No ${selectedStatus.toLowerCase()} tasks` : 'No maintenance tasks assigned'}
+          description={
+            selectedStatus
+              ? `You have no tasks matching status: ${selectedStatus}.`
+              : 'You do not have any complaints currently assigned to your queue.'
+          }
+        />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {complaints.map((c) => {
+            const dateStr = new Date(c.createdAt).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            });
 
-        {loading ? (
-          <div style={styles.centerBox}>
-            <p style={{ color: '#64748b' }}>Loading assigned work orders...</p>
-          </div>
-        ) : complaints.length === 0 ? (
-          <div style={styles.emptyBox}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔧</div>
-            <h3 style={{ margin: '0 0 0.5rem', color: '#334155' }}>No assigned tasks</h3>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-              {selectedStatus
-                ? `No tasks match the filter: ${selectedStatus}`
-                : 'You have no complaints currently assigned to you.'}
-            </p>
-          </div>
-        ) : (
-          <div style={styles.list}>
-            {complaints.map((c) => {
-              const dateStr = new Date(c.createdAt).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-
-              return (
-                <div key={c.id} style={styles.card}>
-                  <div style={styles.cardTop}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={styles.categoryBadge}>{c.category}</span>
-                      <StatusBadge status={c.status} />
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Submitted: {dateStr}</span>
+            return (
+              <div
+                key={c.id}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
+                  padding: '1.5rem',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    marginBottom: '0.85rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <CategoryBadge category={c.category} />
+                    <StatusBadge status={c.status} />
                   </div>
 
-                  <p style={styles.description}>{c.description}</p>
-
-                  <div style={styles.cardFooter}>
-                    <div style={{ fontSize: '0.85rem', color: '#475569' }}>
-                      <strong>Location:</strong> Room {c.student?.roomNumber}, {c.student?.hostelBlock} &bull; Resident: {c.student?.name}
-                    </div>
-
-                    <Link to={`/staff/complaints/${c.id}`} style={styles.actionBtn}>
-                      Update Work Status →
-                    </Link>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+                    <Clock size={13} />
+                    <span>Submitted on {dateStr}</span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, marginBottom: '0.3rem' }}>
+                    WORK ORDER #{c.id.slice(-6).toUpperCase()}
+                  </div>
+                  <p
+                    style={{
+                      fontSize: '0.95rem',
+                      color: '#0f172a',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {c.description}
+                  </p>
+                </div>
+
+                {/* Footer */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    paddingTop: '0.85rem',
+                    borderTop: '1px solid #f1f5f9',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                    <Home size={15} color="#64748b" />
+                    <span>
+                      Room <strong>{c.student?.roomNumber}</strong>, {c.student?.hostelBlock} &bull; Resident: {c.student?.name}
+                    </span>
+                  </div>
+
+                  <Link
+                    to={`/staff/complaints/${c.id}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      backgroundColor: '#ecfdf5',
+                      color: '#059669',
+                      border: '1px solid #a7f3d0',
+                      padding: '0.45rem 0.85rem',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#059669';
+                      e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ecfdf5';
+                      e.currentTarget.style.color = '#059669';
+                    }}
+                  >
+                    <span>Update Work Status</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </AppShell>
   );
 }
-
-const styles = {
-  page: { minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' },
-  nav: { background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  navLink: { color: '#475569', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 },
-  navLinkActive: { color: '#059669', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 },
-  logoutBtn: { background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.4rem 0.85rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' },
-  content: { padding: '2rem', maxWidth: '960px', margin: '0 auto' },
-  header: { marginBottom: '1.5rem' },
-  filterBar: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' },
-  filterBtn: { background: '#fff', border: '1px solid #cbd5e1', padding: '0.4rem 0.85rem', borderRadius: '20px', fontSize: '0.8rem', color: '#475569', cursor: 'pointer' },
-  filterBtnActive: { background: '#059669', border: '1px solid #059669', padding: '0.4rem 0.85rem', borderRadius: '20px', fontSize: '0.8rem', color: '#fff', fontWeight: 600, cursor: 'pointer' },
-  error: { background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.75rem 1rem', borderRadius: '6px', marginBottom: '1.5rem' },
-  centerBox: { background: '#fff', padding: '3rem', borderRadius: '8px', textAlign: 'center', border: '1px solid #e2e8f0' },
-  emptyBox: { background: '#fff', padding: '3.5rem 2rem', borderRadius: '8px', textAlign: 'center', border: '1px solid #e2e8f0' },
-  list: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  card: { background: '#fff', borderRadius: '8px', padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-  cardTop: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' },
-  categoryBadge: { background: '#ecfdf5', color: '#065f46', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 },
-  description: { color: '#1e293b', fontSize: '0.95rem', margin: '0 0 0.85rem', lineHeight: 1.5 },
-  cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' },
-  actionBtn: { display: 'inline-block', background: '#059669', color: '#fff', padding: '0.45rem 0.9rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 600, fontSize: '0.85rem' },
-};

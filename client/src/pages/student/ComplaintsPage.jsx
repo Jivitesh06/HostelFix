@@ -2,7 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import complaintService from '../../services/complaintService';
+import AppShell from '../../components/AppShell';
 import StatusBadge from '../../components/StatusBadge';
+import CategoryBadge from '../../components/CategoryBadge';
+import EmptyState from '../../components/EmptyState';
+import {
+  PlusCircle,
+  Clock,
+  User,
+  ArrowRight,
+  AlertCircle,
+  CheckCircle2,
+  Filter,
+} from 'lucide-react';
 
 const STATUS_FILTERS = [
   { label: 'All', value: '' },
@@ -16,7 +28,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function StudentComplaints() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
 
   const [complaints, setComplaints] = useState([]);
@@ -45,150 +57,269 @@ export default function StudentComplaints() {
   }, [selectedStatus]);
 
   return (
-    <div style={styles.page}>
-      {/* Top Navbar */}
-      <nav style={styles.nav}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <strong style={{ color: '#2563eb', fontSize: '1.25rem' }}>HostelFix</strong>
-          <span style={{ color: '#94a3b8' }}>|</span>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Student Portal</span>
-        </div>
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-          <Link to="/student/dashboard" style={styles.navLink}>Dashboard</Link>
-          <Link to="/student/complaints" style={styles.navLinkActive}>My Complaints</Link>
-          <Link to="/student/mess" style={styles.navLink}>Mess Menu</Link>
-          <button onClick={logout} style={styles.logoutBtn}>Logout</button>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <div style={styles.content}>
-        {bannerMsg && (
-          <div style={styles.successBanner}>
+    <AppShell
+      title="My Maintenance Complaints"
+      subtitle={`Track status, assigned staff, and resolution history for Room ${user?.roomNumber || '—'}`}
+      actions={
+        <Link
+          to="/student/complaints/new"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            backgroundColor: '#4f46e5',
+            color: '#ffffff',
+            padding: '0.6rem 1.15rem',
+            borderRadius: '8px',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+            transition: 'background-color 0.15s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#4338ca')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4f46e5')}
+        >
+          <PlusCircle size={16} />
+          <span>Raise Complaint</span>
+        </Link>
+      }
+    >
+      {/* Success banner from redirect */}
+      {bannerMsg && (
+        <div
+          style={{
+            background: '#ecfdf5',
+            color: '#065f46',
+            border: '1px solid #a7f3d0',
+            padding: '0.85rem 1.25rem',
+            borderRadius: '8px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <CheckCircle2 size={18} color="#059669" />
             <span>{bannerMsg}</span>
-            <button onClick={() => setBannerMsg('')} style={styles.dismissBtn}>✕</button>
           </div>
-        )}
-
-        <div style={styles.header}>
-          <div>
-            <h1 style={{ margin: '0 0 0.25rem', color: '#1e293b' }}>My Complaints</h1>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-              Complaints submitted by {user?.name} (Room {user?.roomNumber}, {user?.hostelBlock})
-            </p>
-          </div>
-          <Link to="/student/complaints/new" style={styles.newBtn}>
-            + Raise New Complaint
-          </Link>
+          <button
+            onClick={() => setBannerMsg('')}
+            style={{ color: '#059669', fontSize: '1rem', fontWeight: 700 }}
+          >
+            ✕
+          </button>
         </div>
+      )}
 
-        {/* Filter Pills */}
-        <div style={styles.filterBar}>
-          {STATUS_FILTERS.map((f) => (
+      {/* Filter Bar */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          marginBottom: '1.75rem',
+          alignItems: 'center',
+        }}
+      >
+        <span
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginRight: '0.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+          }}
+        >
+          <Filter size={14} /> Filter:
+        </span>
+
+        {STATUS_FILTERS.map((f) => {
+          const isActive = selectedStatus === f.value;
+          return (
             <button
               key={f.value}
               onClick={() => setSelectedStatus(f.value)}
-              style={selectedStatus === f.value ? styles.filterBtnActive : styles.filterBtn}
+              style={{
+                padding: '0.4rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.8rem',
+                fontWeight: isActive ? 600 : 500,
+                backgroundColor: isActive ? '#4f46e5' : '#ffffff',
+                color: isActive ? '#ffffff' : '#475569',
+                border: `1px solid ${isActive ? '#4f46e5' : '#e2e8f0'}`,
+                boxShadow: isActive ? '0 1px 2px rgba(79, 70, 229, 0.2)' : 'none',
+                transition: 'all 0.15s ease',
+              }}
             >
               {f.label}
             </button>
-          ))}
+          );
+        })}
+      </div>
+
+      {error && (
+        <div
+          style={{
+            background: '#fff1f2',
+            color: '#9f1239',
+            border: '1px solid #fecdd3',
+            padding: '0.85rem 1rem',
+            borderRadius: '8px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}
+        >
+          <AlertCircle size={16} color="#e11d48" />
+          <span>{error}</span>
         </div>
+      )}
 
-        {error && <div style={styles.error}>{error}</div>}
+      {/* Main Content List */}
+      {loading ? (
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+          Loading your complaints catalog...
+        </div>
+      ) : complaints.length === 0 ? (
+        <EmptyState
+          title={selectedStatus ? `No ${selectedStatus.toLowerCase()} complaints` : 'No complaints submitted yet'}
+          description={
+            selectedStatus
+              ? `You do not have any complaints matching status: ${selectedStatus}.`
+              : 'Whenever an issue occurs in your room or common area, report it here.'
+          }
+          actionLabel="+ Raise New Complaint"
+          onAction={() => (window.location.href = '/student/complaints/new')}
+        />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {complaints.map((c) => {
+            const dateStr = new Date(c.createdAt).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            });
 
-        {loading ? (
-          <div style={styles.centerBox}>
-            <p style={{ color: '#64748b' }}>Loading your complaints...</p>
-          </div>
-        ) : complaints.length === 0 ? (
-          <div style={styles.emptyBox}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📝</div>
-            <h3 style={{ margin: '0 0 0.5rem', color: '#334155' }}>No complaints found</h3>
-            <p style={{ margin: '0 0 1.25rem', color: '#64748b', fontSize: '0.9rem' }}>
-              {selectedStatus
-                ? `You have no complaints with status: ${selectedStatus}.`
-                : 'You have not submitted any hostel maintenance complaints yet.'}
-            </p>
-            <Link to="/student/complaints/new" style={styles.newBtn}>
-              + Raise New Complaint
-            </Link>
-          </div>
-        ) : (
-          <div style={styles.list}>
-            {complaints.map((c) => {
-              const dateStr = new Date(c.createdAt).toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-
-              return (
-                <div key={c.id} style={styles.card}>
-                  <div style={styles.cardTop}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={styles.categoryBadge}>{c.category}</span>
-                      <StatusBadge status={c.status} />
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{dateStr}</span>
+            return (
+              <div
+                key={c.id}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
+                  padding: '1.5rem',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                  transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+                }}
+              >
+                {/* Header row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    marginBottom: '0.85rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <CategoryBadge category={c.category} />
+                    <StatusBadge status={c.status} />
                   </div>
 
-                  <p style={styles.description}>{c.description}</p>
-
-                  {c.rejectionReason && (
-                    <div style={styles.rejectionNotice}>
-                      <strong>Rejection Note:</strong> {c.rejectionReason}
-                    </div>
-                  )}
-
-                  <div style={styles.cardFooter}>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                      {c.assignedStaff ? (
-                        <span>
-                          Assigned to: <strong>{c.assignedStaff.name}</strong> ({c.assignedStaff.staffCategory || 'Staff'})
-                        </span>
-                      ) : (
-                        <span>Assigned to: <em>Not yet assigned</em></span>
-                      )}
-                    </div>
-
-                    <Link to={`/student/complaints/${c.id}`} style={styles.detailLink}>
-                      View Status Timeline →
-                    </Link>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+                    <Clock size={13} />
+                    <span>Submitted on {dateStr}</span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
+
+                {/* Complaint ID & Description */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, marginBottom: '0.3rem' }}>
+                    TICKET #{c.id.slice(-6).toUpperCase()}
+                  </div>
+                  <p
+                    style={{
+                      fontSize: '0.95rem',
+                      color: '#0f172a',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {c.description}
+                  </p>
+                </div>
+
+                {/* Rejection alert if REJECTED */}
+                {c.status === 'REJECTED' && c.rejectionReason && (
+                  <div
+                    style={{
+                      background: '#fff1f2',
+                      border: '1px solid #fecdd3',
+                      borderRadius: '8px',
+                      padding: '0.75rem 1rem',
+                      marginBottom: '1rem',
+                      fontSize: '0.85rem',
+                      color: '#9f1239',
+                    }}
+                  >
+                    <strong>Warden Rejection Reason:</strong> {c.rejectionReason}
+                  </div>
+                )}
+
+                {/* Card footer */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    paddingTop: '0.85rem',
+                    borderTop: '1px solid #f1f5f9',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>
+                    <User size={15} color="#94a3b8" />
+                    {c.assignedStaff ? (
+                      <span>
+                        Assigned to: <strong style={{ color: '#0f172a' }}>{c.assignedStaff.name}</strong> ({c.assignedStaff.staffCategory || 'Maintenance'})
+                      </span>
+                    ) : (
+                      <span style={{ fontStyle: 'italic', color: '#94a3b8' }}>Staff: Pending assignment</span>
+                    )}
+                  </div>
+
+                  <Link
+                    to={`/student/complaints/${c.id}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      color: '#4f46e5',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      transition: 'color 0.15s ease',
+                    }}
+                  >
+                    <span>View Status Timeline</span>
+                    <ArrowRight size={15} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </AppShell>
   );
 }
-
-const styles = {
-  page: { minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' },
-  nav: { background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  navLink: { color: '#475569', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 },
-  navLinkActive: { color: '#2563eb', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 },
-  logoutBtn: { background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.4rem 0.85rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' },
-  content: { padding: '2rem', maxWidth: '960px', margin: '0 auto' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' },
-  newBtn: { display: 'inline-block', background: '#2563eb', color: '#fff', padding: '0.65rem 1.25rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 600, fontSize: '0.9rem' },
-  successBanner: { background: '#dcfce7', border: '1px solid #86efac', color: '#166534', padding: '0.75rem 1rem', borderRadius: '6px', marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  dismissBtn: { background: 'none', border: 'none', color: '#166534', cursor: 'pointer', fontSize: '1rem' },
-  filterBar: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' },
-  filterBtn: { background: '#fff', border: '1px solid #cbd5e1', padding: '0.4rem 0.85rem', borderRadius: '20px', fontSize: '0.8rem', color: '#475569', cursor: 'pointer' },
-  filterBtnActive: { background: '#2563eb', border: '1px solid #2563eb', padding: '0.4rem 0.85rem', borderRadius: '20px', fontSize: '0.8rem', color: '#fff', fontWeight: 600, cursor: 'pointer' },
-  error: { background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.75rem 1rem', borderRadius: '6px', marginBottom: '1.5rem' },
-  centerBox: { background: '#fff', padding: '3rem', borderRadius: '8px', textAlign: 'center', border: '1px solid #e2e8f0' },
-  emptyBox: { background: '#fff', padding: '3.5rem 2rem', borderRadius: '8px', textAlign: 'center', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-  list: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  card: { background: '#fff', borderRadius: '8px', padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-  cardTop: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' },
-  categoryBadge: { background: '#f1f5f9', color: '#334155', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 },
-  description: { color: '#1e293b', fontSize: '0.95rem', margin: '0 0 0.85rem', lineHeight: 1.5 },
-  rejectionNotice: { background: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', padding: '0.5rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem', marginBottom: '0.85rem' },
-  cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' },
-  detailLink: { color: '#2563eb', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 },
-};

@@ -2,18 +2,31 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import complaintService from '../../services/complaintService';
+import AppShell from '../../components/AppShell';
+import {
+  ArrowLeft,
+  Zap,
+  Droplets,
+  Sparkles,
+  Armchair,
+  Wifi,
+  Wrench,
+  AlertCircle,
+  Link as LinkIcon,
+  HelpCircle,
+} from 'lucide-react';
 
 const CATEGORIES = [
-  { value: 'ELECTRICAL', label: 'Electrical & Lighting' },
-  { value: 'PLUMBING', label: 'Plumbing & Water Supply' },
-  { value: 'CLEANING', label: 'Cleaning & Washroom Hygiene' },
-  { value: 'FURNITURE', label: 'Furniture & Carpentry' },
-  { value: 'INTERNET', label: 'Internet & WiFi' },
-  { value: 'OTHER', label: 'Other Maintenance' },
+  { value: 'ELECTRICAL', label: 'Electrical & Lighting', icon: Zap, desc: 'Tube lights, fans, power switches' },
+  { value: 'PLUMBING', label: 'Plumbing & Water Supply', icon: Droplets, desc: 'Taps, washrooms, leaks' },
+  { value: 'CLEANING', label: 'Cleaning & Washroom Hygiene', icon: Sparkles, desc: 'Room hygiene, corridor, garbage' },
+  { value: 'FURNITURE', label: 'Furniture & Carpentry', icon: Armchair, desc: 'Bed, study table, chair, door lock' },
+  { value: 'INTERNET', label: 'Internet & WiFi', icon: Wifi, desc: 'LAN ports, hostel Wi-Fi routers' },
+  { value: 'OTHER', label: 'Other Maintenance', icon: Wrench, desc: 'General hostel infrastructure' },
 ];
 
 export default function NewComplaintPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -67,126 +80,280 @@ export default function NewComplaintPage() {
   };
 
   return (
-    <div style={styles.page}>
-      {/* Top Navbar */}
-      <nav style={styles.nav}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <strong style={{ color: '#2563eb', fontSize: '1.25rem' }}>HostelFix</strong>
-          <span style={{ color: '#94a3b8' }}>|</span>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Student Portal</span>
-        </div>
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-          <Link to="/student/dashboard" style={styles.navLink}>Dashboard</Link>
-          <Link to="/student/complaints" style={styles.navLinkActive}>My Complaints</Link>
-          <Link to="/student/mess" style={styles.navLink}>Mess Menu</Link>
-          <button onClick={logout} style={styles.logoutBtn}>Logout</button>
-        </div>
-      </nav>
+    <AppShell
+      title="Raise New Complaint"
+      subtitle={`Lodged by ${user?.name} for Room ${user?.roomNumber || '—'}, ${user?.hostelBlock || 'Hostel Block'}`}
+      actions={
+        <Link
+          to="/student/complaints"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            color: '#64748b',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            padding: '0.5rem 0.85rem',
+            borderRadius: '6px',
+            border: '1px solid #e2e8f0',
+            background: '#ffffff',
+          }}
+        >
+          <ArrowLeft size={16} />
+          <span>Back to Complaints</span>
+        </Link>
+      }
+    >
+      <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+        {error && (
+          <div
+            style={{
+              background: '#fff1f2',
+              color: '#9f1239',
+              border: '1px solid #fecdd3',
+              padding: '0.85rem 1rem',
+              borderRadius: '8px',
+              marginBottom: '1.5rem',
+              fontSize: '0.875rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+            }}
+          >
+            <AlertCircle size={16} color="#e11d48" />
+            <span>{error}</span>
+          </div>
+        )}
 
-      {/* Main Container */}
-      <div style={styles.content}>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <Link to="/student/complaints" style={styles.backLink}>
-            ← Back to Complaints
-          </Link>
-          <h1 style={{ margin: '0.5rem 0 0.25rem', color: '#1e293b' }}>
-            Raise New Complaint
-          </h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-            Resident: <strong>{user?.name}</strong> &bull; Room: <strong>{user?.roomNumber}</strong>, <strong>{user?.hostelBlock}</strong>
-          </p>
-        </div>
+        <form onSubmit={handleSubmit}>
+          {/* Card 1: Issue Category Selection */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                color: '#0f172a',
+                marginBottom: '0.3rem',
+              }}
+            >
+              Select Maintenance Category *
+            </label>
+            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 1rem' }}>
+              Choose the category that best matches your maintenance requirement.
+            </p>
 
-        <div style={styles.card}>
-          {error && <div style={styles.error}>{error}</div>}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '0.75rem',
+              }}
+            >
+              {CATEGORIES.map((cat) => {
+                const Icon = cat.icon;
+                const isSelected = form.category === cat.value;
 
-          <form onSubmit={handleSubmit}>
-            <div style={styles.field}>
-              <label style={styles.label}>Issue Category *</label>
-              <select
-                style={styles.select}
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                required
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label} ({cat.value})
-                  </option>
-                ))}
-              </select>
+                return (
+                  <div
+                    key={cat.value}
+                    onClick={() => setForm({ ...form, category: cat.value })}
+                    style={{
+                      border: `1.5px solid ${isSelected ? '#4f46e5' : '#e2e8f0'}`,
+                      backgroundColor: isSelected ? '#eef2ff' : '#ffffff',
+                      borderRadius: '10px',
+                      padding: '1rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.35rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <div
+                        style={{
+                          width: '30px',
+                          height: '30px',
+                          borderRadius: '8px',
+                          backgroundColor: isSelected ? '#4f46e5' : '#f1f5f9',
+                          color: isSelected ? '#ffffff' : '#475569',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon size={16} />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          color: isSelected ? '#3730a3' : '#0f172a',
+                        }}
+                      >
+                        {cat.label}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.2rem' }}>
+                      {cat.desc}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            <div style={styles.field}>
-              <label style={styles.label}>
-                Detailed Description *
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'normal', marginLeft: '0.5rem' }}>
-                  (Explain the problem clearly with location details)
+          {/* Card 2: Issue Details */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: '#0f172a',
+                  }}
+                >
+                  Problem Description *
+                </label>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  Min 5 characters
                 </span>
-              </label>
+              </div>
               <textarea
-                style={styles.textarea}
                 name="description"
                 rows={5}
                 value={form.description}
                 onChange={handleChange}
-                placeholder="e.g. Ceiling fan in Room A-101 has stopped spinning completely since this morning."
+                placeholder="Describe the issue in detail. For example: 'The study table tube light in Room A-101 is flickering rapidly and won't turn on properly.'"
                 required
+                style={{
+                  width: '100%',
+                  padding: '0.8rem 1rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.925rem',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  lineHeight: 1.5,
+                  resize: 'vertical',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#4f46e5';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#cbd5e1';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
 
-            <div style={styles.field}>
-              <label style={styles.label}>
-                Evidence Image URL
-                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'normal', marginLeft: '0.5rem' }}>
+            {/* Optional Photo Attachment URL */}
+            <div>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#334155',
+                  marginBottom: '0.4rem',
+                }}
+              >
+                <LinkIcon size={14} />
+                <span>Evidence Image URL</span>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 'normal' }}>
                   (Optional photo link)
                 </span>
               </label>
               <input
-                style={styles.input}
                 type="url"
                 name="imageUrl"
                 value={form.imageUrl}
                 onChange={handleChange}
-                placeholder="e.g. https://example.com/photo.jpg"
+                placeholder="https://images.unsplash.com/... or hosted image URL"
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#4f46e5';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#cbd5e1';
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
+          </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.75rem' }}>
-              <button style={styles.submitBtn} type="submit" disabled={loading}>
-                {loading ? 'Submitting...' : 'Submit Complaint'}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/student/complaints')}
-                style={styles.cancelBtn}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+          {/* Form Action Buttons */}
+          <div style={{ display: 'flex', gap: '0.85rem', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/student/complaints')}
+              style={{
+                padding: '0.7rem 1.25rem',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                color: '#475569',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                padding: '0.7rem 1.5rem',
+                borderRadius: '8px',
+                background: '#4f46e5',
+                color: '#ffffff',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+                transition: 'background-color 0.15s ease',
+              }}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4338ca')}
+              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+            >
+              {loading ? 'Submitting...' : 'Register Complaint'}
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
+    </AppShell>
   );
 }
-
-const styles = {
-  page: { minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' },
-  nav: { background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  navLink: { color: '#475569', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 },
-  navLinkActive: { color: '#2563eb', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 },
-  logoutBtn: { background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.4rem 0.85rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' },
-  content: { padding: '2rem 1.5rem', maxWidth: '680px', margin: '0 auto' },
-  backLink: { color: '#2563eb', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500 },
-  card: { background: '#fff', borderRadius: '8px', padding: '2rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' },
-  error: { background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.75rem 1rem', borderRadius: '6px', marginBottom: '1.25rem', fontSize: '0.9rem' },
-  field: { marginBottom: '1.25rem' },
-  label: { display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: '#334155', fontWeight: 500 },
-  select: { width: '100%', padding: '0.65rem 0.85rem', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem', background: '#fff', boxSizing: 'border-box' },
-  textarea: { width: '100%', padding: '0.65rem 0.85rem', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'vertical' },
-  input: { width: '100%', padding: '0.65rem 0.85rem', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem', boxSizing: 'border-box' },
-  submitBtn: { padding: '0.75rem 1.5rem', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer' },
-  cancelBtn: { padding: '0.75rem 1.25rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem', cursor: 'pointer' },
-};

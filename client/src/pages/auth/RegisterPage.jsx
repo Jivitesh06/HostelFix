@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
+import {
+  Building2,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
+  User,
+  Mail,
+  Home,
+  Layers,
+  Lock,
+} from 'lucide-react';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -29,7 +40,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    // 1. Required fields check
     const { name, email, roomNumber, hostelBlock, password, confirmPassword } = form;
     if (
       !name.trim() ||
@@ -43,19 +53,16 @@ export default function RegisterPage() {
       return;
     }
 
-    // 2. Email format validation
     if (!EMAIL_REGEX.test(email.trim())) {
-      setError('Please provide a valid email address (e.g. name@college.edu).');
+      setError('Please provide a valid email address (e.g. student@college.edu).');
       return;
     }
 
-    // 3. Password length check
     if (password.length < MIN_PASSWORD_LENGTH) {
       setError(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
       return;
     }
 
-    // 4. Password confirmation match
     if (password !== confirmPassword) {
       setError('Passwords do not match. Please re-enter your password.');
       return;
@@ -72,10 +79,9 @@ export default function RegisterPage() {
         password,
       });
 
-      // Redirect to login with success message in location state
       navigate('/login', {
         state: {
-          message: 'Registration successful! Please sign in with your credentials.',
+          message: 'Student account registered successfully! You can now sign in.',
         },
       });
     } catch (err) {
@@ -89,208 +95,379 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-          <h1 style={styles.title}>HostelFix 🏠</h1>
-          <p style={styles.subtitle}>Student Self-Registration</p>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#f8fafc',
+        padding: '2.5rem 1.5rem',
+        fontFamily: 'var(--font-sans)',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '520px',
+          background: '#ffffff',
+          borderRadius: '16px',
+          padding: '2.5rem',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #e2e8f0',
+        }}
+      >
+        {/* Brand Header */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 0.75rem',
+              boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
+            }}
+          >
+            <Building2 size={24} />
+          </div>
+          <h1
+            style={{
+              fontSize: '1.6rem',
+              fontWeight: 800,
+              color: '#0f172a',
+              letterSpacing: '-0.02em',
+              margin: '0 0 0.35rem',
+            }}
+          >
+            Create Resident Account
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+            Register as a hostel resident to submit complaints and view mess menus.
+          </p>
         </div>
 
-        {error && <div style={styles.error}>{error}</div>}
+        {error && (
+          <div
+            style={{
+              background: '#fff1f2',
+              color: '#9f1239',
+              border: '1px solid #fecdd3',
+              padding: '0.75rem 1rem',
+              borderRadius: '8px',
+              marginBottom: '1.5rem',
+              fontSize: '0.875rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+            }}
+          >
+            <AlertCircle size={16} color="#e11d48" />
+            <span>{error}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
-          <div style={styles.field}>
-            <label style={styles.label}>Full Name *</label>
-            <input
-              style={styles.input}
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="e.g. Rahul Sharma"
-              required
-            />
-          </div>
-
-          <div style={styles.field}>
-            <label style={styles.label}>College Email *</label>
-            <input
-              style={styles.input}
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="e.g. rahul@college.edu"
-              required
-            />
-          </div>
-
-          <div style={styles.row}>
-            <div style={{ ...styles.field, flex: 1 }}>
-              <label style={styles.label}>Room Number *</label>
+          {/* Full Name */}
+          <div style={{ marginBottom: '1.1rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: '#334155',
+                marginBottom: '0.35rem',
+              }}
+            >
+              Full Name *
+            </label>
+            <div style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#94a3b8',
+                }}
+              >
+                <User size={16} />
+              </div>
               <input
-                style={styles.input}
                 type="text"
-                name="roomNumber"
-                value={form.roomNumber}
+                name="name"
+                value={form.name}
                 onChange={handleChange}
-                placeholder="e.g. A-101"
+                placeholder="e.g. Rahul Sharma"
                 required
-              />
-            </div>
-
-            <div style={{ ...styles.field, flex: 1 }}>
-              <label style={styles.label}>Hostel Block *</label>
-              <input
-                style={styles.input}
-                type="text"
-                name="hostelBlock"
-                value={form.hostelBlock}
-                onChange={handleChange}
-                placeholder="e.g. Block A"
-                required
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem 0.65rem 2.4rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                }}
               />
             </div>
           </div>
 
-          <div style={styles.field}>
-            <label style={styles.label}>Password (min 6 characters) *</label>
-            <input
-              style={styles.input}
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Create a strong password"
-              required
-            />
+          {/* College Email */}
+          <div style={{ marginBottom: '1.1rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: '#334155',
+                marginBottom: '0.35rem',
+              }}
+            >
+              College Email *
+            </label>
+            <div style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#94a3b8',
+                }}
+              >
+                <Mail size={16} />
+              </div>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="e.g. rahul@college.edu"
+                required
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem 0.65rem 2.4rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
           </div>
 
-          <div style={styles.field}>
-            <label style={styles.label}>Confirm Password *</label>
-            <input
-              style={styles.input}
-              type="password"
-              name="confirmPassword"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              placeholder="Re-enter your password"
-              required
-            />
+          {/* Room & Block */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.1rem' }}>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#334155',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                Room Number *
+              </label>
+              <div style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <Home size={16} />
+                </div>
+                <input
+                  type="text"
+                  name="roomNumber"
+                  value={form.roomNumber}
+                  onChange={handleChange}
+                  placeholder="e.g. A-101"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem 0.65rem 2.4rem',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#334155',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                Hostel Block *
+              </label>
+              <div style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <Layers size={16} />
+                </div>
+                <input
+                  type="text"
+                  name="hostelBlock"
+                  value={form.hostelBlock}
+                  onChange={handleChange}
+                  placeholder="e.g. Block A"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem 0.65rem 2.4rem',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
-          <button style={styles.btn} type="submit" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Register as Student'}
+          {/* Password & Confirm */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#334155',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                Password *
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Min 6 chars"
+                required
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#334155',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                Confirm Password *
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="Re-enter password"
+                required
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              background: '#4f46e5',
+              color: '#ffffff',
+              borderRadius: '8px',
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.15s ease',
+            }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4338ca')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+          >
+            <span>{loading ? 'Creating Account...' : 'Complete Registration'}</span>
+            <ArrowRight size={16} />
           </button>
         </form>
 
-        <p style={styles.loginPrompt}>
-          Already registered?{' '}
-          <Link to="/login" style={styles.link}>
+        <p
+          style={{
+            marginTop: '1.5rem',
+            textAlign: 'center',
+            fontSize: '0.875rem',
+            color: '#64748b',
+          }}
+        >
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}
+          >
             Sign In here
           </Link>
         </p>
 
-        <div style={styles.roleNote}>
-          <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-            ℹ️ Warden and Staff accounts are provisioned by hostel administration
-            and cannot self-register.
-          </span>
+        <div
+          style={{
+            marginTop: '1.25rem',
+            paddingTop: '0.85rem',
+            borderTop: '1px solid #f1f5f9',
+            textAlign: 'center',
+            fontSize: '0.75rem',
+            color: '#94a3b8',
+          }}
+        >
+          Warden and Maintenance Staff accounts are provisioned directly by the hostel office.
         </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%)',
-    padding: '1.5rem',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  card: {
-    background: '#ffffff',
-    borderRadius: '10px',
-    padding: '2.5rem',
-    width: '100%',
-    maxWidth: '460px',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-    border: '1px solid #e2e8f0',
-  },
-  title: {
-    margin: '0 0 0.25rem',
-    color: '#1d4ed8',
-    fontSize: '1.9rem',
-    fontWeight: 700,
-  },
-  subtitle: {
-    margin: 0,
-    color: '#64748b',
-    fontSize: '0.9rem',
-  },
-  error: {
-    background: '#fee2e2',
-    color: '#991b1b',
-    border: '1px solid #fca5a5',
-    padding: '0.75rem 1rem',
-    borderRadius: '6px',
-    marginBottom: '1.25rem',
-    fontSize: '0.9rem',
-  },
-  field: {
-    marginBottom: '1rem',
-  },
-  row: {
-    display: 'flex',
-    gap: '0.75rem',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.35rem',
-    fontSize: '0.85rem',
-    color: '#334155',
-    fontWeight: 500,
-  },
-  input: {
-    width: '100%',
-    padding: '0.65rem 0.85rem',
-    border: '1px solid #cbd5e1',
-    borderRadius: '6px',
-    fontSize: '0.95rem',
-    boxSizing: 'border-box',
-    outline: 'none',
-  },
-  btn: {
-    width: '100%',
-    padding: '0.75rem',
-    background: '#2563eb',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '6px',
-    fontSize: '1rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    marginTop: '0.5rem',
-  },
-  loginPrompt: {
-    marginTop: '1.25rem',
-    textAlign: 'center',
-    fontSize: '0.9rem',
-    color: '#64748b',
-  },
-  link: {
-    color: '#2563eb',
-    textDecoration: 'none',
-    fontWeight: 500,
-  },
-  roleNote: {
-    marginTop: '1.25rem',
-    paddingTop: '0.75rem',
-    borderTop: '1px dashed #cbd5e1',
-    textAlign: 'center',
-  },
-};
