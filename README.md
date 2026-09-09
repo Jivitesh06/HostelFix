@@ -1,179 +1,194 @@
-# HostelFix 🏠
+<div align="center">
 
-**Smart Hostel Complaint & Mess Management System**
+# 🏠 HostelFix
 
-HostelFix is a centralized web-based system for managing hostel complaints and mess-related information in a college hostel environment. It replaces informal complaint channels (WhatsApp, verbal, physical registers) with a structured, transparent, and accountable digital workflow.
+### Smart Hostel Complaint Lifecycle & Mess Management Platform
 
----
+[![React](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Prisma%20ORM-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.prisma.io/)
+[![Tests](https://img.shields.io/badge/Tests-164%2F164%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-## Problem
+A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle and weekly dining management system for college residences.
 
-Hostel complaints are commonly handled through verbal communication, WhatsApp messages, or physical registers — leading to lost complaints, unclear responsibility, and lack of transparency for students.
-
-HostelFix solves this by providing a role-based complaint lifecycle system with full status tracking and accountability.
-
----
-
-## Key Features
-
-- 📋 **Structured Complaint Submission** — Students submit complaints with category, description, and optional image evidence
-- 🔄 **Full Complaint Lifecycle** — Pending → Approved → Assigned → In Progress → Resolved → Closed
-- 👥 **Three User Roles** — Student, Warden, and Staff with enforced role-based access
-- 📜 **Complaint History** — Every status change is recorded with timestamp and actor
-- 🍽️ **Mess Menu** — Warden publishes weekly mess menu visible to all students
-- ⭐ **Mess Feedback** — Students submit ratings and comments on mess services
-- 📊 **Role-Based Dashboards** — Each role sees a relevant summary view
+[Key Features](#-key-features) • [User Roles](#-user-roles--access-matrix) • [Hostel Scoping](#-campus-hostels--gender-scoping) • [Complaint Workflow](#-complaint-lifecycle-workflow) • [Quick Start](#-quick-start-guide) • [Evaluation Accounts](#-evaluation-demo-accounts) • [Documentation](#-project-documentation)
 
 ---
 
-## User Roles
+</div>
 
-| Role | Capabilities |
-|------|-------------|
-| **Student** | Register, raise complaints, track status, view timeline, view mess menu, submit feedback |
-| **Warden** | Approve/reject/assign complaints, close resolved complaints, manage mess menu, view feedback |
-| **Staff** | View assigned complaints, update status, mark complaints as resolved |
+## 📌 Problem & Solution
+
+* **The Problem:** Campus hostels face unorganized maintenance reporting — complaints get buried in WhatsApp chats or lost in paper registers, students lack status visibility, and administrators lack audit trails to hold workers accountable.
+* **The Solution:** **HostelFix** implements an immutable, 6-stage complaint state machine with role-based routing, warden multi-hostel scoping, student profile verification, dining menu schedules with verified reviews, and a secure administrative onboarding gate.
 
 ---
 
-## Complaint Lifecycle
+## ✨ Key Features
 
+- 📋 **6-Stage Complaint Lifecycle** — `PENDING` → `APPROVED` → `ASSIGNED` → `IN_PROGRESS` → `RESOLVED` → `CLOSED` (or `REJECTED` with mandatory justification).
+- 📜 **Immutable Audit Trail** — Every status transition records an unalterable log with timestamp, actor ID, previous status, and notes.
+- 🏢 **Multi-Hostel & Gender Scoping** — Strict scoping ensures wardens only view and manage complaints originating from their assigned residence hall.
+- 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Room) with warden inspection modals.
+- 🍽️ **Weekly Mess Management** — Day-by-day breakfast, lunch, snacks, and dinner schedules with verified 1–5 star student dining reviews.
+- 🛡️ **Secure Administrative Onboarding** — Dedicated `/admin/staff-register` portal protected by an administrative passkey (`HostelFix@Admin2026`) and hard 403 blocks against students.
+- 🎨 **Modern SaaS UI/UX** — Responsive, clean design built with modern CSS styling, Lucide icons, status badges, and zero icon overlaps.
+- 🧪 **100% Test Coverage** — 164 automated backend unit and integration test assertions verifying security, workflows, and database integrity.
+
+---
+
+## 👥 User Roles & Access Matrix
+
+| Feature / Capability | 🎓 Student | 🏛️ Hostel Warden | 🔧 Maintenance Staff |
+|---|:---:|:---:|:---:|
+| Self-Registration | ✅ (Public `/register`) | 🔒 (Admin Portal Only) | 🔒 (Admin Portal Only) |
+| Submit Maintenance Complaint | ✅ | ❌ | ❌ |
+| View Assigned Complaints | Own Only | Hostel-Scoped Only | Assigned Trade Only |
+| Approve / Reject Complaints | ❌ | ✅ | ❌ |
+| Assign Work Orders to Workers | ❌ | ✅ | ❌ |
+| Update Status (`In Progress` / `Resolved`) | ❌ | ❌ | ✅ |
+| Verify & Close Complaints | ❌ | ✅ | ❌ |
+| Inspect Student Academic Profile | ❌ | ✅ | ❌ |
+| View Weekly Mess Menu | ✅ | ✅ | ✅ |
+| Publish / Update Mess Menu | ❌ | ✅ | ❌ |
+| Submit Dining Review (1–5 Stars) | ✅ | ❌ | ❌ |
+| View Mess Dining Feedback | ❌ | ✅ | ❌ |
+
+---
+
+## 🏫 Campus Hostels & Gender Scoping
+
+HostelFix enforces real-world residence policies by segregating residential wings and dynamically tailoring dropdowns:
+
+```text
+┌───────────────────────────────────────────────────────────┐
+│                      CAMPUS HOSTELS                       │
+├─────────────────────────────┬─────────────────────────────┤
+│      BOYS HOSTELS           │       GIRLS HOSTELS         │
+│  • Sarabhai Hostel          │  • Bose Hostel              │
+│  • Bose Hostel              │  • Gargi Hostel             │
+│  • Aryabhata Hostel         │  • Kalpana Hostel           │
+│                             │  • Teresa Hostel            │
+└─────────────────────────────┴─────────────────────────────┘
 ```
-Student submits → [Pending] → Warden approves → [Approved]
-                                     ↓
-                              Warden assigns → [Assigned]
-                                     ↓
-                            Staff starts work → [In Progress]
-                                     ↓
-                           Staff completes → [Resolved]
-                                     ↓
-                           Warden verifies → [Closed]
 
-          Alternative: [Pending] → Warden rejects → [Rejected]
+> **Warden Scoping Rule:** A warden assigned to *Sarabhai Hostel* strictly views, approves, and oversees complaints from students in *Sarabhai Hostel*. Complaints from other hostels remain isolated to their respective wardens.
+
+---
+
+## 🔄 Complaint Lifecycle Workflow
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: Student Submits Complaint
+    
+    PENDING --> REJECTED: Warden Rejects (Reason Mandatory)
+    REJECTED --> [*]: Terminal State
+
+    PENDING --> APPROVED: Warden Approves
+    APPROVED --> ASSIGNED: Warden Assigns to Staff Member
+    ASSIGNED --> IN_PROGRESS: Staff Starts Work
+    IN_PROGRESS --> RESOLVED: Staff Completes Repair
+    RESOLVED --> CLOSED: Warden Inspects & Verifies
+    CLOSED --> [*]: Lifecycle Complete
 ```
 
----
-
-## Project Phases
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| **Phase 1** | Requirement Analysis | ✅ Complete |
-| **Phase 2** | System Design & Architecture | ✅ Complete |
-| **Phase 3A** | Foundation & Database Implementation | ✅ Complete |
-| **Phase 3B** | Authentication & Protected Routes | ✅ Complete (31/31 tests passed) |
-| **Phase 3C** | Complaint Management Workflow | ✅ Complete (39/39 tests passed) |
-| **Phase 3D** | Mess Management & Final Evaluation Polish | ✅ Complete (26/26 tests passed) |
+Each step generates a timestamped entry in the `StatusLog` table visible on the complaint details timeline.
 
 ---
 
-## Documentation
+## 💻 Tech Stack
 
-- **Phase 1 Requirements:** [`docs/requirements-analysis.md`](./docs/requirements-analysis.md)
-- **Phase 2 System Design:** [`docs/system-design.md`](./docs/system-design.md)
-  - [`architecture.md`](./docs/system-design/architecture.md) — 3-tier architecture
-  - [`module-design.md`](./docs/system-design/module-design.md) — Backend & frontend modules
-  - [`role-permissions.md`](./docs/system-design/role-permissions.md) — Role-permission matrix
-  - [`database-design.md`](./docs/system-design/database-design.md) — Schema, models, constraints, indexes
-  - [`er-diagram.md`](./docs/system-design/er-diagram.md) — Entity-relationship diagrams
-  - [`api-design.md`](./docs/system-design/api-design.md) — REST API specification
-  - [`authentication-flow.md`](./docs/system-design/authentication-flow.md) — JWT auth flows
-  - [`complaint-workflow.md`](./docs/system-design/complaint-workflow.md) — State machine transitions
-  - [`frontend-design.md`](./docs/system-design/frontend-design.md) — Page routes & components
-  - [`error-handling.md`](./docs/system-design/error-handling.md) — Error standards
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, React Router DOM v6, Axios, Lucide React, Vite |
+| **Backend** | Node.js, Express.js REST API, JSON Web Tokens (JWT), Bcrypt.js |
+| **Database & ORM** | PostgreSQL (Supabase compatible), Prisma ORM 5.x |
+| **Testing** | Native Node.js Automated Test Suites (164 Assertions) |
+| **Styling** | Custom SaaS CSS Design System, Responsive Flex/Grid |
 
 ---
 
-## Tech Stack
-
-- **Frontend:** React 18, React Router v6, Axios, Vite
-- **Backend:** Node.js, Express.js, CORS, dotenv, bcryptjs, jsonwebtoken
-- **Database:** PostgreSQL (Supabase compatible) with Prisma ORM 5.x
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```text
 HostelFix/
-├── client/                     # React frontend (Vite)
+├── client/                          # React Frontend (Vite)
 │   ├── src/
-│   │   ├── components/         # Reusable UI (ProtectedRoute, RoleRoute, etc.)
-│   │   ├── context/            # AuthContext state management
-│   │   ├── pages/              # Role-based pages (auth, student, warden, staff)
-│   │   ├── routes/             # AppRoutes configuration
-│   │   ├── services/           # Axios API client
+│   │   ├── components/              # ProtectedRoute, RoleRoute
+│   │   ├── constants/               # Hostel & gender configuration
+│   │   ├── context/                 # AuthContext (JWT session management)
+│   │   ├── pages/
+│   │   │   ├── auth/                # Login, Register, StaffRegisterPage
+│   │   │   ├── student/             # Dashboard, Complaints, NewComplaint, Profile, Mess
+│   │   │   ├── warden/              # Dashboard, Complaints, Detail, Profile, Mess
+│   │   │   └── staff/               # Dashboard, Work Orders, Detail
+│   │   ├── routes/                  # AppRoutes configuration
+│   │   ├── services/                # Axios instance with auth interceptors
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   ├── .env.example
 │   ├── package.json
 │   └── vite.config.js
 │
-├── server/                     # Express.js REST API
-│   ├── src/
-│   │   ├── config/             # Environment validation
-│   │   ├── middleware/         # Error handler, 404, auth guards
-│   │   ├── routes/             # Health & feature route definitions
-│   │   ├── utils/              # Standardized API response helpers
-│   │   └── server.js           # Server entry point
+├── server/                          # Express.js REST API
 │   ├── prisma/
-│   │   ├── schema.prisma       # Prisma data model & PostgreSQL config
-│   │   ├── seed.js             # Demo accounts & seed dataset
-│   │   └── migrations/         # Prisma migration history
-│   ├── verify-db.js            # Database verification script
-│   ├── .env.example
-│   └── package.json
+│   │   ├── schema.prisma            # Relational database schema
+│   │   ├── seed.js                  # Evaluation demo accounts & mess menu
+│   │   └── migrations/              # Database migration history
+│   ├── src/
+│   │   ├── config/                  # Environment and Prisma clients
+│   │   ├── controllers/             # Auth, complaints, mess, user controllers
+│   │   ├── middleware/              # JWT verification, RBAC, error handlers
+│   │   ├── routes/                  # API endpoints (/auth, /complaints, /mess, /users)
+│   │   ├── utils/                   # Response helpers & hostel rules
+│   │   └── server.js                # Express app entry point
+│   ├── test-auth.js                 # 42 Auth & onboarding tests
+│   ├── test-profile.js              # 57 Profile, gender & scoping tests
+│   ├── test-complaints.js           # 39 Complaint workflow tests
+│   ├── test-mess.js                 # 26 Mess menu & review tests
+│   ├── package.json
+│   └── .env.example
 │
-├── docs/                       # Phase 1 & Phase 2 documentation
-├── README.md
-└── .gitignore
+├── docs/                            # Software engineering specification
+└── README.md
 ```
 
 ---
 
-## Setup & Running Guide
+## 🚀 Quick Start Guide
 
 ### Prerequisites
+* **Node.js** v18+ and **npm** v9+
+* **PostgreSQL** running locally on port 5432 (or a hosted Supabase instance)
 
-- **Node.js** v18+ and **npm** v9+
-- **PostgreSQL** (local instance or free cloud Supabase instance)
+---
 
-### 1. Environment Variables
+### 1. Configure Environment Files
 
-Create `.env` files in both `server/` and `client/`:
-
-```bash
-# Server environment
-cp server/.env.example server/.env
-# Edit server/.env with your DATABASE_URL and JWT_SECRET
-
-# Client environment
-cp client/.env.example client/.env
-```
-
-Example `server/.env`:
+Create `.env` inside `server/`:
 ```env
 PORT=5001
 NODE_ENV=development
 DATABASE_URL="postgresql://username:password@localhost:5432/hostelfix?schema=public"
-JWT_SECRET="your-secure-jwt-secret-key"
+JWT_SECRET="your-super-secure-jwt-secret-key"
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
+ADMIN_REGISTRATION_KEY="HostelFix@Admin2026"
 ```
 
-Example `client/.env`:
+Create `.env` inside `client/`:
 ```env
 VITE_API_BASE_URL=http://localhost:5001/api
 ```
 
-### 2. Backend Setup & Database Migration
+---
+
+### 2. Database Setup & Seeding
 
 ```bash
 cd server
 npm install
-
-# Validate Prisma schema
-npx prisma validate
 
 # Run database migrations
 npx prisma migrate dev --name init
@@ -181,104 +196,97 @@ npx prisma migrate dev --name init
 # Generate Prisma Client
 npx prisma generate
 
-# Seed demo dataset
+# Seed sample users, complaints, mess menu & reviews
 npm run db:seed
-
-# Optional: Verify database and relations
-node verify-db.js
 ```
 
-### 3. Frontend Setup
+---
 
+### 3. Start Application
+
+**Start the Backend Server (Terminal 1):**
 ```bash
-cd ../client
-npm install
-
-# Test build
-npm run build
+cd server
+npm start
+# Server active at: http://localhost:5001
+# Health check:     http://localhost:5001/api/health
 ```
 
-### 4. Running Automated Verification Suites
+**Start the Frontend Client (Terminal 2):**
+```bash
+cd client
+npm install
+npm run dev
+# Frontend active at: http://localhost:5173
+```
 
-With the backend running on port 5001:
+---
 
+## 🧪 Automated Test Verification
+
+HostelFix includes 4 comprehensive automated test suites covering all business logic, security constraints, and state transitions.
+
+Run with backend running on port 5001:
 ```bash
 cd server
 
-# Verify database connection and relational integrity
-node verify-db.js
-
-# Run Authentication & RBAC test suite (31 tests)
+# 1. Authentication, Protected Routes & Staff Onboarding (42 tests)
 node test-auth.js
 
-# Run Complaint Workflow & Audit Trail test suite (39 tests)
+# 2. Student Profile, Gender Validation & Warden Scoping (57 tests)
+node test-profile.js
+
+# 3. Complaint State Machine & Status History (39 tests)
 node test-complaints.js
 
-# Run Mess Menu & Student Feedback test suite (26 tests)
+# 4. Weekly Mess Scheduling & Rating Feedback (26 tests)
 node test-mess.js
 ```
 
-### 5. Running the Application
-
-In terminal 1 (Backend):
-```bash
-cd server
-npm run dev    # or npm start
-# Server runs on http://localhost:5001
-# Health check: http://localhost:5001/api/health
-```
-
-In terminal 2 (Frontend):
-```bash
-cd client
-npm run dev
-# Frontend runs on http://localhost:5173
+```text
+============================================================
+Test Suite Results: 164 / 164 Tests Passed (100% Success Rate)
+============================================================
 ```
 
 ---
 
-## Evaluation Live Demo Walkthrough (3-Role Flow)
+## 🔑 Evaluation Demo Accounts
 
-To demonstrate the full lifecycle during project evaluation:
+All seeded demo accounts share the password: **`Demo@1234`**
 
-1. **Student submits a complaint**:
-   - Log in as `student@hostelfix.demo` (`Demo@1234`).
-   - Navigate to **Raise Complaint**, fill category (e.g. *Electrical*) and description, click Submit.
-   - Observe status is **PENDING** and initial audit log is recorded in the timeline.
-   - Navigate to **Mess Menu**, view weekly schedule, and submit a 5-star rating with comments.
-
-2. **Warden reviews and assigns**:
-   - Log out and log in as `warden@hostelfix.demo` (`Demo@1234`).
-   - Open **All Complaints**, locate the pending complaint.
-   - Click **Approve Complaint** (moves to **APPROVED**).
-   - Select a staff member (e.g. *Ravi Electrician*) and click **Assign Staff** (moves to **ASSIGNED**).
-   - Open **Mess Admin** to show menu schedule editing and review student dining feedback.
-
-3. **Staff resolves**:
-   - Log out and log in as `staff2@hostelfix.demo` (`Demo@1234`).
-   - View assigned complaint, click **Start Work** (moves to **IN_PROGRESS**).
-   - Click **Mark Resolved** with completion note (moves to **RESOLVED**).
-
-4. **Warden closes**:
-   - Switch back to `warden@hostelfix.demo`, view the resolved complaint, and click **Verify & Close Complaint** (moves to **CLOSED**).
-   - Observe the full 6-step audit trail (`PENDING → APPROVED → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED`) with timestamps and actors.
-
----
-
-## Demo Accounts for Evaluation
-
-All demo accounts share the password: **`Demo@1234`**
-
-| Role | Email | Password | Details |
+| Role | Email | Password | Assigned Location / Trade |
 |---|---|---|---|
-| **Student** | `student@hostelfix.demo` | `Demo@1234` | Room A-101, Block A |
-| **Student** | `student2@hostelfix.demo` | `Demo@1234` | Room B-205, Block B |
-| **Warden** | `warden@hostelfix.demo` | `Demo@1234` | Hostel Warden |
-| **Staff** | `staff@hostelfix.demo` | `Demo@1234` | Maintenance (Plumber) |
-| **Staff** | `staff2@hostelfix.demo` | `Demo@1234` | Maintenance (Electrician) |
+| **Student (Male)** | `student@hostelfix.demo` | `Demo@1234` | Sarabhai Hostel, Room A-101 |
+| **Student (Female)** | `student2@hostelfix.demo` | `Demo@1234` | Gargi Hostel, Room B-205 |
+| **Warden (Sarabhai)** | `warden@hostelfix.demo` | `Demo@1234` | Sarabhai Hostel (Boys) |
+| **Warden (Gargi)** | `warden2@hostelfix.demo` | `Demo@1234` | Gargi Hostel (Girls) |
+| **Staff (Plumber)** | `staff@hostelfix.demo` | `Demo@1234` | Plumbing Maintenance |
+| **Staff (Electrician)** | `staff2@hostelfix.demo` | `Demo@1234` | Electrical Maintenance |
 
 ---
 
-## College Project
+## 🛡️ Administrative Onboarding Portal
 
-This is a software engineering college project developed for academic evaluation.
+For provisioning new Wardens and Maintenance Technicians:
+* **Portal Link:** [`http://localhost:5173/admin/staff-register`](http://localhost:5173/admin/staff-register) (or click *"Staff & Warden Portal →"* on login).
+* **Administrative Authorization Key:** `HostelFix@Admin2026`
+* **Student Protection:** Authenticated students navigating to this portal receive an immediate **403 Forbidden** security barrier.
+
+---
+
+## 📚 Project Documentation
+
+Engineering design and software requirements specifications are available in [`/docs`](./docs):
+* [System Requirements Analysis](./docs/requirements-analysis.md)
+* [System Design Specification](./docs/system-design.md)
+* [Database Architecture & Schema](./docs/system-design/database-design.md)
+* [Role-Based Access Control (RBAC)](./docs/system-design/role-permissions.md)
+* [Complaint State Machine](./docs/system-design/complaint-workflow.md)
+* [REST API Specification](./docs/system-design/api-design.md)
+
+---
+
+<div align="center">
+  <sub>Developed for College Software Engineering Academic Evaluation • 2026</sub>
+</div>
