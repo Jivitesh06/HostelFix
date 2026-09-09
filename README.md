@@ -59,37 +59,175 @@ Student submits → [Pending] → Warden approves → [Approved]
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **Phase 1** | Requirement Analysis | ✅ Complete |
-| **Phase 2** | System Design & Architecture | 🔜 Upcoming |
-| **Phase 3** | Implementation | 🔜 Upcoming |
-| **Phase 4** | Testing & Deployment | 🔜 Upcoming |
+| **Phase 2** | System Design & Architecture | ✅ Complete |
+| **Phase 3A** | Foundation & Database Implementation | ✅ Complete |
+| **Phase 3B** | Authentication & Protected Routes | 🔜 Next |
+| **Phase 3C** | Complaint Management Workflow | 🔜 Upcoming |
+| **Phase 3D** | Mess Management & Final Evaluation Polish | 🔜 Upcoming |
 
 ---
 
 ## Documentation
 
-Phase 1 requirement analysis documents are located in [`docs/`](./docs/):
-
-- [`requirements-analysis.md`](./docs/requirements-analysis.md) — Phase 1 master overview
-- [`requirements/problem-statement.md`](./docs/requirements/problem-statement.md)
-- [`requirements/objectives.md`](./docs/requirements/objectives.md)
-- [`requirements/stakeholders.md`](./docs/requirements/stakeholders.md)
-- [`requirements/functional-requirements.md`](./docs/requirements/functional-requirements.md)
-- [`requirements/non-functional-requirements.md`](./docs/requirements/non-functional-requirements.md)
-- [`requirements/use-cases.md`](./docs/requirements/use-cases.md)
-- [`requirements/use-case-diagram.md`](./docs/requirements/use-case-diagram.md)
-- [`requirements/complaint-workflow.md`](./docs/requirements/complaint-workflow.md)
-- [`requirements/scope.md`](./docs/requirements/scope.md)
-- [`requirements/requirements-traceability.md`](./docs/requirements/requirements-traceability.md)
+- **Phase 1 Requirements:** [`docs/requirements-analysis.md`](./docs/requirements-analysis.md)
+- **Phase 2 System Design:** [`docs/system-design.md`](./docs/system-design.md)
+  - [`architecture.md`](./docs/system-design/architecture.md) — 3-tier architecture
+  - [`module-design.md`](./docs/system-design/module-design.md) — Backend & frontend modules
+  - [`role-permissions.md`](./docs/system-design/role-permissions.md) — Role-permission matrix
+  - [`database-design.md`](./docs/system-design/database-design.md) — Schema, models, constraints, indexes
+  - [`er-diagram.md`](./docs/system-design/er-diagram.md) — Entity-relationship diagrams
+  - [`api-design.md`](./docs/system-design/api-design.md) — REST API specification
+  - [`authentication-flow.md`](./docs/system-design/authentication-flow.md) — JWT auth flows
+  - [`complaint-workflow.md`](./docs/system-design/complaint-workflow.md) — State machine transitions
+  - [`frontend-design.md`](./docs/system-design/frontend-design.md) — Page routes & components
+  - [`error-handling.md`](./docs/system-design/error-handling.md) — Error standards
 
 ---
 
-## Tech Stack *(Planned — Phase 2/3)*
+## Tech Stack
 
-- **Frontend:** Next.js, React
-- **Backend:** Node.js, Express / Next.js API Routes
-- **Database:** PostgreSQL with Prisma ORM
-- **Authentication:** JWT-based role authentication
-- **Hosting:** Free-tier cloud (TBD)
+- **Frontend:** React 18, React Router v6, Axios, Vite
+- **Backend:** Node.js, Express.js, CORS, dotenv, bcryptjs, jsonwebtoken
+- **Database:** PostgreSQL (Supabase compatible) with Prisma ORM 5.x
+
+---
+
+## Project Structure
+
+```text
+HostelFix/
+├── client/                     # React frontend (Vite)
+│   ├── src/
+│   │   ├── components/         # Reusable UI (ProtectedRoute, RoleRoute, etc.)
+│   │   ├── context/            # AuthContext state management
+│   │   ├── pages/              # Role-based pages (auth, student, warden, staff)
+│   │   ├── routes/             # AppRoutes configuration
+│   │   ├── services/           # Axios API client
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .env.example
+│   ├── package.json
+│   └── vite.config.js
+│
+├── server/                     # Express.js REST API
+│   ├── src/
+│   │   ├── config/             # Environment validation
+│   │   ├── middleware/         # Error handler, 404, auth guards
+│   │   ├── routes/             # Health & feature route definitions
+│   │   ├── utils/              # Standardized API response helpers
+│   │   └── server.js           # Server entry point
+│   ├── prisma/
+│   │   ├── schema.prisma       # Prisma data model & PostgreSQL config
+│   │   ├── seed.js             # Demo accounts & seed dataset
+│   │   └── migrations/         # Prisma migration history
+│   ├── verify-db.js            # Database verification script
+│   ├── .env.example
+│   └── package.json
+│
+├── docs/                       # Phase 1 & Phase 2 documentation
+├── README.md
+└── .gitignore
+```
+
+---
+
+## Setup & Running Guide
+
+### Prerequisites
+
+- **Node.js** v18+ and **npm** v9+
+- **PostgreSQL** (local instance or free cloud Supabase instance)
+
+### 1. Environment Variables
+
+Create `.env` files in both `server/` and `client/`:
+
+```bash
+# Server environment
+cp server/.env.example server/.env
+# Edit server/.env with your DATABASE_URL and JWT_SECRET
+
+# Client environment
+cp client/.env.example client/.env
+```
+
+Example `server/.env`:
+```env
+PORT=5001
+NODE_ENV=development
+DATABASE_URL="postgresql://username:password@localhost:5432/hostelfix?schema=public"
+JWT_SECRET="your-secure-jwt-secret-key"
+JWT_EXPIRES_IN=7d
+CLIENT_URL=http://localhost:5173
+```
+
+Example `client/.env`:
+```env
+VITE_API_BASE_URL=http://localhost:5001/api
+```
+
+### 2. Backend Setup & Database Migration
+
+```bash
+cd server
+npm install
+
+# Validate Prisma schema
+npx prisma validate
+
+# Run database migrations
+npx prisma migrate dev --name init
+
+# Generate Prisma Client
+npx prisma generate
+
+# Seed demo dataset
+npm run db:seed
+
+# Optional: Verify database and relations
+node verify-db.js
+```
+
+### 3. Frontend Setup
+
+```bash
+cd ../client
+npm install
+
+# Test build
+npm run build
+```
+
+### 4. Running the Application
+
+In terminal 1 (Backend):
+```bash
+cd server
+npm run dev    # or npm start
+# Server runs on http://localhost:5001
+# Health check: http://localhost:5001/api/health
+```
+
+In terminal 2 (Frontend):
+```bash
+cd client
+npm run dev
+# Frontend runs on http://localhost:5173
+```
+
+---
+
+## Demo Accounts for Evaluation
+
+All demo accounts share the password: **`Demo@1234`**
+
+| Role | Email | Password | Details |
+|---|---|---|---|
+| **Student** | `student@hostelfix.demo` | `Demo@1234` | Room A-101, Block A |
+| **Student** | `student2@hostelfix.demo` | `Demo@1234` | Room B-205, Block B |
+| **Warden** | `warden@hostelfix.demo` | `Demo@1234` | Hostel Warden |
+| **Staff** | `staff@hostelfix.demo` | `Demo@1234` | Maintenance (Plumber) |
+| **Staff** | `staff2@hostelfix.demo` | `Demo@1234` | Maintenance (Electrician) |
 
 ---
 

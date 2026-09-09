@@ -1,0 +1,168 @@
+// HostelFix Prisma Schema
+// Database: PostgreSQL (Supabase compatible)
+// Phase 2 Database Design: docs/system-design/database-design.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  WARDEN
+  STAFF
+}
+
+enum ComplaintStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ComplaintCategory {
+  ELECTRICAL
+  PLUMBING
+  CLEANING
+  FURNITURE
+  INTERNET
+  OTHER
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACKS
+  DINNER
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// USER
+// Stores all roles in a single table; role field discriminates behavior.
+// roomNumber + hostelBlock: required for STUDENT accounts (nullable for others)
+// staffCategory: informational for STAFF accounts (nullable for others)
+// ─────────────────────────────────────────────────────────────────────────────
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  role          Role
+  roomNumber    String?
+  hostelBlock   String?
+  staffCategory String?
+  createdAt     DateTime @default(now())
+
+  // A student can submit many complaints
+  complaintsSubmitted Complaint[]  @relation("StudentComplaints")
+
+  // A staff member can be assigned many complaints
+  complaintsAssigned  Complaint[]  @relation("StaffAssignedComplaints")
+
+  // Any user can appear as the actor in status log entries
+  statusLogsChanged   StatusLog[]  @relation("StatusLogChanger")
+
+  // A student can submit many feedback entries
+  feedbacks           MenuFeedback[]
+
+  @@index([email])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPLAINT
+// Core entity. Lifecycle: PENDING → APPROVED → ASSIGNED →
+//                          IN_PROGRESS → RESOLVED → CLOSED
+// Alternative:             PENDING → REJECTED (terminal)
+// rejectionReason: nullable; must be set when status = REJECTED
+// deadlineAt: nullable; reserved for future SLA feature (not implemented)
+// ─────────────────────────────────────────────────────────────────────────────
+model Complaint {
+  id              String            @id @default(cuid())
+  studentId       String
+  category        ComplaintCategory
+  description     String
+  imageUrl        String?
+  status          ComplaintStatus   @default(PENDING)
+  rejectionReason String?
+  assignedStaffId String?
+  deadlineAt      DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  student       User        @relation("StudentComplaints", fields: [studentId], references: [id])
+  assignedStaff User?       @relation("StaffAssignedComplaints", fields: [assignedStaffId], references: [id])
+  statusLogs    StatusLog[]
+
+  @@index([studentId])
+  @@index([status])
+  @@index([assignedStaffId])
+  @@index([createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATUS LOG
+// Immutable audit trail. One entry created per status transition.
+// oldStatus is null for the initial PENDING creation entry.
+// Records are never edited or deleted after creation.
+// ─────────────────────────────────────────────────────────────────────────────
+model StatusLog {
+  id          String           @id @default(cuid())
+  complaintId String
+  oldStatus   ComplaintStatus?
+  newStatus   ComplaintStatus
+  changedById String
+  note        String?
+  timestamp   DateTime         @default(now())
+
+  complaint Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  changedBy User      @relation("StatusLogChanger", fields: [changedById], references: [id])
+
+  @@index([complaintId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MESS MENU
+// Warden publishes weekly meal schedule. Students view it.
+// Each record = one meal slot on one day of a specific week.
+// ─────────────────────────────────────────────────────────────────────────────
+model MessMenu {
+  id        String     @id @default(cuid())
+  dayOfWeek String
+  mealType  MealType
+  items     String
+  weekOf    DateTime
+
+  feedbacks MenuFeedback[]
+
+  @@index([weekOf])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MENU FEEDBACK
+// Student submits rating (1-5) and optional comment for a mess menu entry.
+// ─────────────────────────────────────────────────────────────────────────────
+model MenuFeedback {
+  id         String   @id @default(cuid())
+  messMenuId String
+  studentId  String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  messMenu MessMenu @relation(fields: [messMenuId], references: [id])
+  student  User     @relation(fields: [studentId], references: [id])
+
+  @@index([messMenuId])
+  @@index([studentId])
+}
