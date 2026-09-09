@@ -40,16 +40,16 @@ const register = async (req, res, next) => {
     } = req.body;
 
     // Validate presence of required fields
-    if (!name || !email || !password || !roomNumber || !hostelBlock) {
+    if (!name || !email || !password || !roomNumber) {
       return sendError(
         res,
-        'Name, email, password, room number, and hostel block are required',
+        'Name, email, password, and room number are required',
         400
       );
     }
 
     // Validate trimmed lengths
-    if (!name.trim() || !roomNumber.trim() || !hostelBlock.trim()) {
+    if (!name.trim() || !roomNumber.trim()) {
       return sendError(res, 'Fields cannot be empty or whitespace only', 400);
     }
 
@@ -112,7 +112,7 @@ const register = async (req, res, next) => {
         passwordHash,
         role: 'STUDENT',
         roomNumber: roomNumber.trim(),
-        hostelBlock: hostelBlock.trim(),
+        hostelBlock: hostelBlock && typeof hostelBlock === 'string' ? hostelBlock.trim() : null,
         hostelName: hostelName && typeof hostelName === 'string' ? hostelName.trim() : null,
         gender: cleanGender,
         mobileNumber: mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,

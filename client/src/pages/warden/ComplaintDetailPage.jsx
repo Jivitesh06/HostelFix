@@ -174,7 +174,7 @@ export default function WardenComplaintDetail() {
       title={complaint ? `Review Ticket #${complaint.id.slice(-6).toUpperCase()}` : 'Complaint Review'}
       subtitle={
         complaint
-          ? `Submitted by ${complaint.student?.name} (Room ${complaint.student?.roomNumber}, ${complaint.student?.hostelBlock})`
+          ? `Submitted by ${complaint.student?.name} (Room ${complaint.student?.roomNumber})`
           : ''
       }
       actions={
@@ -633,10 +633,11 @@ export default function WardenComplaintDetail() {
                   <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
                     Room {complaint.student?.roomNumber}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                    {complaint.student?.hostelBlock}
-                    {complaint.student?.hostelName ? ` • ${complaint.student.hostelName}` : ''}
-                  </div>
+                  {complaint.student?.hostelName && (
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      {complaint.student.hostelName}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -1110,16 +1111,10 @@ export default function WardenComplaintDetail() {
                     {studentDetails?.hostelName || complaint?.student?.hostelName || 'Campus Hostel'}
                   </div>
                 </div>
-                <div>
+                <div style={{ gridColumn: 'span 2' }}>
                   <span style={detailLabelStyle}>Room Number</span>
                   <div style={detailValueStyle}>
                     Room {studentDetails?.roomNumber || complaint?.student?.roomNumber}
-                  </div>
-                </div>
-                <div>
-                  <span style={detailLabelStyle}>Hostel Block</span>
-                  <div style={detailValueStyle}>
-                    {studentDetails?.hostelBlock || complaint?.student?.hostelBlock}
                   </div>
                 </div>
               </div>

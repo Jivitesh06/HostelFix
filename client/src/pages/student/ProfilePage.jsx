@@ -12,7 +12,6 @@ import {
   Calendar,
   Building2,
   Home,
-  Layers,
   Edit3,
   CheckCircle2,
   AlertCircle,
@@ -53,7 +52,6 @@ export default function StudentProfilePage() {
     year: '',
     hostelName: '',
     roomNumber: '',
-    hostelBlock: '',
   });
 
   const fetchProfile = async () => {
@@ -72,7 +70,6 @@ export default function StudentProfilePage() {
         year: data.year || '',
         hostelName: data.hostelName || '',
         roomNumber: data.roomNumber || '',
-        hostelBlock: data.hostelBlock || '',
       });
     } catch (err) {
       setError('Unable to load student profile. Please try again.');
@@ -96,7 +93,6 @@ export default function StudentProfilePage() {
         year: profile.year || '',
         hostelName: profile.hostelName || '',
         roomNumber: profile.roomNumber || '',
-        hostelBlock: profile.hostelBlock || '',
       });
     }
     setEditError('');
@@ -135,10 +131,6 @@ export default function StudentProfilePage() {
       setEditError('Room number is required.');
       return;
     }
-    if (!formData.hostelBlock.trim()) {
-      setEditError('Hostel block is required.');
-      return;
-    }
     if (formData.mobileNumber.trim() && !PHONE_REGEX.test(formData.mobileNumber.trim())) {
       setEditError('Please enter a valid mobile number (7-15 numeric digits).');
       return;
@@ -155,7 +147,6 @@ export default function StudentProfilePage() {
         year: formData.year.trim() || null,
         hostelName: formData.hostelName.trim() || null,
         roomNumber: formData.roomNumber.trim(),
-        hostelBlock: formData.hostelBlock.trim(),
       });
 
       setProfile(updated);
@@ -334,7 +325,7 @@ export default function StudentProfilePage() {
                   <span>•</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Home size={15} color="#94a3b8" />
-                    Room {profile.roomNumber || '—'}, {profile.hostelBlock || ''}
+                    Room {profile.roomNumber || '—'}
                   </span>
                   {profile.hostelName && (
                     <>
@@ -736,16 +727,6 @@ export default function StudentProfilePage() {
                     </span>
                   </div>
                 </div>
-
-                <div>
-                  <span style={labelStyle}>Hostel Block / Wing</span>
-                  <div style={valueStyle}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Layers size={14} color="#64748b" />
-                      {profile.hostelBlock}
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -929,31 +910,17 @@ export default function StudentProfilePage() {
                 </p>
               )}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
-              <div>
-                <label style={modalLabelStyle}>Room Number *</label>
-                <input
-                  type="text"
-                  name="roomNumber"
-                  value={formData.roomNumber}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="e.g. A-101"
-                  style={modalInputStyle}
-                />
-              </div>
-              <div>
-                <label style={modalLabelStyle}>Hostel Block *</label>
-                <input
-                  type="text"
-                  name="hostelBlock"
-                  value={formData.hostelBlock}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="e.g. Block A"
-                  style={modalInputStyle}
-                />
-              </div>
+            <div>
+              <label style={modalLabelStyle}>Room Number *</label>
+              <input
+                type="text"
+                name="roomNumber"
+                value={formData.roomNumber}
+                onChange={handleInputChange}
+                required
+                placeholder="e.g. A-101"
+                style={modalInputStyle}
+              />
             </div>
           </div>
 

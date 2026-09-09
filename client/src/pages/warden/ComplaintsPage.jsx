@@ -65,7 +65,6 @@ export default function WardenComplaints() {
       c.description.toLowerCase().includes(q) ||
       c.student?.name?.toLowerCase().includes(q) ||
       c.student?.roomNumber?.toLowerCase().includes(q) ||
-      c.student?.hostelBlock?.toLowerCase().includes(q) ||
       c.id.toLowerCase().includes(q)
     );
   });
@@ -284,7 +283,7 @@ export default function WardenComplaints() {
                         {c.student?.name || 'Resident'}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                        Room {c.student?.roomNumber || '—'}, {c.student?.hostelBlock || ''}
+                        Room {c.student?.roomNumber || '—'}
                       </div>
                     </td>
 

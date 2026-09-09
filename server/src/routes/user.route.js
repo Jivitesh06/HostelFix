@@ -147,10 +147,10 @@ router.put('/profile', verifyToken, requireRole('STUDENT'), async (req, res, nex
     }
 
     if (hostelBlock !== undefined) {
-      if (typeof hostelBlock !== 'string' || !hostelBlock.trim()) {
-        return sendError(res, 'Hostel block cannot be empty', 400);
-      }
-      dataToUpdate.hostelBlock = hostelBlock.trim();
+      dataToUpdate.hostelBlock =
+        hostelBlock && typeof hostelBlock === 'string' && hostelBlock.trim()
+          ? hostelBlock.trim()
+          : null;
     }
 
     const updatedUser = await prisma.user.update({

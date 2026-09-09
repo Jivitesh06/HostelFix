@@ -9,7 +9,6 @@ import {
   User,
   Mail,
   Home,
-  Layers,
   Lock,
   Phone,
   GraduationCap,
@@ -45,7 +44,6 @@ export default function RegisterPage() {
     year: '',
     hostelName: '',
     roomNumber: '',
-    hostelBlock: '',
     password: '',
     confirmPassword: '',
   });
@@ -85,7 +83,6 @@ export default function RegisterPage() {
       year,
       hostelName,
       roomNumber,
-      hostelBlock,
       password,
       confirmPassword,
     } = form;
@@ -94,11 +91,10 @@ export default function RegisterPage() {
       !name.trim() ||
       !email.trim() ||
       !roomNumber.trim() ||
-      !hostelBlock.trim() ||
       !password ||
       !confirmPassword
     ) {
-      setError('Name, email, room number, hostel block, and password are required.');
+      setError('Name, email, room number, and password are required.');
       return;
     }
 
@@ -130,7 +126,6 @@ export default function RegisterPage() {
         email: email.trim().toLowerCase(),
         gender: gender || null,
         roomNumber: roomNumber.trim(),
-        hostelBlock: hostelBlock.trim(),
         hostelName: hostelName.trim() || null,
         mobileNumber: mobileNumber.trim() || null,
         universityRollNumber: universityRollNumber.trim() || null,
@@ -286,19 +281,16 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label style={fieldLabelStyle}>Gender</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><User size={16} /></div>
-                  <select
-                    name="gender"
-                    value={form.gender}
-                    onChange={handleGenderChange}
-                    style={inputWithIconStyle}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                  </select>
-                </div>
+                <select
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleGenderChange}
+                  style={selectStyle}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                </select>
               </div>
             </div>
           </div>
@@ -325,22 +317,19 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label style={fieldLabelStyle}>Year of Study</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Calendar size={16} /></div>
-                  <select
-                    name="year"
-                    value={form.year}
-                    onChange={handleChange}
-                    style={inputWithIconStyle}
-                  >
-                    <option value="">Select current year</option>
-                    {YEAR_OPTIONS.map((yr) => (
-                      <option key={yr} value={yr}>
-                        {yr}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  name="year"
+                  value={form.year}
+                  onChange={handleChange}
+                  style={selectStyle}
+                >
+                  <option value="">Select current year</option>
+                  {YEAR_OPTIONS.map((yr) => (
+                    <option key={yr} value={yr}>
+                      {yr}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div>
@@ -368,60 +357,40 @@ export default function RegisterPage() {
               <label style={fieldLabelStyle}>
                 Hostel / Hall Name {form.gender ? `(${form.gender === 'MALE' ? 'Boys Hostels' : 'Girls Hostels'})` : ''}
               </label>
-              <div style={{ position: 'relative' }}>
-                <div style={iconWrapperStyle}><Building2 size={16} /></div>
-                <select
-                  name="hostelName"
-                  value={form.hostelName}
-                  onChange={handleChange}
-                  style={inputWithIconStyle}
-                >
-                  <option value="">
-                    {form.gender ? '-- Select Hostel --' : '-- Select Gender First --'}
+              <select
+                name="hostelName"
+                value={form.hostelName}
+                onChange={handleChange}
+                style={selectStyle}
+              >
+                <option value="">
+                  {form.gender ? '-- Select Hostel --' : '-- Select Gender First --'}
+                </option>
+                {getHostelsByGender(form.gender).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
                   </option>
-                  {getHostelsByGender(form.gender).map((h) => (
-                    <option key={h} value={h}>
-                      {h}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                ))}
+              </select>
               {!form.gender && (
                 <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>
                   Select your gender above to view available hostels for your accommodation.
                 </p>
               )}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={fieldLabelStyle}>Room Number *</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Home size={16} /></div>
-                  <input
-                    type="text"
-                    name="roomNumber"
-                    value={form.roomNumber}
-                    onChange={handleChange}
-                    placeholder="e.g. A-101"
-                    required
-                    style={inputWithIconStyle}
-                  />
-                </div>
-              </div>
-              <div>
-                <label style={fieldLabelStyle}>Hostel Block *</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Layers size={16} /></div>
-                  <input
-                    type="text"
-                    name="hostelBlock"
-                    value={form.hostelBlock}
-                    onChange={handleChange}
-                    placeholder="e.g. Block A"
-                    required
-                    style={inputWithIconStyle}
-                  />
-                </div>
+            <div>
+              <label style={fieldLabelStyle}>Room Number *</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><Home size={16} /></div>
+                <input
+                  type="text"
+                  name="roomNumber"
+                  value={form.roomNumber}
+                  onChange={handleChange}
+                  placeholder="e.g. A-101"
+                  required
+                  style={inputWithIconStyle}
+                />
               </div>
             </div>
           </div>
@@ -564,4 +533,18 @@ const inputWithIconStyle = {
   boxSizing: 'border-box',
   fontFamily: 'inherit',
   background: '#ffffff',
+};
+
+const selectStyle = {
+  width: '100%',
+  padding: '0.65rem 0.85rem',
+  border: '1px solid #cbd5e1',
+  borderRadius: '8px',
+  fontSize: '0.875rem',
+  outline: 'none',
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+  background: '#ffffff',
+  color: '#0f172a',
+  cursor: 'pointer',
 };

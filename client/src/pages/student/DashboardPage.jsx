@@ -52,7 +52,7 @@ export default function StudentDashboard() {
   return (
     <AppShell
       title={`Welcome back, ${user?.name || 'Resident'}`}
-      subtitle={`Hostel Room ${user?.roomNumber || '—'}, ${user?.hostelBlock || 'Hostel Block'}`}
+      subtitle={user?.hostelName ? `${user.hostelName} • Room ${user?.roomNumber || '—'}` : `Hostel Room ${user?.roomNumber || '—'}`}
       actions={
         <Link
           to="/student/complaints/new"

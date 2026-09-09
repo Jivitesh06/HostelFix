@@ -521,7 +521,7 @@ export default function WardenMessPage() {
                         {fb.student?.name}
                       </strong>{' '}
                       <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        (Room {fb.student?.roomNumber}, {fb.student?.hostelBlock})
+                        (Room {fb.student?.roomNumber})
                       </span>
                     </div>
 

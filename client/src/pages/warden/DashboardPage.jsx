@@ -425,7 +425,7 @@ export default function WardenDashboard() {
                         {c.description}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
-                        Resident: <strong>{c.student?.name}</strong> (Room {c.student?.roomNumber}, {c.student?.hostelBlock}) &bull; {dateStr}
+                        Resident: <strong>{c.student?.name}</strong> (Room {c.student?.roomNumber}) &bull; {dateStr}
                       </div>
                     </div>
                   </div>

@@ -212,7 +212,7 @@ export default function StaffDashboard() {
                         {c.description}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
-                        Room <strong>{c.student?.roomNumber}</strong>, {c.student?.hostelBlock} &bull; Resident: {c.student?.name} &bull; {dateStr}
+                        Room <strong>{c.student?.roomNumber}</strong> &bull; Resident: {c.student?.name} &bull; {dateStr}
                       </div>
                     </div>
                   </div>

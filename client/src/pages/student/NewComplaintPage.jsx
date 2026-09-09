@@ -82,7 +82,7 @@ export default function NewComplaintPage() {
   return (
     <AppShell
       title="Raise New Complaint"
-      subtitle={`Lodged by ${user?.name} for Room ${user?.roomNumber || '—'}, ${user?.hostelBlock || 'Hostel Block'}`}
+      subtitle={`Lodged by ${user?.name || 'Resident'} for Room ${user?.roomNumber || '—'}${user?.hostelName ? ` • ${user.hostelName}` : ''}`}
       actions={
         <Link
           to="/student/complaints"

@@ -263,9 +263,11 @@ export default function StudentComplaintDetail() {
                   <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
                     Room {complaint.student?.roomNumber}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                    {complaint.student?.hostelBlock}
-                  </div>
+                  {complaint.student?.hostelName && (
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      {complaint.student.hostelName}
+                    </div>
+                  )}
                 </div>
 
                 <div>

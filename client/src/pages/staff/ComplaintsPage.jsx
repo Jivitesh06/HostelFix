@@ -213,7 +213,7 @@ export default function StaffComplaints() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
                     <Home size={15} color="#64748b" />
                     <span>
-                      Room <strong>{c.student?.roomNumber}</strong>, {c.student?.hostelBlock} &bull; Resident: {c.student?.name}
+                      Room <strong>{c.student?.roomNumber}</strong> &bull; Resident: {c.student?.name}
                     </span>
                   </div>
 

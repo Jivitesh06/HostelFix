@@ -64,7 +64,7 @@ export default function StaffComplaintDetail() {
       title={complaint ? `Work Order #${complaint.id.slice(-6).toUpperCase()}` : 'Task Details'}
       subtitle={
         complaint
-          ? `Assigned to ${user?.name} (${user?.staffCategory || 'Technician'}) • Room ${complaint.student?.roomNumber}, ${complaint.student?.hostelBlock}`
+          ? `Assigned to ${user?.name} (${user?.staffCategory || 'Technician'}) • Room ${complaint.student?.roomNumber}`
           : ''
       }
       actions={
@@ -383,9 +383,11 @@ export default function StaffComplaintDetail() {
                   <div style={{ fontWeight: 700, color: '#065f46', fontSize: '1.1rem', marginTop: '0.15rem' }}>
                     Room {complaint.student?.roomNumber}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#047857' }}>
-                    {complaint.student?.hostelBlock}
-                  </div>
+                  {complaint.student?.hostelName && (
+                    <div style={{ fontSize: '0.8rem', color: '#047857' }}>
+                      {complaint.student.hostelName}
+                    </div>
+                  )}
                 </div>
 
                 <div>
