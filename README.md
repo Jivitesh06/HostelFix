@@ -80,18 +80,28 @@ HostelFix enforces real-world residence policies by segregating residential wing
 ## 🔄 Complaint Lifecycle Workflow
 
 ```mermaid
-stateDiagram-v2
-    [*] --> PENDING: Student Submits Complaint
+flowchart TD
+    SUBMIT(["Student Submits Complaint"]) --> PENDING["PENDING"]
     
-    PENDING --> REJECTED: Warden Rejects (Reason Mandatory)
-    REJECTED --> [*]: Terminal State
+    PENDING -->|"Warden Rejects (Reason Required)"| REJECTED["REJECTED"]
+    PENDING -->|"Warden Approves"| APPROVED["APPROVED"]
+    APPROVED -->|"Warden Assigns Staff"| ASSIGNED["ASSIGNED"]
+    ASSIGNED -->|"Staff Starts Work"| IN_PROGRESS["IN_PROGRESS"]
+    IN_PROGRESS -->|"Staff Completes Repair"| RESOLVED["RESOLVED"]
+    RESOLVED -->|"Warden Verifies & Closes"| CLOSED["CLOSED"]
+```
 
-    PENDING --> APPROVED: Warden Approves
-    APPROVED --> ASSIGNED: Warden Assigns to Staff Member
-    ASSIGNED --> IN_PROGRESS: Staff Starts Work
-    IN_PROGRESS --> RESOLVED: Staff Completes Repair
-    RESOLVED --> CLOSED: Warden Inspects & Verifies
-    CLOSED --> [*]: Lifecycle Complete
+```text
+Student Submits ──> [ PENDING ] ──(Warden Approves)──> [ APPROVED ] ──(Warden Assigns)──> [ ASSIGNED ]
+                         │                                                                      │
+                (Warden Rejects)                                                                │
+                         │                                                                      ▼
+                         ▼                                                              [ IN_PROGRESS ]
+                  [ REJECTED ]                                                                  │
+                                                                                          (Staff Works)
+                                                                                                │
+                                                                                                ▼
+                  [ CLOSED ] <──(Warden Verifies)── [ RESOLVED ] <──────────────────────────────┘
 ```
 
 Each step generates a timestamped entry in the `StatusLog` table visible on the complaint details timeline.
