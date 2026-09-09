@@ -79,6 +79,9 @@ export default function WardenDashboard() {
           <Link to="/warden/complaints" style={{ background: '#7c3aed', color: '#fff', padding: '0.75rem 1.5rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>
             Open Complaints Management
           </Link>
+          <Link to="/warden/mess" style={{ background: '#fff', color: '#475569', border: '1px solid #cbd5e1', padding: '0.75rem 1.25rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 500, fontSize: '0.95rem' }}>
+            🍽️ Manage Mess Menu & Feedback
+          </Link>
         </div>
       </div>
     </div>

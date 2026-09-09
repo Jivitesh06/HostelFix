@@ -82,6 +82,9 @@ export default function StudentDashboard() {
           <Link to="/student/complaints" style={{ background: '#fff', color: '#475569', border: '1px solid #cbd5e1', padding: '0.75rem 1.25rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 500, fontSize: '0.95rem' }}>
             Browse My Complaints
           </Link>
+          <Link to="/student/mess" style={{ background: '#fff', color: '#475569', border: '1px solid #cbd5e1', padding: '0.75rem 1.25rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 500, fontSize: '0.95rem' }}>
+            🍽️ Weekly Mess Menu & Reviews
+          </Link>
         </div>
       </div>
     </div>
