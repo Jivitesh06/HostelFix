@@ -462,23 +462,37 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Registration link */}
-          <p
+          {/* Registration links */}
+          <div
             style={{
               marginTop: '1.25rem',
               textAlign: 'center',
               fontSize: '0.875rem',
               color: '#64748b',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.4rem',
             }}
           >
-            New resident student?{' '}
-            <Link
-              to="/register"
-              style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}
-            >
-              Create an account
-            </Link>
-          </p>
+            <div>
+              New resident student?{' '}
+              <Link
+                to="/register"
+                style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}
+              >
+                Create student account
+              </Link>
+            </div>
+            <div style={{ fontSize: '0.8rem' }}>
+              Campus administrative or maintenance personnel?{' '}
+              <Link
+                to="/admin/staff-register"
+                style={{ color: '#4338ca', fontWeight: 600, textDecoration: 'none' }}
+              >
+                Staff &amp; Warden Portal &rarr;
+              </Link>
+            </div>
+          </div>
 
           {/* ── Evaluation Demo Accounts Panel ──────────────────────────── */}
           <div

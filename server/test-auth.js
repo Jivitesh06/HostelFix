@@ -121,6 +121,83 @@ async function runTests() {
   });
   assert(regShortPass.status === 400 && regShortPass.body.success === false, 'Password < 6 chars returns 400 Bad Request');
 
+  // 2B. Secure Staff & Warden Registration Tests
+  // Missing administrative key -> 403 Forbidden
+  const staffRegNoKey = await request('POST', '/api/auth/staff-register', {
+    role: 'WARDEN',
+    name: 'Unauthorized Warden',
+    email: `warden.unauth.${Date.now()}@college.edu`,
+    password: 'password123',
+    gender: 'MALE',
+    hostelName: 'Sarabhai Hostel',
+  });
+  assert(staffRegNoKey.status === 403 && staffRegNoKey.body.success === false, 'Staff register without adminKey returns 403 Forbidden');
+
+  // Invalid administrative key -> 403 Forbidden
+  const staffRegWrongKey = await request('POST', '/api/auth/staff-register', {
+    adminKey: 'WrongSecretKey',
+    role: 'WARDEN',
+    name: 'Unauthorized Warden',
+    email: `warden.wrongkey.${Date.now()}@college.edu`,
+    password: 'password123',
+    gender: 'MALE',
+    hostelName: 'Sarabhai Hostel',
+  });
+  assert(staffRegWrongKey.status === 403 && staffRegWrongKey.body.success === false, 'Staff register with incorrect adminKey returns 403 Forbidden');
+
+  // Invalid role (STUDENT) -> 400 Bad Request
+  const staffRegStudentRole = await request('POST', '/api/auth/staff-register', {
+    adminKey: 'HostelFix@Admin2026',
+    role: 'STUDENT',
+    name: 'Student Trying Staff Route',
+    email: `fake.student.${Date.now()}@college.edu`,
+    password: 'password123',
+  });
+  assert(staffRegStudentRole.status === 400 && staffRegStudentRole.body.success === false, 'Staff register with role STUDENT returns 400 Bad Request');
+
+  // Valid Warden registration -> 201 Created
+  const wardenEmail = `test.warden.${Date.now()}@college.edu`;
+  const wardenReg = await request('POST', '/api/auth/staff-register', {
+    adminKey: 'HostelFix@Admin2026',
+    role: 'WARDEN',
+    name: 'Chief Warden Bose',
+    email: wardenEmail,
+    password: 'password123',
+    gender: 'MALE',
+    hostelName: 'Bose Hostel',
+    mobileNumber: '+91 98765 43210',
+  });
+  assert(wardenReg.status === 201 && wardenReg.body.success === true, 'Valid Warden registration returns 201 Created');
+  assert(wardenReg.body.data.role === 'WARDEN', 'Warden registration sets role to WARDEN');
+  assert(wardenReg.body.data.hostelName === 'Bose Hostel', 'Warden registration assigns hostelName');
+  assert(wardenReg.body.data.passwordHash === undefined, 'Security: passwordHash is not returned in staff registration');
+
+  // Valid Staff / Worker registration -> 201 Created
+  const staffEmail = `test.worker.${Date.now()}@college.edu`;
+  const workerReg = await request('POST', '/api/auth/staff-register', {
+    adminKey: 'HostelFix@Admin2026',
+    role: 'STAFF',
+    name: 'Electrician Ramesh',
+    email: staffEmail,
+    password: 'password123',
+    staffCategory: 'Electrician',
+    mobileNumber: '+91 91234 56789',
+  });
+  assert(workerReg.status === 201 && workerReg.body.success === true, 'Valid Staff registration returns 201 Created');
+  assert(workerReg.body.data.role === 'STAFF', 'Staff registration sets role to STAFF');
+  assert(workerReg.body.data.staffCategory === 'Electrician', 'Staff registration saves staffCategory');
+
+  // Duplicate email on staff register -> 409 Conflict
+  const staffRegDup = await request('POST', '/api/auth/staff-register', {
+    adminKey: 'HostelFix@Admin2026',
+    role: 'STAFF',
+    name: 'Duplicate Ramesh',
+    email: staffEmail,
+    password: 'password123',
+    staffCategory: 'Plumber',
+  });
+  assert(staffRegDup.status === 409 && staffRegDup.body.success === false, 'Duplicate email on staff register returns 409 Conflict');
+
   // 3. Login Tests
   // Student Login
   const loginStudent = await request('POST', '/api/auth/login', {

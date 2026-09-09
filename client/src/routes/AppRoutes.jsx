@@ -5,6 +5,7 @@ import RoleRoute from '../components/RoleRoute';
 // Auth pages
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
+import StaffRegisterPage from '../pages/auth/StaffRegisterPage';
 
 // Student pages
 import StudentDashboard from '../pages/student/DashboardPage';
@@ -32,6 +33,9 @@ export default function AppRoutes() {
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      {/* Secure administrative onboarding for wardens and staff/workers */}
+      <Route path="/admin/staff-register" element={<StaffRegisterPage />} />
+      <Route path="/staff-portal/register" element={<StaffRegisterPage />} />
 
       {/* Student routes */}
       <Route

@@ -7,6 +7,7 @@ const {
   sendCreated,
   sendError,
   sendUnauthorized,
+  sendForbidden,
 } = require('../utils/response');
 const {
   GENDERS,
@@ -242,8 +243,160 @@ const getMe = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/auth/staff-register
+ * Administrative onboarding for Wardens and Maintenance Staff (Workers).
+ * Requires valid administrative authorization key.
+ * Students cannot register through this portal.
+ */
+const staffRegister = async (req, res, next) => {
+  try {
+    const {
+      adminKey,
+      role,
+      name,
+      email,
+      password,
+      gender,
+      hostelName,
+      staffCategory,
+      mobileNumber,
+    } = req.body;
+
+    // 1. Validate administrative authorization key
+    const expectedKey = config.adminRegistrationKey;
+    if (!adminKey || adminKey.trim() !== expectedKey) {
+      return sendForbidden(
+        res,
+        'Invalid or missing administrative authorization key. Student access to staff registration is prohibited.'
+      );
+    }
+
+    // 2. Validate role: strictly WARDEN or STAFF
+    if (!role || (role !== 'WARDEN' && role !== 'STAFF')) {
+      return sendError(
+        res,
+        'Invalid role. This portal only allows registration for WARDEN or STAFF roles.',
+        400
+      );
+    }
+
+    // 3. Validate common required fields: name, email, password
+    if (!name || !email || !password) {
+      return sendError(res, 'Name, email, and password are required', 400);
+    }
+
+    if (!name.trim()) {
+      return sendError(res, 'Name cannot be empty', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return sendError(res, 'Please provide a valid email address', 400);
+    }
+
+    if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
+      return sendError(
+        res,
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+        400
+      );
+    }
+
+    let cleanGender = null;
+    if (gender) {
+      cleanGender = gender.trim().toUpperCase();
+      if (!GENDERS.includes(cleanGender)) {
+        return sendError(res, 'Invalid gender. Allowed values: MALE, FEMALE', 400);
+      }
+    }
+
+    // 4. Role-specific validation
+    let assignedHostel = null;
+    let assignedStaffCategory = null;
+
+    if (role === 'WARDEN') {
+      if (!cleanGender) {
+        return sendError(
+          res,
+          'Gender is required for Warden registration to assign the appropriate hostel.',
+          400
+        );
+      }
+      if (!hostelName || !hostelName.trim()) {
+        return sendError(res, 'Assigned Hostel is required for Warden registration.', 400);
+      }
+      assignedHostel = hostelName.trim();
+      if (!isValidHostelForGender(assignedHostel, cleanGender)) {
+        return sendError(
+          res,
+          `Selected hostel "${assignedHostel}" is not valid for ${cleanGender.toLowerCase()} wardens. Allowed hostels: ${getHostelsByGender(cleanGender).join(', ')}`,
+          400
+        );
+      }
+    } else if (role === 'STAFF') {
+      if (!staffCategory || !staffCategory.trim()) {
+        return sendError(
+          res,
+          'Staff trade/category (e.g. Electrician, Plumber, Cleaning) is required for staff registration.',
+          400
+        );
+      }
+      assignedStaffCategory = staffCategory.trim();
+    }
+
+    // 5. Check duplicate email
+    const existingUser = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (existingUser) {
+      return sendError(res, 'An account with this email already exists', 409);
+    }
+
+    // 6. Hash password
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+    // 7. Create user
+    const newUser = await prisma.user.create({
+      data: {
+        name: name.trim(),
+        email: cleanEmail,
+        passwordHash,
+        role,
+        gender: cleanGender,
+        hostelName: assignedHostel,
+        staffCategory: assignedStaffCategory,
+        mobileNumber:
+          mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
+        roomNumber: null,
+        hostelBlock: null,
+        universityRollNumber: null,
+        branch: null,
+        year: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        gender: true,
+        hostelName: true,
+        staffCategory: true,
+        mobileNumber: true,
+        createdAt: true,
+      },
+    });
+
+    return sendCreated(res, newUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
+  staffRegister,
   login,
   getMe,
 };
