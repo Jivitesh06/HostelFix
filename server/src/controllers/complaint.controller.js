@@ -127,6 +127,11 @@ const getComplaints = async (req, res, next) => {
             email: true,
             roomNumber: true,
             hostelBlock: true,
+            hostelName: true,
+            mobileNumber: true,
+            universityRollNumber: true,
+            branch: true,
+            year: true,
           },
         },
         assignedStaff: {
@@ -168,6 +173,11 @@ const getComplaintById = async (req, res, next) => {
             email: true,
             roomNumber: true,
             hostelBlock: true,
+            hostelName: true,
+            mobileNumber: true,
+            universityRollNumber: true,
+            branch: true,
+            year: true,
           },
         },
         assignedStaff: {

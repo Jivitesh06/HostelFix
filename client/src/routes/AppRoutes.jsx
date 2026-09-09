@@ -12,6 +12,7 @@ import StudentComplaints from '../pages/student/ComplaintsPage';
 import NewComplaintPage from '../pages/student/NewComplaintPage';
 import StudentComplaintDetail from '../pages/student/ComplaintDetailPage';
 import StudentMessPage from '../pages/student/MessPage';
+import StudentProfilePage from '../pages/student/ProfilePage';
 
 // Warden pages
 import WardenDashboard from '../pages/warden/DashboardPage';
@@ -69,6 +70,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute role="STUDENT"><StudentMessPage /></RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/profile"
+        element={
+          <ProtectedRoute>
+            <RoleRoute role="STUDENT"><StudentProfilePage /></RoleRoute>
           </ProtectedRoute>
         }
       />

@@ -20,7 +20,18 @@ const SALT_ROUNDS = 10;
  */
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, roomNumber, hostelBlock } = req.body;
+    const {
+      name,
+      email,
+      password,
+      roomNumber,
+      hostelBlock,
+      hostelName,
+      mobileNumber,
+      universityRollNumber,
+      branch,
+      year,
+    } = req.body;
 
     // Validate presence of required fields
     if (!name || !email || !password || !roomNumber || !hostelBlock) {
@@ -76,6 +87,11 @@ const register = async (req, res, next) => {
         role: 'STUDENT',
         roomNumber: roomNumber.trim(),
         hostelBlock: hostelBlock.trim(),
+        hostelName: hostelName && typeof hostelName === 'string' ? hostelName.trim() : null,
+        mobileNumber: mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
+        universityRollNumber: universityRollNumber && typeof universityRollNumber === 'string' ? universityRollNumber.trim() : null,
+        branch: branch && typeof branch === 'string' ? branch.trim() : null,
+        year: year && typeof year === 'string' ? year.trim() : null,
         staffCategory: null,
       },
       select: {
@@ -85,6 +101,11 @@ const register = async (req, res, next) => {
         role: true,
         roomNumber: true,
         hostelBlock: true,
+        hostelName: true,
+        mobileNumber: true,
+        universityRollNumber: true,
+        branch: true,
+        year: true,
         createdAt: true,
       },
     });
@@ -143,6 +164,11 @@ const login = async (req, res, next) => {
       role: user.role,
       roomNumber: user.roomNumber,
       hostelBlock: user.hostelBlock,
+      hostelName: user.hostelName,
+      mobileNumber: user.mobileNumber,
+      universityRollNumber: user.universityRollNumber,
+      branch: user.branch,
+      year: user.year,
       staffCategory: user.staffCategory,
     };
 
@@ -169,6 +195,11 @@ const getMe = async (req, res, next) => {
       role: req.user.role,
       roomNumber: req.user.roomNumber,
       hostelBlock: req.user.hostelBlock,
+      hostelName: req.user.hostelName,
+      mobileNumber: req.user.mobileNumber,
+      universityRollNumber: req.user.universityRollNumber,
+      branch: req.user.branch,
+      year: req.user.year,
       staffCategory: req.user.staffCategory,
     };
 

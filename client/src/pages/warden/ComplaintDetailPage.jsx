@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import complaintService from '../../services/complaintService';
+import userService from '../../services/userService';
 import AppShell from '../../components/AppShell';
 import StatusBadge from '../../components/StatusBadge';
 import CategoryBadge from '../../components/CategoryBadge';
@@ -18,6 +19,14 @@ import {
   Home,
   ShieldCheck,
   AlertTriangle,
+  Phone,
+  GraduationCap,
+  BookOpen,
+  Calendar,
+  Building2,
+  Layers,
+  Eye,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function WardenComplaintDetail() {
@@ -32,6 +41,9 @@ export default function WardenComplaintDetail() {
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [closeModalOpen, setCloseModalOpen] = useState(false);
+  const [studentModalOpen, setStudentModalOpen] = useState(false);
+  const [studentDetails, setStudentDetails] = useState(null);
+  const [studentLoading, setStudentLoading] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -138,6 +150,22 @@ export default function WardenComplaintDetail() {
       setError(err.response?.data?.message || 'Failed to close complaint.');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  // Open student details modal
+  const handleOpenStudentModal = async () => {
+    setStudentModalOpen(true);
+    if (complaint?.student?.id) {
+      setStudentLoading(true);
+      try {
+        const student = await userService.getStudentById(complaint.student.id);
+        setStudentDetails(student);
+      } catch (err) {
+        setStudentDetails(complaint.student);
+      } finally {
+        setStudentLoading(false);
+      }
     }
   };
 
@@ -541,15 +569,43 @@ export default function WardenComplaintDetail() {
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
-                    Resident Student
-                  </span>
-                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                      Resident Student
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleOpenStudentModal}
+                      style={{
+                        background: '#eff6ff',
+                        color: '#2563eb',
+                        border: '1px solid #bfdbfe',
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
+                    >
+                      <Eye size={12} />
+                      View Profile
+                    </button>
+                  </div>
+                  <div style={{ fontWeight: 600, color: '#0f172a' }}>
                     {complaint.student?.name}
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
                     {complaint.student?.email}
                   </div>
+                  {complaint.student?.mobileNumber && (
+                    <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <Phone size={12} color="#64748b" />
+                      <span>{complaint.student.mobileNumber}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -561,6 +617,7 @@ export default function WardenComplaintDetail() {
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
                     {complaint.student?.hostelBlock}
+                    {complaint.student?.hostelName ? ` • ${complaint.student.hostelName}` : ''}
                   </div>
                 </div>
 
@@ -785,6 +842,316 @@ export default function WardenComplaintDetail() {
           </button>
         </div>
       </Modal>
+
+      {/* ── Modal 4: Student Resident Profile Details Dialog ──────────── */}
+      <Modal
+        isOpen={studentModalOpen}
+        onClose={() => setStudentModalOpen(false)}
+        title="Student Resident Profile"
+        subtitle="Official resident identification, academic details, and room allocation"
+      >
+        {studentLoading ? (
+          <div style={{ padding: '2.5rem', textAlign: 'center', color: '#64748b' }}>
+            Loading student profile...
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Header with Avatar & Badge */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+                background: '#f8fafc',
+                padding: '1rem',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+              }}
+            >
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                }}
+              >
+                {(studentDetails?.name || complaint?.student?.name || 'ST')
+                  .split(' ')
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((n) => n[0].toUpperCase())
+                  .join('')}
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
+                    {studentDetails?.name || complaint?.student?.name}
+                  </h3>
+                  <span
+                    style={{
+                      background: '#eff6ff',
+                      color: '#1d4ed8',
+                      border: '1px solid #bfdbfe',
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '9999px',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Resident
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                  {studentDetails?.email || complaint?.student?.email}
+                </div>
+              </div>
+            </div>
+
+            {/* 1. Personal Information */}
+            <div>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#4f46e5',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                1. Personal Information
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.75rem',
+                  background: '#ffffff',
+                  border: '1px solid #f1f5f9',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                }}
+              >
+                <div>
+                  <span style={detailLabelStyle}>Full Name</span>
+                  <div style={detailValueStyle}>{studentDetails?.name || complaint?.student?.name}</div>
+                </div>
+                <div>
+                  <span style={detailLabelStyle}>Contact Mobile</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.mobileNumber || complaint?.student?.mobileNumber ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <Phone size={13} color="#64748b" />
+                        {studentDetails?.mobileNumber || complaint?.student?.mobileNumber}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not provided</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Academic Information */}
+            <div>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#4f46e5',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                2. Academic Information
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.75rem',
+                  background: '#ffffff',
+                  border: '1px solid #f1f5f9',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                }}
+              >
+                <div>
+                  <span style={detailLabelStyle}>University Roll Number</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.universityRollNumber || complaint?.student?.universityRollNumber ? (
+                      <span
+                        style={{
+                          fontFamily: 'monospace',
+                          background: '#f8fafc',
+                          padding: '0.15rem 0.4rem',
+                          borderRadius: '4px',
+                          border: '1px solid #e2e8f0',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {studentDetails?.universityRollNumber || complaint?.student?.universityRollNumber}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not provided</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <span style={detailLabelStyle}>Year of Study</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.year || complaint?.student?.year ? (
+                      <span
+                        style={{
+                          background: '#f5f3ff',
+                          color: '#6d28d9',
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '6px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {studentDetails?.year || complaint?.student?.year}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                    )}
+                  </div>
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <span style={detailLabelStyle}>Branch / Specialization</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.branch || complaint?.student?.branch || (
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Hostel Information */}
+            <div>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#4f46e5',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                3. Hostel Residence Information
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.75rem',
+                  background: '#ffffff',
+                  border: '1px solid #f1f5f9',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                }}
+              >
+                <div style={{ gridColumn: 'span 2' }}>
+                  <span style={detailLabelStyle}>Hostel / Hall Name</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.hostelName || complaint?.student?.hostelName || 'Campus Hostel'}
+                  </div>
+                </div>
+                <div>
+                  <span style={detailLabelStyle}>Room Number</span>
+                  <div style={detailValueStyle}>
+                    Room {studentDetails?.roomNumber || complaint?.student?.roomNumber}
+                  </div>
+                </div>
+                <div>
+                  <span style={detailLabelStyle}>Hostel Block</span>
+                  <div style={detailValueStyle}>
+                    {studentDetails?.hostelBlock || complaint?.student?.hostelBlock}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Complaints Submitted badge if available */}
+            {typeof studentDetails?.complaintsCount === 'number' && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: '#f8fafc',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  fontSize: '0.85rem',
+                }}
+              >
+                <span style={{ color: '#64748b', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ClipboardList size={16} color="#64748b" /> Total Maintenance Tickets Submitted
+                </span>
+                <span
+                  style={{
+                    background: '#e0e7ff',
+                    color: '#3730a3',
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '9999px',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  {studentDetails.complaintsCount} {studentDetails.complaintsCount === 1 ? 'ticket' : 'tickets'}
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() => setStudentModalOpen(false)}
+                style={{
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '8px',
+                  background: '#4f46e5',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Close Profile
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </AppShell>
   );
 }
+
+const detailLabelStyle = {
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  color: '#64748b',
+  display: 'block',
+  marginBottom: '0.2rem',
+  letterSpacing: '0.04em',
+};
+
+const detailValueStyle = {
+  fontSize: '0.875rem',
+  fontWeight: 600,
+  color: '#0f172a',
+};

@@ -29,7 +29,15 @@ async function main() {
 
   const student = await prisma.user.upsert({
     where: { email: 'student@hostelfix.demo' },
-    update: {},
+    update: {
+      mobileNumber: '9876543210',
+      universityRollNumber: 'CUH2024CS001',
+      branch: 'Computer Science & Engineering',
+      year: '3rd Year',
+      hostelName: 'Aravali Boys Hostel',
+      roomNumber: 'A-101',
+      hostelBlock: 'Block A',
+    },
     create: {
       name: 'Demo Student',
       email: 'student@hostelfix.demo',
@@ -37,12 +45,25 @@ async function main() {
       role: 'STUDENT',
       roomNumber: 'A-101',
       hostelBlock: 'Block A',
+      hostelName: 'Aravali Boys Hostel',
+      mobileNumber: '9876543210',
+      universityRollNumber: 'CUH2024CS001',
+      branch: 'Computer Science & Engineering',
+      year: '3rd Year',
     },
   });
 
   const student2 = await prisma.user.upsert({
     where: { email: 'student2@hostelfix.demo' },
-    update: {},
+    update: {
+      mobileNumber: '9876543211',
+      universityRollNumber: 'CUH2024EC042',
+      branch: 'Electronics & Communication',
+      year: '2nd Year',
+      hostelName: 'Nilgiri Girls Hostel',
+      roomNumber: 'B-205',
+      hostelBlock: 'Block B',
+    },
     create: {
       name: 'Priya Sharma',
       email: 'student2@hostelfix.demo',
@@ -50,6 +71,11 @@ async function main() {
       role: 'STUDENT',
       roomNumber: 'B-205',
       hostelBlock: 'Block B',
+      hostelName: 'Nilgiri Girls Hostel',
+      mobileNumber: '9876543211',
+      universityRollNumber: 'CUH2024EC042',
+      branch: 'Electronics & Communication',
+      year: '2nd Year',
     },
   });
 

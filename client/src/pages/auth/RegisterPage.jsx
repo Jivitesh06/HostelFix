@@ -11,10 +11,25 @@ import {
   Home,
   Layers,
   Lock,
+  Phone,
+  GraduationCap,
+  BookOpen,
+  Calendar,
 } from 'lucide-react';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
+const PHONE_REGEX = /^[0-9+\-\s]{7,15}$/;
+
+const YEAR_OPTIONS = [
+  '1st Year',
+  '2nd Year',
+  '3rd Year',
+  '4th Year',
+  '5th Year (Dual Degree)',
+  'Post Graduate / Masters',
+  'PhD Scholar',
+];
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -22,6 +37,11 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name: '',
     email: '',
+    mobileNumber: '',
+    universityRollNumber: '',
+    branch: '',
+    year: '',
+    hostelName: '',
     roomNumber: '',
     hostelBlock: '',
     password: '',
@@ -40,7 +60,20 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    const { name, email, roomNumber, hostelBlock, password, confirmPassword } = form;
+    const {
+      name,
+      email,
+      mobileNumber,
+      universityRollNumber,
+      branch,
+      year,
+      hostelName,
+      roomNumber,
+      hostelBlock,
+      password,
+      confirmPassword,
+    } = form;
+
     if (
       !name.trim() ||
       !email.trim() ||
@@ -49,12 +82,17 @@ export default function RegisterPage() {
       !password ||
       !confirmPassword
     ) {
-      setError('All fields are required.');
+      setError('Name, email, room number, hostel block, and password are required.');
       return;
     }
 
     if (!EMAIL_REGEX.test(email.trim())) {
       setError('Please provide a valid email address (e.g. student@college.edu).');
+      return;
+    }
+
+    if (mobileNumber.trim() && !PHONE_REGEX.test(mobileNumber.trim())) {
+      setError('Please provide a valid mobile contact number (7-15 digits).');
       return;
     }
 
@@ -76,6 +114,11 @@ export default function RegisterPage() {
         email: email.trim().toLowerCase(),
         roomNumber: roomNumber.trim(),
         hostelBlock: hostelBlock.trim(),
+        hostelName: hostelName.trim() || null,
+        mobileNumber: mobileNumber.trim() || null,
+        universityRollNumber: universityRollNumber.trim() || null,
+        branch: branch.trim() || null,
+        year: year.trim() || null,
         password,
       });
 
@@ -109,7 +152,7 @@ export default function RegisterPage() {
       <div
         style={{
           width: '100%',
-          maxWidth: '520px',
+          maxWidth: '580px',
           background: '#ffffff',
           borderRadius: '16px',
           padding: '2.5rem',
@@ -147,7 +190,7 @@ export default function RegisterPage() {
             Create Resident Account
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
-            Register as a hostel resident to submit complaints and view mess menus.
+            Register your student profile to submit maintenance tickets and access mess portals.
           </p>
         </div>
 
@@ -171,244 +214,206 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* Full Name */}
-          <div style={{ marginBottom: '1.1rem' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: '#334155',
-                marginBottom: '0.35rem',
-              }}
-            >
-              Full Name *
-            </label>
-            <div style={{ position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#94a3b8',
-                }}
-              >
-                <User size={16} />
-              </div>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="e.g. Rahul Sharma"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
-              />
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* SECTION 1: Personal Information */}
+          <div>
+            <div style={sectionHeadingStyle}>
+              1. Personal Information
             </div>
-          </div>
-
-          {/* College Email */}
-          <div style={{ marginBottom: '1.1rem' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: '#334155',
-                marginBottom: '0.35rem',
-              }}
-            >
-              College Email *
-            </label>
-            <div style={{ position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#94a3b8',
-                }}
-              >
-                <Mail size={16} />
-              </div>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="e.g. rahul@college.edu"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Room & Block */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.1rem' }}>
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Room Number *
-              </label>
+            <div style={{ marginBottom: '0.85rem' }}>
+              <label style={fieldLabelStyle}>Full Name *</label>
               <div style={{ position: 'relative' }}>
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#94a3b8',
-                  }}
-                >
-                  <Home size={16} />
-                </div>
+                <div style={iconWrapperStyle}><User size={16} /></div>
                 <input
                   type="text"
-                  name="roomNumber"
-                  value={form.roomNumber}
+                  name="name"
+                  value={form.name}
                   onChange={handleChange}
-                  placeholder="e.g. A-101"
+                  placeholder="e.g. Rahul Sharma"
                   required
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
+                  style={inputWithIconStyle}
                 />
               </div>
             </div>
 
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Hostel Block *
-              </label>
-              <div style={{ position: 'relative' }}>
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#94a3b8',
-                  }}
-                >
-                  <Layers size={16} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={fieldLabelStyle}>College Email *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Mail size={16} /></div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="student@college.edu"
+                    required
+                    style={inputWithIconStyle}
+                  />
                 </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Mobile Number</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Phone size={16} /></div>
+                  <input
+                    type="tel"
+                    name="mobileNumber"
+                    value={form.mobileNumber}
+                    onChange={handleChange}
+                    placeholder="e.g. 9876543210"
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: Academic Information */}
+          <div>
+            <div style={sectionHeadingStyle}>
+              2. Academic Information
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.85rem' }}>
+              <div>
+                <label style={fieldLabelStyle}>University Roll Number</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><GraduationCap size={16} /></div>
+                  <input
+                    type="text"
+                    name="universityRollNumber"
+                    value={form.universityRollNumber}
+                    onChange={handleChange}
+                    placeholder="e.g. CUH2024CS001"
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Year of Study</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Calendar size={16} /></div>
+                  <select
+                    name="year"
+                    value={form.year}
+                    onChange={handleChange}
+                    style={inputWithIconStyle}
+                  >
+                    <option value="">Select current year</option>
+                    {YEAR_OPTIONS.map((yr) => (
+                      <option key={yr} value={yr}>
+                        {yr}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label style={fieldLabelStyle}>Branch / Specialization</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><BookOpen size={16} /></div>
                 <input
                   type="text"
-                  name="hostelBlock"
-                  value={form.hostelBlock}
+                  name="branch"
+                  value={form.branch}
                   onChange={handleChange}
-                  placeholder="e.g. Block A"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
+                  placeholder="e.g. Computer Science & Engineering"
+                  style={inputWithIconStyle}
                 />
               </div>
             </div>
           </div>
 
-          {/* Password & Confirm */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Password *
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Min 6 chars"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 0.85rem',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
-              />
+          {/* SECTION 3: Hostel Information */}
+          <div>
+            <div style={sectionHeadingStyle}>
+              3. Hostel Residence
             </div>
+            <div style={{ marginBottom: '0.85rem' }}>
+              <label style={fieldLabelStyle}>Hostel / Hall Name</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><Building2 size={16} /></div>
+                <input
+                  type="text"
+                  name="hostelName"
+                  value={form.hostelName}
+                  onChange={handleChange}
+                  placeholder="e.g. Aravali Boys Hostel"
+                  style={inputWithIconStyle}
+                />
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={fieldLabelStyle}>Room Number *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Home size={16} /></div>
+                  <input
+                    type="text"
+                    name="roomNumber"
+                    value={form.roomNumber}
+                    onChange={handleChange}
+                    placeholder="e.g. A-101"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Hostel Block *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Layers size={16} /></div>
+                  <input
+                    type="text"
+                    name="hostelBlock"
+                    value={form.hostelBlock}
+                    onChange={handleChange}
+                    placeholder="e.g. Block A"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Confirm Password *
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                placeholder="Re-enter password"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 0.85rem',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
-              />
+          {/* SECTION 4: Account Security */}
+          <div>
+            <div style={sectionHeadingStyle}>
+              4. Account Password
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={fieldLabelStyle}>Password *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Lock size={16} /></div>
+                  <input
+                    type="password"
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Min 6 characters"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Confirm Password *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Lock size={16} /></div>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Re-enter password"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -429,6 +434,8 @@ export default function RegisterPage() {
               gap: '0.5rem',
               cursor: loading ? 'not-allowed' : 'pointer',
               transition: 'background-color 0.15s ease',
+              marginTop: '0.5rem',
+              border: 'none',
             }}
             onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4338ca')}
             onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4f46e5')}
@@ -471,3 +478,42 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+const sectionHeadingStyle = {
+  fontSize: '0.75rem',
+  fontWeight: 700,
+  color: '#4f46e5',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  marginBottom: '0.65rem',
+};
+
+const fieldLabelStyle = {
+  display: 'block',
+  fontSize: '0.8rem',
+  fontWeight: 600,
+  color: '#334155',
+  marginBottom: '0.35rem',
+};
+
+const iconWrapperStyle = {
+  position: 'absolute',
+  left: '12px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  color: '#94a3b8',
+  display: 'flex',
+  alignItems: 'center',
+};
+
+const inputWithIconStyle = {
+  width: '100%',
+  padding: '0.65rem 0.85rem 0.65rem 2.4rem',
+  border: '1px solid #cbd5e1',
+  borderRadius: '8px',
+  fontSize: '0.875rem',
+  outline: 'none',
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+  background: '#ffffff',
+};

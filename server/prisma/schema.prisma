@@ -59,10 +59,15 @@ model User {
   email         String   @unique
   passwordHash  String
   role          Role
-  roomNumber    String?
-  hostelBlock   String?
-  staffCategory String?
-  createdAt     DateTime @default(now())
+  roomNumber            String?
+  hostelBlock           String?
+  hostelName            String?
+  mobileNumber          String?
+  universityRollNumber  String?
+  branch                String?
+  year                  String?
+  staffCategory         String?
+  createdAt             DateTime @default(now())
 
   // A student can submit many complaints
   complaintsSubmitted Complaint[]  @relation("StudentComplaints")

@@ -41,6 +41,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
       { label: 'My Complaints', path: '/student/complaints', icon: ClipboardList },
       { label: 'New Complaint', path: '/student/complaints/new', icon: PlusCircle },
       { label: 'Mess Menu', path: '/student/mess', icon: Utensils },
+      { label: 'My Profile', path: '/student/profile', icon: User },
     ];
   };
 
