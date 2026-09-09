@@ -7,7 +7,7 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach JWT to every request
+// Automatically attach JWT from localStorage to outgoing requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('hostelfix_token');
   if (token) {
@@ -16,13 +16,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally — clear session and redirect to login
+// Global response interceptor: handle 401 (expired/invalid token)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // Clear expired or invalid token
       localStorage.removeItem('hostelfix_token');
-      window.location.href = '/login';
+
+      // Only redirect if not already on an authentication page
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

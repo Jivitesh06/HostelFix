@@ -8,26 +8,45 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('hostelfix_token'));
   const [loading, setLoading] = useState(true);
 
-  // On mount: verify stored token against /api/auth/me
+  // On initial mount or token change: verify stored token against /api/auth/me
   useEffect(() => {
-    const verify = async () => {
-      if (!token) {
-        setLoading(false);
+    let isMounted = true;
+
+    const verifySession = async () => {
+      const storedToken = localStorage.getItem('hostelfix_token');
+      if (!storedToken) {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
         return;
       }
+
       try {
         const res = await api.get('/auth/me');
-        setUser(res.data.data);
-      } catch {
-        // Token is invalid or expired
-        localStorage.removeItem('hostelfix_token');
-        setToken(null);
-        setUser(null);
+        if (isMounted) {
+          const profile = res.data.data?.user || res.data.data;
+          setUser(profile);
+        }
+      } catch (err) {
+        // Stored token is invalid or expired
+        if (isMounted) {
+          localStorage.removeItem('hostelfix_token');
+          setToken(null);
+          setUser(null);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
-    verify();
+
+    verifySession();
+
+    return () => {
+      isMounted = false;
+    };
   }, [token]);
 
   const login = (newToken, userData) => {
@@ -60,6 +79,8 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
+  if (!ctx) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return ctx;
 }
