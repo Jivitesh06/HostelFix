@@ -6,6 +6,7 @@ const authRoute = require('./auth.route');
 const complaintRoute = require('./complaint.route');
 const userRoute = require('./user.route');
 const messRoute = require('./mess.route');
+const uploadRoute = require('./upload.route');
 const { verifyToken, requireRole } = require('../middleware/auth.middleware');
 
 // Health check
@@ -20,6 +21,9 @@ router.use('/users', userRoute);
 
 // ── Phase 3D: Mess Management & Feedback ──────────────────────────────────────
 router.use('/mess', messRoute);
+
+// ── Image Uploads (Cloudinary) ────────────────────────────────────────────────
+router.use('/upload', uploadRoute);
 
 // ── Role Authorization Test Routes (Used to verify role enforcement) ──────────
 router.get(

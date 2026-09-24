@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import complaintService from '../../services/complaintService';
 import AppShell from '../../components/AppShell';
+import ImageUpload from '../../components/ImageUpload';
 import {
   ArrowLeft,
   Zap,
@@ -268,49 +269,14 @@ export default function NewComplaintPage() {
               />
             </div>
 
-            {/* Optional Photo Attachment URL */}
-            <div>
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  color: '#334155',
-                  marginBottom: '0.4rem',
-                }}
-              >
-                <LinkIcon size={14} />
-                <span>Evidence Image URL</span>
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 'normal' }}>
-                  (Optional photo link)
-                </span>
-              </label>
-              <input
-                type="url"
-                name="imageUrl"
-                value={form.imageUrl}
-                onChange={handleChange}
-                placeholder="https://images.unsplash.com/... or hosted image URL"
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 0.85rem',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#4f46e5';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#cbd5e1';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-            </div>
+            {/* Optional Photo Attachment */}
+            <ImageUpload
+              label="Issue Photo"
+              folder="complaints/issues"
+              value={form.imageUrl}
+              onChange={(url) => setForm((prev) => ({ ...prev, imageUrl: url }))}
+              helpText="Upload an optional photo showing the maintenance problem (JPG, PNG, WEBP up to 5MB)"
+            />
           </div>
 
           {/* Form Action Buttons */}

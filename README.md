@@ -7,12 +7,12 @@
 [![React](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Prisma%20ORM-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.prisma.io/)
-[![Tests](https://img.shields.io/badge/Tests-164%2F164%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
+[![Tests](https://img.shields.io/badge/Tests-166%2F166%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle and weekly dining management system for college residences.
+A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle, photo verification, and weekly dining management system for college residences.
 
-[Key Features](#-key-features) • [User Roles](#-user-roles--access-matrix) • [Hostel Scoping](#-campus-hostels--gender-scoping) • [Complaint Workflow](#-complaint-lifecycle-workflow) • [Quick Start](#-quick-start-guide) • [Evaluation Accounts](#-evaluation-demo-accounts) • [Documentation](#-project-documentation)
+[Key Features](#-key-features) • [User Roles](#-user-roles--access-matrix) • [Hostel Scoping](#-campus-hostels--gender-scoping) • [Complaint Workflow](#-complaint-lifecycle-workflow) • [Photo Proof](#-photo-upload--work-completion-proof) • [Deployment](#-production-deployment-guide) • [Quick Start](#-quick-start-guide) • [Evaluation Accounts](#-evaluation-demo-accounts)
 
 ---
 
@@ -20,21 +20,23 @@ A high-accountability digital platform replacing informal communication channels
 
 ## 📌 Problem & Solution
 
-* **The Problem:** Campus hostels face unorganized maintenance reporting — complaints get buried in WhatsApp chats or lost in paper registers, students lack status visibility, and administrators lack audit trails to hold workers accountable.
-* **The Solution:** **HostelFix** implements an immutable, 6-stage complaint state machine with role-based routing, warden multi-hostel scoping, student profile verification, dining menu schedules with verified reviews, and a secure administrative onboarding gate.
+* **The Problem:** Campus hostels face unorganized maintenance reporting — complaints get buried in WhatsApp chats or lost in paper registers, students lack status visibility, and administrators lack audit trails and physical proof to hold workers accountable.
+* **The Solution:** **HostelFix** implements an immutable, 6-stage complaint state machine with role-based routing, warden multi-hostel scoping, student profile verification, dining menu schedules with verified reviews, Cloudinary image upload with mandatory technician work completion proof, and a secure administrative onboarding gate.
 
 ---
 
 ## ✨ Key Features
 
 - 📋 **6-Stage Complaint Lifecycle** — `PENDING` → `APPROVED` → `ASSIGNED` → `IN_PROGRESS` → `RESOLVED` → `CLOSED` (or `REJECTED` with mandatory justification).
+- 📸 **Cloudinary Photo Verification** — Students attach optional issue photos on complaint submission; maintenance staff are strictly required to upload work completion proof photos when resolving complaints.
+- 🔍 **Interactive Lightbox Inspection** — Wardens, staff, and students can click any photo to inspect high-resolution images in a lightbox modal.
 - 📜 **Immutable Audit Trail** — Every status transition records an unalterable log with timestamp, actor ID, previous status, and notes.
 - 🏢 **Multi-Hostel & Gender Scoping** — Strict scoping ensures wardens only view and manage complaints originating from their assigned residence hall.
 - 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Room) with warden inspection modals.
 - 🍽️ **Weekly Mess Management** — Day-by-day breakfast, lunch, snacks, and dinner schedules with verified 1–5 star student dining reviews.
 - 🛡️ **Secure Administrative Onboarding** — Dedicated `/admin/staff-register` portal protected by an administrative passkey (`HostelFix@Admin2026`) and hard 403 blocks against students.
 - 🎨 **Modern SaaS UI/UX** — Responsive, clean design built with modern CSS styling, Lucide icons, status badges, and zero icon overlaps.
-- 🧪 **100% Test Coverage** — 164 automated backend unit and integration test assertions verifying security, workflows, and database integrity.
+- 🧪 **100% Test Coverage** — 166 automated backend unit and integration test assertions verifying security, workflows, photo validation, and database integrity.
 
 ---
 
@@ -108,15 +110,35 @@ Each step generates a timestamped entry in the `StatusLog` table visible on the 
 
 ---
 
+## 📷 Photo Upload & Work Completion Proof
+
+HostelFix integrates **Cloudinary** for secure, persistent image hosting without storing heavy binaries in PostgreSQL or on the local filesystem:
+
+1. **Student Issue Photo (Optional):**
+   - Students can upload a photo (JPEG, PNG, WebP ≤ 5MB) while creating a complaint.
+   - Includes real-time image preview, client-side format/size validation, and remove/replace controls.
+2. **Technician Work Completion Proof (Strictly Mandatory):**
+   - When maintenance technicians mark an assigned job as `RESOLVED`, the system **strictly enforces** both a resolution note and an uploaded photo demonstrating the completed repair.
+   - Backend controller rejects status transitions to `RESOLVED` with `400 Bad Request` if `completionPhotoUrl` is missing or empty.
+3. **Interactive Lightbox Inspection:**
+   - Original student photo and worker completion proof are displayed with full-resolution lightbox inspection modals across Student, Warden, and Staff views.
+   - Wardens review the worker's completion proof directly inside the "Verify & Close" modal before marking complaints `CLOSED`.
+
+> 💡 **Offline / Evaluation Fallback:** If Cloudinary environment variables are omitted, the upload service automatically falls back to an encoded Data-URI format, ensuring offline evaluation and CI tests never fail.
+
+---
+
 ## 💻 Tech Stack
 
 | Layer | Technology |
 |---|---|
 | **Frontend** | React 18, React Router DOM v6, Axios, Lucide React, Vite |
 | **Backend** | Node.js, Express.js REST API, JSON Web Tokens (JWT), Bcrypt.js |
-| **Database & ORM** | PostgreSQL (Supabase compatible), Prisma ORM 5.x |
-| **Testing** | Native Node.js Automated Test Suites (164 Assertions) |
+| **Cloud Storage** | Cloudinary v2 SDK, Multer Memory Storage (5MB limit) |
+| **Database & ORM** | PostgreSQL (Supabase / Neon compatible), Prisma ORM 5.x |
+| **Testing** | Native Node.js Automated Test Suites (166 Assertions) |
 | **Styling** | Custom SaaS CSS Design System, Responsive Flex/Grid |
+| **Deployment** | Vercel (Client SPA), Render / Railway (API Server), Supabase (DB) |
 
 ---
 
@@ -185,6 +207,11 @@ JWT_SECRET="your-super-secure-jwt-secret-key"
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
 ADMIN_REGISTRATION_KEY="HostelFix@Admin2026"
+
+# Optional Cloudinary Storage (falls back to local Data-URI if omitted)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 Create `.env` inside `client/`:
@@ -246,7 +273,7 @@ node test-auth.js
 # 2. Student Profile, Gender Validation & Warden Scoping (57 tests)
 node test-profile.js
 
-# 3. Complaint State Machine & Status History (39 tests)
+# 3. Complaint State Machine & Work Proof Verification (41 tests)
 node test-complaints.js
 
 # 4. Weekly Mess Scheduling & Rating Feedback (26 tests)
@@ -255,9 +282,49 @@ node test-mess.js
 
 ```text
 ============================================================
-Test Suite Results: 164 / 164 Tests Passed (100% Success Rate)
+Test Suite Results: 166 / 166 Tests Passed (100% Success Rate)
 ============================================================
 ```
+
+---
+
+## 🌐 Production Deployment Guide
+
+HostelFix is fully pre-configured for production deployment across cloud providers:
+
+### Step 1: Managed PostgreSQL Database (Supabase / Neon)
+1. Create a free project at [Supabase](https://supabase.com) or [Neon](https://neon.tech).
+2. Copy the PostgreSQL connection URI (e.g. `postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres?sslmode=require`).
+3. Set this as `DATABASE_URL` in your backend environment.
+
+### Step 2: Backend REST API (Render / Railway)
+1. Push this repository to GitHub and create a new Web Service on [Render](https://render.com).
+2. Configure settings:
+   - **Root Directory:** `server`
+   - **Build Command:** `npm install && npx prisma migrate deploy && npx prisma generate`
+   - **Start Command:** `npm start`
+3. Add Environment Variables:
+   - `DATABASE_URL`: Your Supabase/Neon connection string
+   - `JWT_SECRET`: A secure random 64-character hex string
+   - `CLIENT_URL`: `https://<your-vercel-app>.vercel.app`
+   - `FRONTEND_URL`: `https://<your-vercel-app>.vercel.app`
+   - `NODE_ENV`: `production`
+   - `ADMIN_REGISTRATION_KEY`: `HostelFix@Admin2026`
+   - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
+   - `CLOUDINARY_API_KEY`: Your Cloudinary API key
+   - `CLOUDINARY_API_SECRET`: Your Cloudinary API secret
+4. Optional: Run seed once via Render Shell: `npm run db:seed`.
+
+### Step 3: Frontend Client SPA (Vercel)
+1. Import repository on [Vercel](https://vercel.com).
+2. Configure settings:
+   - **Root Directory:** `client`
+   - **Framework Preset:** `Vite`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Add Environment Variable:
+   - `VITE_API_URL`: `https://<your-render-api>.onrender.com/api`
+4. Deploy! `client/vercel.json` and `client/public/_redirects` automatically handle single-page application routing rewrites so direct navigation and refreshes work flawlessly.
 
 ---
 

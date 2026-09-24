@@ -18,6 +18,6 @@ module.exports = {
     secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173',
   adminRegistrationKey: process.env.ADMIN_REGISTRATION_KEY || 'HostelFix@Admin2026',
 };

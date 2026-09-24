@@ -38,8 +38,9 @@ export const complaintService = {
   },
 
   // Update complaint status to IN_PROGRESS or RESOLVED (Staff)
-  updateComplaintStatus: async (id, status) => {
-    const res = await api.patch(`/complaints/${id}/status`, { status });
+  updateComplaintStatus: async (id, statusData) => {
+    const payload = typeof statusData === 'string' ? { status: statusData } : statusData;
+    const res = await api.patch(`/complaints/${id}/status`, payload);
     return res.data.data;
   },
 

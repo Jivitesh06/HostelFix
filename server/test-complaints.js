@@ -151,14 +151,39 @@ async function runTests() {
   );
   assert(inProgRes.status === 200 && inProgRes.body.data.status === 'IN_PROGRESS', 'Staff updates ASSIGNED -> IN_PROGRESS');
 
-  // 2g. Staff updates status: IN_PROGRESS -> RESOLVED
-  const resolveRes = await request(
+  // 2g. Staff attempts to mark RESOLVED without completion photo -> rejected (400)
+  const failResolve = await request(
     'PATCH',
     `/api/complaints/${complaintId}/status`,
     { status: 'RESOLVED' },
     staffToken
   );
-  assert(resolveRes.status === 200 && resolveRes.body.data.status === 'RESOLVED', 'Staff updates IN_PROGRESS -> RESOLVED');
+  assert(
+    failResolve.status === 400 && failResolve.body.success === false,
+    'Staff resolve without completion photo is rejected with 400'
+  );
+
+  // 2h. Staff updates status: IN_PROGRESS -> RESOLVED with required completion photo & note
+  const sampleCompletionUrl =
+    'https://res.cloudinary.com/demo/image/upload/v1/hostelfix/complaints/completions/sample.jpg';
+  const resolveRes = await request(
+    'PATCH',
+    `/api/complaints/${complaintId}/status`,
+    {
+      status: 'RESOLVED',
+      completionPhotoUrl: sampleCompletionUrl,
+      note: 'Work completed and fan motor replaced',
+    },
+    staffToken
+  );
+  assert(
+    resolveRes.status === 200 && resolveRes.body.data.status === 'RESOLVED',
+    'Staff updates IN_PROGRESS -> RESOLVED with completion photo'
+  );
+  assert(
+    resolveRes.body.data.completionPhotoUrl === sampleCompletionUrl,
+    'Complaint persists completionPhotoUrl'
+  );
 
   // 2h. Warden closes complaint: RESOLVED -> CLOSED
   const closeRes = await request('PATCH', `/api/complaints/${complaintId}/close`, null, wardenToken);

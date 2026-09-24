@@ -98,7 +98,8 @@ model Complaint {
   studentId       String
   category        ComplaintCategory
   description     String
-  imageUrl        String?
+  imageUrl           String?
+  completionPhotoUrl String?
   status          ComplaintStatus   @default(PENDING)
   rejectionReason String?
   assignedStaffId String?

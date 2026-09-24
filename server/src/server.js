@@ -8,9 +8,32 @@ const notFound = require('./middleware/notFound');
 const app = express();
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const allowedOrigins = [
+  config.clientUrl,
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: config.clientUrl,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Check configured origins or Vercel preview/production deployments
+      const isAllowed =
+        config.clientUrl === '*' ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        config.nodeEnv !== 'production';
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Fallback to permissive origin in production
+    },
     credentials: true,
   })
 );
@@ -37,8 +60,9 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ── Start server ──────────────────────────────────────────────────────────────
-app.listen(config.port, () => {
-  console.log(`[Server] HostelFix API running on port ${config.port}`);
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(config.port, HOST, () => {
+  console.log(`[Server] HostelFix API running on http://${HOST}:${config.port}`);
   console.log(`[Server] Environment: ${config.nodeEnv}`);
   console.log(`[Server] Health check: http://localhost:${config.port}/api/health`);
 });

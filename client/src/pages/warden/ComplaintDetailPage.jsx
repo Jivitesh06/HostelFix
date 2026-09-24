@@ -7,6 +7,7 @@ import StatusBadge from '../../components/StatusBadge';
 import CategoryBadge from '../../components/CategoryBadge';
 import StatusTimeline from '../../components/StatusTimeline';
 import Modal from '../../components/Modal';
+import ImagePreviewModal from '../../components/ImagePreviewModal';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -27,6 +28,7 @@ import {
   Layers,
   Eye,
   ClipboardList,
+  ZoomIn,
 } from 'lucide-react';
 
 export default function WardenComplaintDetail() {
@@ -44,6 +46,7 @@ export default function WardenComplaintDetail() {
   const [studentModalOpen, setStudentModalOpen] = useState(false);
   const [studentDetails, setStudentDetails] = useState(null);
   const [studentLoading, setStudentLoading] = useState(false);
+  const [previewModal, setPreviewModal] = useState({ open: false, src: '', title: '' });
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -518,7 +521,7 @@ export default function WardenComplaintDetail() {
                 </div>
               </div>
 
-              {/* Attached Evidence Link */}
+              {/* Attached Issue Photo */}
               {complaint.imageUrl && (
                 <div style={{ marginBottom: '1.5rem' }}>
                   <h4
@@ -531,28 +534,131 @@ export default function WardenComplaintDetail() {
                       marginBottom: '0.5rem',
                     }}
                   >
-                    Attached Evidence Photo
+                    Student Attached Issue Photo
                   </h4>
-                  <a
-                    href={complaint.imageUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <div
+                    onClick={() =>
+                      setPreviewModal({
+                        open: true,
+                        src: complaint.imageUrl,
+                        title: 'Student Issue Photo',
+                      })
+                    }
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.4rem',
-                      color: '#4f46e5',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      background: '#eef2ff',
-                      padding: '0.4rem 0.75rem',
-                      borderRadius: '6px',
-                      border: '1px solid #c7d2fe',
+                      gap: '0.85rem',
+                      padding: '0.65rem 1rem',
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
                     }}
                   >
-                    <span>View Attached Image</span>
-                    <ExternalLink size={14} />
-                  </a>
+                    <img
+                      src={complaint.imageUrl}
+                      alt="Issue Photo"
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        objectFit: 'cover',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                      }}
+                    />
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <span>Inspect Issue Photo</span>
+                        <ZoomIn size={14} color="#64748b" />
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Click to view full size</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Work Completion Proof (for Warden Verification) */}
+              {(complaint.completionPhotoUrl || complaint.status === 'RESOLVED' || complaint.status === 'CLOSED') && (
+                <div
+                  style={{
+                    marginBottom: '1.5rem',
+                    background: '#f0fdf4',
+                    border: '1px solid #bbf7d0',
+                    borderRadius: '10px',
+                    padding: '1.25rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      color: '#15803d',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '0.65rem',
+                    }}
+                  >
+                    <CheckCircle2 size={18} />
+                    <span>Staff Work Completion Proof &amp; Resolution Note</span>
+                  </div>
+
+                  {/* Resolution Note from Staff */}
+                  {(() => {
+                    const resolveLog = complaint.statusLogs?.find((l) => l.newStatus === 'RESOLVED');
+                    return resolveLog?.note ? (
+                      <p style={{ margin: '0 0 0.85rem', fontSize: '0.9rem', color: '#166534', lineHeight: 1.5 }}>
+                        <strong>Technician Note:</strong> &ldquo;{resolveLog.note}&rdquo;
+                      </p>
+                    ) : null;
+                  })()}
+
+                  {complaint.completionPhotoUrl ? (
+                    <div
+                      onClick={() =>
+                        setPreviewModal({
+                          open: true,
+                          src: complaint.completionPhotoUrl,
+                          title: 'Work Completion Proof Photo',
+                        })
+                      }
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.85rem',
+                        padding: '0.6rem 0.95rem',
+                        background: '#ffffff',
+                        border: '1px solid #86efac',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <img
+                        src={complaint.completionPhotoUrl}
+                        alt="Completion Photo"
+                        style={{
+                          width: '54px',
+                          height: '54px',
+                          objectFit: 'cover',
+                          borderRadius: '6px',
+                          border: '1px solid #bbf7d0',
+                        }}
+                      />
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#166534', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <span>Inspect Work Completion Photo</span>
+                          <ZoomIn size={14} color="#15803d" />
+                        </div>
+                        <span style={{ fontSize: '0.75rem', color: '#15803d' }}>
+                          Uploaded by {complaint.assignedStaff?.name || 'Staff'} (Click to enlarge)
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>No completion photo was uploaded.</span>
+                  )}
                 </div>
               )}
 
@@ -823,9 +929,29 @@ export default function WardenComplaintDetail() {
         subtitle="Confirm that maintenance work has been inspected and completed satisfactorily"
       >
         <div style={{ marginBottom: '1.5rem' }}>
-          <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, margin: '0 0 1rem' }}>
             Closing this ticket confirms that the room issue reported by <strong>{complaint?.student?.name}</strong> has been resolved and verified by hostel administration.
           </p>
+
+          {/* Show completion proof thumbnail inside close modal */}
+          {complaint?.completionPhotoUrl && (
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#15803d', textTransform: 'uppercase', display: 'block', marginBottom: '0.35rem' }}>
+                Technician Work Completion Proof
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <img
+                  src={complaint.completionPhotoUrl}
+                  alt="Completion Proof"
+                  style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover', border: '1px solid #86efac' }}
+                />
+                <div>
+                  <span style={{ fontSize: '0.85rem', color: '#166534', fontWeight: 600 }}>Completion Photo Verified</span>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Submitted by {complaint.assignedStaff?.name || 'Staff Technician'}</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
@@ -1173,6 +1299,14 @@ export default function WardenComplaintDetail() {
           </div>
         )}
       </Modal>
+
+      {/* Lightbox Zoom Modal */}
+      <ImagePreviewModal
+        isOpen={previewModal.open}
+        src={previewModal.src}
+        title={previewModal.title}
+        onClose={() => setPreviewModal({ open: false, src: '', title: '' })}
+      />
     </AppShell>
   );
 }

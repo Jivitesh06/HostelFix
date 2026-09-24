@@ -431,7 +431,7 @@ const assignComplaint = async (req, res, next) => {
 const updateComplaintStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, completionPhotoUrl, note } = req.body;
 
     if (!status || !['IN_PROGRESS', 'RESOLVED'].includes(status)) {
       return sendError(
@@ -439,6 +439,16 @@ const updateComplaintStatus = async (req, res, next) => {
         'Staff can only update complaint status to IN_PROGRESS or RESOLVED',
         400
       );
+    }
+
+    if (status === 'RESOLVED') {
+      if (!completionPhotoUrl || typeof completionPhotoUrl !== 'string' || !completionPhotoUrl.trim()) {
+        return sendError(
+          res,
+          'Please upload a completion photo before marking this complaint as resolved.',
+          400
+        );
+      }
     }
 
     const complaint = await prisma.complaint.findUnique({ where: { id } });
@@ -462,10 +472,20 @@ const updateComplaintStatus = async (req, res, next) => {
 
     // Atomic transaction
     const updated = await prisma.$transaction(async (tx) => {
+      const updateData = { status };
+      if (status === 'RESOLVED') {
+        updateData.completionPhotoUrl = completionPhotoUrl.trim();
+      }
+
       const updatedComplaint = await tx.complaint.update({
         where: { id },
-        data: { status },
+        data: updateData,
       });
+
+      const logNote =
+        note && typeof note === 'string' && note.trim()
+          ? note.trim()
+          : `Status updated to ${status} by staff member: ${req.user.name}`;
 
       await tx.statusLog.create({
         data: {
@@ -473,7 +493,7 @@ const updateComplaintStatus = async (req, res, next) => {
           oldStatus: complaint.status,
           newStatus: status,
           changedById: req.user.id,
-          note: `Status updated to ${status} by staff member: ${req.user.name}`,
+          note: logNote,
         },
       });
 
