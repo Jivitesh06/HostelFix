@@ -113,12 +113,12 @@ export default function StaffComplaintDetail() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.4rem',
-            color: '#64748b',
+            color: '#6b7280',
             fontSize: '0.875rem',
             fontWeight: 600,
             padding: '0.5rem 0.85rem',
             borderRadius: '6px',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             background: '#ffffff',
           }}
         >
@@ -172,11 +172,11 @@ export default function StaffComplaintDetail() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '3rem',
               textAlign: 'center',
-              color: '#64748b',
+              color: '#6b7280',
             }}
           >
             Loading task details...
@@ -185,11 +185,11 @@ export default function StaffComplaintDetail() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '3rem',
               textAlign: 'center',
-              color: '#64748b',
+              color: '#6b7280',
             }}
           >
             Task record not found.
@@ -200,7 +200,7 @@ export default function StaffComplaintDetail() {
             <div
               style={{
                 background: '#ffffff',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '12px',
                 padding: '1.25rem 1.5rem',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
@@ -213,10 +213,10 @@ export default function StaffComplaintDetail() {
               }}
             >
               <div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.05em' }}>
                   Maintenance Duty Actions
                 </div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginTop: '0.15rem' }}>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#171717', marginTop: '0.15rem' }}>
                   Current Status: <span style={{ color: '#059669' }}>{complaint.status}</span>
                 </div>
               </div>
@@ -315,7 +315,7 @@ export default function StaffComplaintDetail() {
               style={{
                 background: '#ffffff',
                 borderRadius: '12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 padding: '1.75rem',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 marginBottom: '1.5rem',
@@ -330,7 +330,7 @@ export default function StaffComplaintDetail() {
                   flexWrap: 'wrap',
                   gap: '0.75rem',
                   paddingBottom: '1.25rem',
-                  borderBottom: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #f3f4f6',
                   marginBottom: '1.25rem',
                 }}
               >
@@ -338,7 +338,7 @@ export default function StaffComplaintDetail() {
                   <CategoryBadge category={complaint.category} />
                   <StatusBadge status={complaint.status} />
                 </div>
-                <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                   Work Order ID: #{complaint.id.toUpperCase()}
                 </span>
               </div>
@@ -351,7 +351,7 @@ export default function StaffComplaintDetail() {
                     fontWeight: 700,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: '#64748b',
+                    color: '#6b7280',
                     marginBottom: '0.5rem',
                   }}
                 >
@@ -359,11 +359,11 @@ export default function StaffComplaintDetail() {
                 </h4>
                 <div
                   style={{
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
+                    background: '#f8f8f8',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '8px',
                     padding: '1rem 1.25rem',
-                    color: '#0f172a',
+                    color: '#171717',
                     fontSize: '0.95rem',
                     lineHeight: 1.6,
                   }}
@@ -381,7 +381,7 @@ export default function StaffComplaintDetail() {
                       fontWeight: 700,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#64748b',
+                      color: '#6b7280',
                       marginBottom: '0.5rem',
                     }}
                   >
@@ -400,8 +400,8 @@ export default function StaffComplaintDetail() {
                       alignItems: 'center',
                       gap: '0.85rem',
                       padding: '0.65rem 1rem',
-                      background: '#f8fafc',
-                      border: '1px solid #cbd5e1',
+                      background: '#f8f8f8',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '8px',
                       cursor: 'pointer',
                     }}
@@ -414,15 +414,15 @@ export default function StaffComplaintDetail() {
                         height: '48px',
                         objectFit: 'cover',
                         borderRadius: '6px',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid #e5e7eb',
                       }}
                     />
                     <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#171717', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <span>Inspect Issue Photo</span>
-                        <ZoomIn size={14} color="#64748b" />
+                        <ZoomIn size={14} color="#6b7280" />
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Click to view full size</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Click to view full size</span>
                     </div>
                   </div>
                 </div>
@@ -502,46 +502,46 @@ export default function StaffComplaintDetail() {
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                   gap: '1rem',
-                  background: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
+                  background: '#f8f8f8',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '10px',
                   padding: '1rem 1.25rem',
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#047857', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Target Room
                   </span>
-                  <div style={{ fontWeight: 700, color: '#065f46', fontSize: '1.1rem', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 700, color: '#171717', fontSize: '1.1rem', marginTop: '0.15rem' }}>
                     Room {complaint.student?.roomNumber}
                   </div>
                   {complaint.student?.hostelName && (
-                    <div style={{ fontSize: '0.8rem', color: '#047857' }}>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                       {complaint.student.hostelName}
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#047857', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Resident Name
                   </span>
-                  <div style={{ fontWeight: 600, color: '#065f46', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#171717', marginTop: '0.15rem' }}>
                     {complaint.student?.name}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#047857' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     {complaint.student?.email}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#047857', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Date Registered
                   </span>
-                  <div style={{ fontWeight: 600, color: '#065f46', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#171717', marginTop: '0.15rem' }}>
                     {new Date(complaint.createdAt).toLocaleDateString()}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#047857' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     {new Date(complaint.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -561,7 +561,7 @@ export default function StaffComplaintDetail() {
         title="Mark Complaint as Resolved"
       >
         <form onSubmit={handleResolveSubmit}>
-          <p style={{ margin: '0 0 1rem', fontSize: '0.875rem', color: '#64748b', lineHeight: 1.5 }}>
+          <p style={{ margin: '0 0 1rem', fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5 }}>
             To mark this task as resolved, please upload a photo proving the work has been completed
             and enter a brief completion note for the student and warden.
           </p>
@@ -592,7 +592,7 @@ export default function StaffComplaintDetail() {
                 display: 'block',
                 fontSize: '0.85rem',
                 fontWeight: 600,
-                color: '#334155',
+                color: '#171717',
                 marginBottom: '0.4rem',
               }}
             >
@@ -606,7 +606,7 @@ export default function StaffComplaintDetail() {
               style={{
                 width: '100%',
                 padding: '0.65rem 0.85rem',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '8px',
                 fontSize: '0.9rem',
                 outline: 'none',
@@ -634,7 +634,7 @@ export default function StaffComplaintDetail() {
               gap: '0.75rem',
               justifyContent: 'flex-end',
               marginTop: '1.5rem',
-              borderTop: '1px solid #f1f5f9',
+              borderTop: '1px solid #f3f4f6',
               paddingTop: '1rem',
             }}
           >
@@ -645,9 +645,9 @@ export default function StaffComplaintDetail() {
               style={{
                 padding: '0.65rem 1.25rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -666,12 +666,12 @@ export default function StaffComplaintDetail() {
                 padding: '0.65rem 1.35rem',
                 borderRadius: '8px',
                 border: 'none',
-                background: '#059669',
+                background: '#c8102e',
                 color: '#ffffff',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: actionLoading ? 'wait' : 'pointer',
-                boxShadow: '0 1px 2px rgba(5, 150, 105, 0.2)',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
               }}
             >
               <CheckCircle2 size={16} />

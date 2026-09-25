@@ -81,9 +81,9 @@ export default function WardenComplaints() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            color: '#334155',
+            background: '#f8f8f8',
+            border: '1px solid #e5e7eb',
+            color: '#171717',
             padding: '0.75rem 1.25rem',
             borderRadius: '10px',
             marginBottom: '1.5rem',
@@ -93,7 +93,7 @@ export default function WardenComplaints() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <Building size={18} color="#4f46e5" />
+            <Building size={18} color="#c8102e" />
             <span>
               Filtered by Hostel Scope: <strong>{user.hostelName}</strong> ({complaints.length} registered {complaints.length === 1 ? 'ticket' : 'tickets'}).
             </span>
@@ -102,13 +102,22 @@ export default function WardenComplaints() {
             to="/warden/profile"
             style={{
               fontSize: '0.8rem',
-              color: '#4f46e5',
+              color: '#c8102e',
               fontWeight: 600,
               textDecoration: 'none',
               background: '#ffffff',
               padding: '0.3rem 0.75rem',
               borderRadius: '6px',
-              border: '1px solid #cbd5e1',
+              border: '1px solid #e5e7eb',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c8102e';
+              e.currentTarget.style.backgroundColor = '#fdecef';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e5e7eb';
+              e.currentTarget.style.backgroundColor = '#ffffff';
             }}
           >
             Manage Assignment →
@@ -140,10 +149,10 @@ export default function WardenComplaints() {
                   borderRadius: '9999px',
                   fontSize: '0.8rem',
                   fontWeight: isActive ? 600 : 500,
-                  backgroundColor: isActive ? '#4f46e5' : '#ffffff',
-                  color: isActive ? '#ffffff' : '#475569',
-                  border: `1px solid ${isActive ? '#4f46e5' : '#e2e8f0'}`,
-                  boxShadow: isActive ? '0 1px 2px rgba(79, 70, 229, 0.2)' : 'none',
+                  backgroundColor: isActive ? '#c8102e' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#374151',
+                  border: `1px solid ${isActive ? '#c8102e' : '#e5e7eb'}`,
+                  boxShadow: isActive ? '0 1px 2px rgba(200, 16, 46, 0.2)' : 'none',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
@@ -162,7 +171,7 @@ export default function WardenComplaints() {
               left: '10px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#94a3b8',
+              color: '#6b7280',
               display: 'flex',
               alignItems: 'center',
             }}
@@ -177,11 +186,20 @@ export default function WardenComplaints() {
             style={{
               width: '100%',
               padding: '0.45rem 0.75rem 0.45rem 2rem',
-              border: '1px solid #cbd5e1',
+              border: '1px solid #e5e7eb',
               borderRadius: '8px',
               fontSize: '0.85rem',
               outline: 'none',
               background: '#ffffff',
+              color: '#171717',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#c8102e';
+              e.target.style.boxShadow = '0 0 0 3px rgba(200, 16, 46, 0.12)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#e5e7eb';
+              e.target.style.boxShadow = 'none';
             }}
           />
         </div>
@@ -209,7 +227,7 @@ export default function WardenComplaints() {
 
       {/* ── Complaints Admin Data Table ───────────────────────────────── */}
       {loading ? (
-        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e5e7eb', textAlign: 'center', color: '#6b7280' }}>
           Loading complaints catalog...
         </div>
       ) : filteredComplaints.length === 0 ? (
@@ -227,14 +245,14 @@ export default function WardenComplaints() {
           style={{
             background: '#ffffff',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
             overflowX: 'auto',
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '940px' }}>
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <tr style={{ background: '#f8f8f8', borderBottom: '1px solid #e5e7eb' }}>
                 <th style={thStyle}>Ticket ID & Date</th>
                 <th style={thStyle}>Resident & Location</th>
                 <th style={thStyle}>Category</th>
@@ -255,10 +273,10 @@ export default function WardenComplaints() {
                   <tr
                     key={c.id}
                     style={{
-                      borderBottom: index < filteredComplaints.length - 1 ? '1px solid #f1f5f9' : 'none',
+                      borderBottom: index < filteredComplaints.length - 1 ? '1px solid #e5e7eb' : 'none',
                       transition: 'background-color 0.15s ease',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8f8f8')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#ffffff')}
                   >
                     {/* Ticket ID & Date */}
@@ -267,22 +285,22 @@ export default function WardenComplaints() {
                         style={{
                           fontSize: '0.8rem',
                           fontWeight: 700,
-                          color: '#0f172a',
+                          color: '#171717',
                           fontVariantNumeric: 'tabular-nums',
                           display: 'block',
                         }}
                       >
                         #{c.id.slice(-6).toUpperCase()}
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{dateStr}</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{dateStr}</span>
                     </td>
 
                     {/* Resident & Location */}
                     <td style={tdStyle}>
-                      <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.875rem' }}>
+                      <div style={{ fontWeight: 600, color: '#171717', fontSize: '0.875rem' }}>
                         {c.student?.name || 'Resident'}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                         Room {c.student?.roomNumber || '—'}
                       </div>
                     </td>
@@ -297,7 +315,7 @@ export default function WardenComplaints() {
                       <div
                         style={{
                           fontSize: '0.875rem',
-                          color: '#334155',
+                          color: '#374151',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -318,15 +336,15 @@ export default function WardenComplaints() {
                     <td style={tdStyle}>
                       {c.assignedStaff ? (
                         <div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0f172a' }}>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#171717' }}>
                             {c.assignedStaff.name}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                             {c.assignedStaff.staffCategory || 'Maintenance'}
                           </div>
                         </div>
                       ) : (
-                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#9ca3af', fontStyle: 'italic' }}>
                           Unassigned
                         </span>
                       )}
@@ -341,21 +359,22 @@ export default function WardenComplaints() {
                           alignItems: 'center',
                           gap: '0.35rem',
                           padding: '0.4rem 0.8rem',
-                          backgroundColor: '#eef2ff',
-                          color: '#4f46e5',
-                          border: '1px solid #c7d2fe',
+                          backgroundColor: '#fdecef',
+                          color: '#c8102e',
+                          border: '1px solid #fecdd3',
                           borderRadius: '6px',
                           fontSize: '0.8rem',
                           fontWeight: 600,
+                          textDecoration: 'none',
                           transition: 'all 0.15s ease',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#4f46e5';
+                          e.currentTarget.style.backgroundColor = '#c8102e';
                           e.currentTarget.style.color = '#ffffff';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = '#eef2ff';
-                          e.currentTarget.style.color = '#4f46e5';
+                          e.currentTarget.style.backgroundColor = '#fdecef';
+                          e.currentTarget.style.color = '#c8102e';
                         }}
                       >
                         <span>Review</span>
@@ -377,7 +396,7 @@ const thStyle = {
   padding: '0.85rem 1.25rem',
   fontSize: '0.75rem',
   fontWeight: 700,
-  color: '#64748b',
+  color: '#6b7280',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
 };

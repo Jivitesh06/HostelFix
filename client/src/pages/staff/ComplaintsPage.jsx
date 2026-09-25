@@ -92,10 +92,10 @@ export default function StaffComplaints() {
                 borderRadius: '9999px',
                 fontSize: '0.8rem',
                 fontWeight: isActive ? 600 : 500,
-                backgroundColor: isActive ? '#059669' : '#ffffff',
-                color: isActive ? '#ffffff' : '#475569',
-                border: `1px solid ${isActive ? '#059669' : '#e2e8f0'}`,
-                boxShadow: isActive ? '0 1px 2px rgba(5, 150, 105, 0.2)' : 'none',
+                backgroundColor: isActive ? '#c8102e' : '#ffffff',
+                color: isActive ? '#ffffff' : '#374151',
+                border: `1px solid ${isActive ? '#c8102e' : '#e5e7eb'}`,
+                boxShadow: isActive ? '0 1px 2px rgba(200, 16, 46, 0.2)' : 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -128,7 +128,7 @@ export default function StaffComplaints() {
 
       {/* ── Main Task List ────────────────────────────────────────────── */}
       {loading ? (
-        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e5e7eb', textAlign: 'center', color: '#6b7280' }}>
           Loading assigned work tasks...
         </div>
       ) : complaints.length === 0 ? (
@@ -156,7 +156,7 @@ export default function StaffComplaints() {
                 style={{
                   background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   padding: '1.5rem',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 }}
@@ -176,20 +176,20 @@ export default function StaffComplaints() {
                     <StatusBadge status={c.status} />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#6b7280' }}>
                     <Clock size={13} />
                     <span>Submitted on {dateStr}</span>
                   </div>
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, marginBottom: '0.3rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, marginBottom: '0.3rem' }}>
                     WORK ORDER #{c.id.slice(-6).toUpperCase()}
                   </div>
                   <p
                     style={{
                       fontSize: '0.95rem',
-                      color: '#0f172a',
+                      color: '#171717',
                       lineHeight: 1.55,
                       margin: 0,
                     }}
@@ -207,10 +207,10 @@ export default function StaffComplaints() {
                     flexWrap: 'wrap',
                     gap: '0.75rem',
                     paddingTop: '0.85rem',
-                    borderTop: '1px solid #f1f5f9',
+                    borderTop: '1px solid #f3f4f6',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#475569' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#374151' }}>
                     <Home size={15} color="#64748b" />
                     <span>
                       Room <strong>{c.student?.roomNumber}</strong> &bull; Resident: {c.student?.name}
@@ -223,9 +223,9 @@ export default function StaffComplaints() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.35rem',
-                      backgroundColor: '#ecfdf5',
-                      color: '#059669',
-                      border: '1px solid #a7f3d0',
+                      backgroundColor: '#fdecef',
+                      color: '#c8102e',
+                      border: '1px solid #fecdd3',
                       padding: '0.45rem 0.85rem',
                       borderRadius: '6px',
                       fontSize: '0.8rem',
@@ -233,12 +233,12 @@ export default function StaffComplaints() {
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#059669';
+                      e.currentTarget.style.backgroundColor = '#c8102e';
                       e.currentTarget.style.color = '#ffffff';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#ecfdf5';
-                      e.currentTarget.style.color = '#059669';
+                      e.currentTarget.style.backgroundColor = '#fdecef';
+                      e.currentTarget.style.color = '#c8102e';
                     }}
                   >
                     <span>Update Work Status</span>

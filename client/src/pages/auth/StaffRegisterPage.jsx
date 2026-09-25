@@ -143,7 +143,7 @@ export default function StaffRegisterPage() {
             style={{
               width: '100%',
               padding: '0.75rem',
-              background: '#4f46e5',
+              background: '#c8102e',
               color: '#ffffff',
               border: 'none',
               borderRadius: '8px',
@@ -154,8 +154,10 @@ export default function StaffRegisterPage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#a50d25')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#c8102e')}
           >
             <ArrowLeft size={16} />
             <span>Return to Student Dashboard</span>
@@ -289,12 +291,12 @@ export default function StaffRegisterPage() {
   const inputStyle = {
     width: '100%',
     padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-    border: '1px solid #cbd5e1',
+    border: '1px solid #e5e7eb',
     borderRadius: '8px',
     fontSize: '0.9rem',
     outline: 'none',
     boxSizing: 'border-box',
-    color: '#0f172a',
+    color: '#171717',
     backgroundColor: '#ffffff',
     transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
   };
@@ -302,12 +304,12 @@ export default function StaffRegisterPage() {
   const selectStyle = {
     width: '100%',
     padding: '0.65rem 0.85rem',
-    border: '1px solid #cbd5e1',
+    border: '1px solid #e5e7eb',
     borderRadius: '8px',
     fontSize: '0.9rem',
     outline: 'none',
     boxSizing: 'border-box',
-    color: '#0f172a',
+    color: '#171717',
     backgroundColor: '#ffffff',
     cursor: 'pointer',
     transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
@@ -317,7 +319,7 @@ export default function StaffRegisterPage() {
     display: 'block',
     fontSize: '0.8rem',
     fontWeight: 600,
-    color: '#334155',
+    color: '#374151',
     marginBottom: '0.35rem',
   };
 
@@ -326,7 +328,7 @@ export default function StaffRegisterPage() {
     left: '10px',
     top: '50%',
     transform: 'translateY(-50%)',
-    color: '#94a3b8',
+    color: '#9ca3af',
     display: 'flex',
     alignItems: 'center',
     pointerEvents: 'none',
@@ -338,8 +340,8 @@ export default function StaffRegisterPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(145deg, #090d16 0%, #111827 50%, #1e293b 100%)',
-        color: '#f8fafc',
+        background: '#f8f8f8',
+        color: '#171717',
         fontFamily: 'var(--font-sans)',
         padding: '2.5rem 1rem',
         display: 'flex',
@@ -353,19 +355,20 @@ export default function StaffRegisterPage() {
           width: '100%',
           maxWidth: '620px',
           background: '#ffffff',
-          color: '#0f172a',
+          color: '#171717',
           borderRadius: '16px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.04)',
           overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          border: '1px solid #e5e7eb',
         }}
       >
         {/* Header Ribbon */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)',
+            background: '#ffffff',
+            borderBottom: '1px solid #e5e7eb',
             padding: '1.75rem 2rem',
-            color: '#ffffff',
+            color: '#171717',
             position: 'relative',
           }}
         >
@@ -374,19 +377,19 @@ export default function StaffRegisterPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.4rem',
-              background: 'rgba(238, 242, 255, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
+              background: '#fdecef',
+              border: '1px solid #fecdd3',
               padding: '0.25rem 0.75rem',
               borderRadius: '9999px',
               fontSize: '0.75rem',
               fontWeight: 700,
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              color: '#e0e7ff',
+              color: '#c8102e',
               marginBottom: '0.75rem',
             }}
           >
-            <ShieldCheck size={14} color="#a5b4fc" />
+            <ShieldCheck size={14} color="#c8102e" />
             <span>Administrative Onboarding Portal</span>
           </div>
 
@@ -394,14 +397,15 @@ export default function StaffRegisterPage() {
             style={{
               fontSize: '1.6rem',
               fontWeight: 800,
+              color: '#171717',
               letterSpacing: '-0.02em',
               margin: '0 0 0.35rem',
             }}
           >
-            Warden & Staff Registration
+            Warden &amp; Staff Registration
           </h1>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: '#c7d2fe', lineHeight: 1.5 }}>
-            Secure campus administrator & maintenance technician provisioning. Requires official Estate
+          <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5 }}>
+            Secure campus administrator &amp; maintenance technician provisioning. Requires official Estate
             Office authorization key.
           </p>
         </div>
@@ -471,16 +475,16 @@ export default function StaffRegisterPage() {
                   gap: '0.5rem',
                   padding: '0.75rem 1rem',
                   borderRadius: '10px',
-                  border: selectedRole === 'WARDEN' ? '2px solid #4f46e5' : '1px solid #e2e8f0',
-                  background: selectedRole === 'WARDEN' ? '#eef2ff' : '#f8fafc',
-                  color: selectedRole === 'WARDEN' ? '#312e81' : '#64748b',
+                  border: selectedRole === 'WARDEN' ? '2px solid #c8102e' : '1px solid #e5e7eb',
+                  background: selectedRole === 'WARDEN' ? '#fdecef' : '#ffffff',
+                  color: selectedRole === 'WARDEN' ? '#c8102e' : '#6b7280',
                   fontWeight: selectedRole === 'WARDEN' ? 700 : 500,
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Building2 size={18} color={selectedRole === 'WARDEN' ? '#4f46e5' : '#94a3b8'} />
+                <Building2 size={18} color={selectedRole === 'WARDEN' ? '#c8102e' : '#9ca3af'} />
                 <span>Hostel Warden</span>
               </button>
 
@@ -494,16 +498,16 @@ export default function StaffRegisterPage() {
                   gap: '0.5rem',
                   padding: '0.75rem 1rem',
                   borderRadius: '10px',
-                  border: selectedRole === 'STAFF' ? '2px solid #059669' : '1px solid #e2e8f0',
-                  background: selectedRole === 'STAFF' ? '#ecfdf5' : '#f8fafc',
-                  color: selectedRole === 'STAFF' ? '#065f46' : '#64748b',
+                  border: selectedRole === 'STAFF' ? '2px solid #059669' : '1px solid #e5e7eb',
+                  background: selectedRole === 'STAFF' ? '#ecfdf5' : '#ffffff',
+                  color: selectedRole === 'STAFF' ? '#065f46' : '#6b7280',
                   fontWeight: selectedRole === 'STAFF' ? 700 : 500,
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Wrench size={18} color={selectedRole === 'STAFF' ? '#059669' : '#94a3b8'} />
+                <Wrench size={18} color={selectedRole === 'STAFF' ? '#059669' : '#9ca3af'} />
                 <span>Worker / Maintenance Staff</span>
               </button>
             </div>
@@ -514,8 +518,8 @@ export default function StaffRegisterPage() {
             <div
               style={{
                 marginBottom: '1.5rem',
-                background: '#f8fafc',
-                border: '1px dashed #cbd5e1',
+                background: '#f8f8f8',
+                border: '1px dashed #e5e7eb',
                 borderRadius: '10px',
                 padding: '1rem',
               }}
@@ -803,7 +807,7 @@ export default function StaffRegisterPage() {
               style={{
                 width: '100%',
                 padding: '0.8rem',
-                background: selectedRole === 'WARDEN' ? '#4f46e5' : '#059669',
+                background: selectedRole === 'WARDEN' ? '#c8102e' : '#059669',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '8px',
@@ -815,7 +819,17 @@ export default function StaffRegisterPage() {
                 gap: '0.5rem',
                 cursor: loading || success ? 'not-allowed' : 'pointer',
                 transition: 'background-color 0.15s ease',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading && !success) {
+                  e.currentTarget.style.background = selectedRole === 'WARDEN' ? '#a50d25' : '#047857';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading && !success) {
+                  e.currentTarget.style.background = selectedRole === 'WARDEN' ? '#c8102e' : '#059669';
+                }
               }}
             >
               <span>
@@ -834,15 +848,15 @@ export default function StaffRegisterPage() {
             style={{
               marginTop: '1.5rem',
               textAlign: 'center',
-              borderTop: '1px solid #f1f5f9',
+              borderTop: '1px solid #e5e7eb',
               paddingTop: '1rem',
             }}
           >
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#6b7280' }}>
               Already registered?{' '}
               <Link
                 to="/login"
-                style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}
+                style={{ color: '#c8102e', fontWeight: 600, textDecoration: 'none' }}
               >
                 Sign in to HostelFix
               </Link>

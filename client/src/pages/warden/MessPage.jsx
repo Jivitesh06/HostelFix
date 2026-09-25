@@ -157,13 +157,13 @@ export default function WardenMessPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.45rem',
-              backgroundColor: '#4f46e5',
+              backgroundColor: '#c8102e',
               color: '#ffffff',
               padding: '0.6rem 1.15rem',
               borderRadius: '8px',
               fontSize: '0.875rem',
               fontWeight: 600,
-              boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+              boxShadow: '0 1px 2px 0 rgba(200, 16, 46, 0.2)',
               cursor: 'pointer',
             }}
           >
@@ -227,7 +227,7 @@ export default function WardenMessPage() {
         style={{
           display: 'flex',
           gap: '0.5rem',
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e5e7eb',
           paddingBottom: '0.75rem',
           marginBottom: '1.75rem',
         }}
@@ -239,9 +239,9 @@ export default function WardenMessPage() {
             borderRadius: '8px',
             fontSize: '0.875rem',
             fontWeight: activeTab === 'menu' ? 700 : 500,
-            backgroundColor: activeTab === 'menu' ? '#eef2ff' : 'transparent',
-            color: activeTab === 'menu' ? '#4f46e5' : '#64748b',
-            border: `1px solid ${activeTab === 'menu' ? '#c7d2fe' : 'transparent'}`,
+            backgroundColor: activeTab === 'menu' ? '#fdecef' : 'transparent',
+            color: activeTab === 'menu' ? '#c8102e' : '#6b7280',
+            border: `1px solid ${activeTab === 'menu' ? '#fecdd3' : 'transparent'}`,
             cursor: 'pointer',
           }}
         >
@@ -255,9 +255,9 @@ export default function WardenMessPage() {
             borderRadius: '8px',
             fontSize: '0.875rem',
             fontWeight: activeTab === 'feedback' ? 700 : 500,
-            backgroundColor: activeTab === 'feedback' ? '#eef2ff' : 'transparent',
-            color: activeTab === 'feedback' ? '#4f46e5' : '#64748b',
-            border: `1px solid ${activeTab === 'feedback' ? '#c7d2fe' : 'transparent'}`,
+            backgroundColor: activeTab === 'feedback' ? '#fdecef' : 'transparent',
+            color: activeTab === 'feedback' ? '#c8102e' : '#6b7280',
+            border: `1px solid ${activeTab === 'feedback' ? '#fecdd3' : 'transparent'}`,
             cursor: 'pointer',
           }}
         >
@@ -289,10 +289,10 @@ export default function WardenMessPage() {
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: isActive ? 700 : 500,
-                    backgroundColor: isActive ? '#4f46e5' : '#ffffff',
-                    color: isActive ? '#ffffff' : '#475569',
-                    border: `1px solid ${isActive ? '#4f46e5' : '#e2e8f0'}`,
-                    boxShadow: isActive ? '0 2px 4px rgba(79, 70, 229, 0.2)' : '0 1px 2px rgba(0,0,0,0.03)',
+                    backgroundColor: isActive ? '#c8102e' : '#ffffff',
+                    color: isActive ? '#ffffff' : '#374151',
+                    border: `1px solid ${isActive ? '#c8102e' : '#e5e7eb'}`,
+                    boxShadow: isActive ? '0 2px 4px rgba(200, 16, 46, 0.2)' : '0 1px 2px rgba(0,0,0,0.03)',
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
                     transition: 'all 0.15s ease',
@@ -306,7 +306,7 @@ export default function WardenMessPage() {
 
           {/* Meals List */}
           {loading ? (
-            <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+            <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e5e7eb', textAlign: 'center', color: '#6b7280' }}>
               Loading dining menu for {selectedDay}...
             </div>
           ) : dayMeals.length === 0 ? (
@@ -333,9 +333,9 @@ export default function WardenMessPage() {
                   label: meal.mealType,
                   time: 'Meal Slot',
                   Icon: Utensils,
-                  color: '#4f46e5',
-                  bg: '#eef2ff',
-                  border: '#c7d2fe',
+                  color: '#c8102e',
+                  bg: '#fdecef',
+                  border: '#fecdd3',
                 };
                 const { Icon } = config;
 
@@ -345,7 +345,7 @@ export default function WardenMessPage() {
                     style={{
                       background: '#ffffff',
                       borderRadius: '12px',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid #e5e7eb',
                       boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                       display: 'flex',
                       flexDirection: 'column',
@@ -355,7 +355,7 @@ export default function WardenMessPage() {
                     <div
                       style={{
                         padding: '1.25rem',
-                        borderBottom: '1px solid #f1f5f9',
+                        borderBottom: '1px solid #f3f4f6',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -377,10 +377,10 @@ export default function WardenMessPage() {
                           <Icon size={18} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>
+                          <div style={{ fontWeight: 700, color: '#171717', fontSize: '0.95rem' }}>
                             {config.label}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                             {config.time}
                           </div>
                         </div>
@@ -405,7 +405,7 @@ export default function WardenMessPage() {
                           <span>{meal.averageRating} ({meal.feedbackCount})</span>
                         </div>
                       ) : (
-                        <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>No ratings</span>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>No ratings</span>
                       )}
                     </div>
 
@@ -413,13 +413,13 @@ export default function WardenMessPage() {
                       <p
                         style={{
                           margin: 0,
-                          color: '#1e293b',
+                          color: '#171717',
                           fontSize: '0.9rem',
                           lineHeight: 1.5,
-                          background: '#f8fafc',
+                          background: '#f8f8f8',
                           padding: '0.85rem',
                           borderRadius: '8px',
-                          border: '1px solid #f1f5f9',
+                          border: '1px solid #e5e7eb',
                         }}
                       >
                         {meal.items}
@@ -430,7 +430,7 @@ export default function WardenMessPage() {
                     <div
                       style={{
                         padding: '0.75rem 1.25rem',
-                        borderTop: '1px solid #f1f5f9',
+                        borderTop: '1px solid #f3f4f6',
                         display: 'flex',
                         justifyContent: 'flex-end',
                         gap: '0.5rem',
@@ -444,9 +444,9 @@ export default function WardenMessPage() {
                           gap: '0.35rem',
                           padding: '0.4rem 0.75rem',
                           borderRadius: '6px',
-                          border: '1px solid #cbd5e1',
+                          border: '1px solid #e5e7eb',
                           background: '#ffffff',
-                          color: '#334155',
+                          color: '#374151',
                           fontSize: '0.8rem',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -500,7 +500,7 @@ export default function WardenMessPage() {
                   key={fb.id}
                   style={{
                     background: '#ffffff',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '10px',
                     padding: '1.25rem',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
@@ -517,10 +517,10 @@ export default function WardenMessPage() {
                     }}
                   >
                     <div>
-                      <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>
+                      <strong style={{ color: '#171717', fontSize: '0.95rem' }}>
                         {fb.student?.name}
                       </strong>{' '}
-                      <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                         (Room {fb.student?.roomNumber})
                       </span>
                     </div>
@@ -530,8 +530,8 @@ export default function WardenMessPage() {
                         <Star
                           key={s}
                           size={14}
-                          fill={s <= fb.rating ? '#f59e0b' : '#e2e8f0'}
-                          color={s <= fb.rating ? '#f59e0b' : '#cbd5e1'}
+                          fill={s <= fb.rating ? '#f59e0b' : '#e5e7eb'}
+                          color={s <= fb.rating ? '#f59e0b' : '#d1d5db'}
                         />
                       ))}
                       <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#b45309', marginLeft: '0.35rem' }}>
@@ -540,19 +540,19 @@ export default function WardenMessPage() {
                     </div>
                   </div>
 
-                  <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#374151', marginBottom: '0.5rem' }}>
                     <strong>Meal:</strong> {fb.messMenu?.dayOfWeek} {fb.messMenu?.mealType} &bull; <em>{fb.messMenu?.items}</em>
                   </div>
 
                   {fb.comment && (
                     <div
                       style={{
-                        background: '#f8fafc',
+                        background: '#f8f8f8',
                         padding: '0.65rem 0.85rem',
                         borderRadius: '6px',
-                        border: '1px solid #f1f5f9',
+                        border: '1px solid #e5e7eb',
                         fontSize: '0.875rem',
-                        color: '#1e293b',
+                        color: '#171717',
                         fontStyle: 'italic',
                       }}
                     >
@@ -576,7 +576,7 @@ export default function WardenMessPage() {
         <form onSubmit={handleCreate}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#171717', marginBottom: '0.35rem' }}>
                 Day of Week *
               </label>
               <select
@@ -585,7 +585,7 @@ export default function WardenMessPage() {
                 style={{
                   width: '100%',
                   padding: '0.65rem',
-                  border: '1px solid #cbd5e1',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '8px',
                   fontSize: '0.9rem',
                   background: '#ffffff',
@@ -598,7 +598,7 @@ export default function WardenMessPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#171717', marginBottom: '0.35rem' }}>
                 Meal Type *
               </label>
               <select
@@ -607,7 +607,7 @@ export default function WardenMessPage() {
                 style={{
                   width: '100%',
                   padding: '0.65rem',
-                  border: '1px solid #cbd5e1',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '8px',
                   fontSize: '0.9rem',
                   background: '#ffffff',
@@ -621,7 +621,7 @@ export default function WardenMessPage() {
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#171717', marginBottom: '0.35rem' }}>
               Menu Items (comma-separated) *
             </label>
             <textarea
@@ -633,7 +633,7 @@ export default function WardenMessPage() {
               style={{
                 width: '100%',
                 padding: '0.65rem',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '8px',
                 fontSize: '0.9rem',
                 fontFamily: 'inherit',
@@ -649,9 +649,9 @@ export default function WardenMessPage() {
               style={{
                 padding: '0.65rem 1.15rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
               }}
@@ -663,7 +663,7 @@ export default function WardenMessPage() {
               style={{
                 padding: '0.65rem 1.35rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 fontSize: '0.875rem',
                 fontWeight: 600,
@@ -684,7 +684,7 @@ export default function WardenMessPage() {
       >
         <form onSubmit={handleUpdate}>
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#171717', marginBottom: '0.35rem' }}>
               Food Items *
             </label>
             <textarea
@@ -695,7 +695,7 @@ export default function WardenMessPage() {
               style={{
                 width: '100%',
                 padding: '0.75rem',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '8px',
                 fontSize: '0.9rem',
                 fontFamily: 'inherit',
@@ -711,9 +711,9 @@ export default function WardenMessPage() {
               style={{
                 padding: '0.65rem 1.15rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
               }}
@@ -725,7 +725,7 @@ export default function WardenMessPage() {
               style={{
                 padding: '0.65rem 1.35rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 fontSize: '0.875rem',
                 fontWeight: 600,
@@ -744,7 +744,7 @@ export default function WardenMessPage() {
         title="Delete Meal Slot"
         subtitle="Confirm removal of this meal slot from the published schedule"
       >
-        <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, margin: '0 0 1.5rem' }}>
+        <p style={{ fontSize: '0.9rem', color: '#374151', lineHeight: 1.5, margin: '0 0 1.5rem' }}>
           Are you sure you want to remove this meal slot? Any resident ratings or reviews associated with this slot will also be deleted.
         </p>
 
@@ -755,9 +755,9 @@ export default function WardenMessPage() {
             style={{
               padding: '0.65rem 1.15rem',
               borderRadius: '8px',
-              border: '1px solid #cbd5e1',
+              border: '1px solid #e5e7eb',
               background: '#ffffff',
-              color: '#475569',
+              color: '#374151',
               fontSize: '0.875rem',
               fontWeight: 600,
             }}

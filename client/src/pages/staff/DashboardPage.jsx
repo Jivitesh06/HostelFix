@@ -57,13 +57,13 @@ export default function StaffDashboard() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            backgroundColor: '#059669',
+            backgroundColor: '#c8102e',
             color: '#ffffff',
             padding: '0.6rem 1.15rem',
             borderRadius: '8px',
             fontSize: '0.875rem',
             fontWeight: 600,
-            boxShadow: '0 1px 2px 0 rgba(5, 150, 105, 0.2)',
+            boxShadow: '0 1px 2px 0 rgba(200, 16, 46, 0.2)',
           }}
         >
           <Wrench size={16} />
@@ -85,8 +85,8 @@ export default function StaffDashboard() {
           title="Total Assigned"
           value={totalCount}
           subtitle="All maintenance work orders"
-          accentColor="#059669"
-          accentBg="#ecfdf5"
+          accentColor="#c8102e"
+          accentBg="#fdecef"
           loading={loading}
         />
 
@@ -126,7 +126,7 @@ export default function StaffDashboard() {
         style={{
           background: '#ffffff',
           borderRadius: '12px',
-          border: '1px solid #e2e8f0',
+          border: '1px solid #e5e7eb',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
           overflow: 'hidden',
         }}
@@ -134,17 +134,17 @@ export default function StaffDashboard() {
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#171717', margin: 0 }}>
               Active Work Orders (Needs Action)
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.2rem 0 0' }}>
+            <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.2rem 0 0' }}>
               Maintenance tasks currently assigned to you or in progress
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function StaffDashboard() {
             style={{
               fontSize: '0.85rem',
               fontWeight: 600,
-              color: '#059669',
+              color: '#c8102e',
               display: 'flex',
               alignItems: 'center',
               gap: '0.25rem',
@@ -191,7 +191,7 @@ export default function StaffDashboard() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '1.1rem 1.5rem',
-                    borderBottom: index < activeWorkList.length - 1 ? '1px solid #f1f5f9' : 'none',
+                    borderBottom: index < activeWorkList.length - 1 ? '1px solid #f3f4f6' : 'none',
                     flexWrap: 'wrap',
                     gap: '1rem',
                   }}
@@ -203,7 +203,7 @@ export default function StaffDashboard() {
                         style={{
                           fontSize: '0.9rem',
                           fontWeight: 600,
-                          color: '#0f172a',
+                          color: '#171717',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -211,7 +211,7 @@ export default function StaffDashboard() {
                       >
                         {c.description}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.15rem' }}>
                         Room <strong>{c.student?.roomNumber}</strong> &bull; Resident: {c.student?.name} &bull; {dateStr}
                       </div>
                     </div>
@@ -224,9 +224,9 @@ export default function StaffDashboard() {
                       to={`/staff/complaints/${c.id}`}
                       style={{
                         padding: '0.45rem 0.85rem',
-                        backgroundColor: '#ecfdf5',
-                        color: '#059669',
-                        border: '1px solid #a7f3d0',
+                        backgroundColor: '#fdecef',
+                        color: '#c8102e',
+                        border: '1px solid #fecdd3',
                         borderRadius: '6px',
                         fontSize: '0.8rem',
                         fontWeight: 600,
@@ -236,12 +236,12 @@ export default function StaffDashboard() {
                         transition: 'all 0.15s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#059669';
+                        e.currentTarget.style.backgroundColor = '#c8102e';
                         e.currentTarget.style.color = '#ffffff';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#ecfdf5';
-                        e.currentTarget.style.color = '#059669';
+                        e.currentTarget.style.backgroundColor = '#fdecef';
+                        e.currentTarget.style.color = '#c8102e';
                       }}
                     >
                       <span>Update Status</span>

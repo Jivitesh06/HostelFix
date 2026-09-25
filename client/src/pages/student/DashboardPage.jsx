@@ -60,17 +60,17 @@ export default function StudentDashboard() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            backgroundColor: '#4f46e5',
+            backgroundColor: '#c8102e',
             color: '#ffffff',
             padding: '0.6rem 1.15rem',
             borderRadius: '8px',
             fontSize: '0.875rem',
             fontWeight: 600,
-            boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+            boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
             transition: 'background-color 0.15s ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#4338ca')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4f46e5')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a50d25')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c8102e')}
         >
           <PlusCircle size={16} />
           <span>Raise Complaint</span>
@@ -91,8 +91,8 @@ export default function StudentDashboard() {
           title="Total Complaints"
           value={complaints.length}
           subtitle="All issues registered by you"
-          accentColor="#4f46e5"
-          accentBg="#eef2ff"
+          accentColor="#c8102e"
+          accentBg="#fdecef"
           loading={loading}
         />
 
@@ -139,50 +139,74 @@ export default function StudentDashboard() {
         <Link
           to="/student/complaints/new"
           style={{
-            background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
-            color: '#ffffff',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: '12px',
             padding: '1.25rem 1.5rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.2)',
-            transition: 'transform 0.15s ease',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+            transition: 'transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.borderColor = '#fecdd3';
+            e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(200, 16, 46, 0.08)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.borderColor = '#e5e7eb';
+            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.04)';
+          }}
         >
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.2rem' }}>
-              + Raise New Complaint
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: '#fdecef',
+                color: '#c8102e',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <PlusCircle size={20} />
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#e0e7ff' }}>
-              Report room electrical, plumbing, or hygiene issues
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#171717', marginBottom: '0.2rem' }}>
+                Raise New Complaint
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                Report room electrical, plumbing, or hygiene issues
+              </div>
             </div>
           </div>
-          <ArrowRight size={20} color="#ffffff" />
+          <ChevronRight size={18} color="#c8102e" />
         </Link>
 
         <Link
           to="/student/mess"
           style={{
             background: '#ffffff',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             borderRadius: '12px',
             padding: '1.25rem 1.5rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
             transition: 'transform 0.15s ease, border-color 0.15s ease',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.borderColor = '#cbd5e1';
+            e.currentTarget.style.borderColor = '#d1d5db';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.borderColor = '#e2e8f0';
+            e.currentTarget.style.borderColor = '#e5e7eb';
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -201,15 +225,15 @@ export default function StudentDashboard() {
               <Utensils size={20} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a', marginBottom: '0.2rem' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#171717', marginBottom: '0.2rem' }}>
                 Weekly Mess Menu
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                 Check today's meals and rate food quality
               </div>
             </div>
           </div>
-          <ChevronRight size={18} color="#94a3b8" />
+          <ChevronRight size={18} color="#9ca3af" />
         </Link>
       </div>
 
@@ -218,7 +242,7 @@ export default function StudentDashboard() {
         style={{
           background: '#ffffff',
           borderRadius: '12px',
-          border: '1px solid #e2e8f0',
+          border: '1px solid #e5e7eb',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
           overflow: 'hidden',
         }}
@@ -226,17 +250,17 @@ export default function StudentDashboard() {
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#171717', margin: 0 }}>
               Recent Complaints
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.2rem 0 0' }}>
+            <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.2rem 0 0' }}>
               Your latest maintenance requests and current resolution stages
             </p>
           </div>
@@ -247,10 +271,11 @@ export default function StudentDashboard() {
               style={{
                 fontSize: '0.85rem',
                 fontWeight: 600,
-                color: '#4f46e5',
+                color: '#c8102e',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem',
+                textDecoration: 'none',
               }}
             >
               <span>View all ({complaints.length})</span>
@@ -260,7 +285,7 @@ export default function StudentDashboard() {
         </div>
 
         {loading ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+          <div style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
             Loading complaints data...
           </div>
         ) : recentComplaints.length === 0 ? (
@@ -287,11 +312,11 @@ export default function StudentDashboard() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '1.1rem 1.5rem',
-                    borderBottom: index < recentComplaints.length - 1 ? '1px solid #f1f5f9' : 'none',
+                    borderBottom: index < recentComplaints.length - 1 ? '1px solid #e5e7eb' : 'none',
                     transition: 'background-color 0.15s ease',
                     textDecoration: 'none',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8f8f8')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#ffffff')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
@@ -301,7 +326,7 @@ export default function StudentDashboard() {
                         style={{
                           fontSize: '0.9rem',
                           fontWeight: 600,
-                          color: '#0f172a',
+                          color: '#171717',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -310,7 +335,7 @@ export default function StudentDashboard() {
                       >
                         {c.description}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.15rem' }}>
                         ID: #{c.id.slice(-6).toUpperCase()} &bull; Submitted on {dateStr}
                       </div>
                     </div>
@@ -318,7 +343,7 @@ export default function StudentDashboard() {
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
                     <StatusBadge status={c.status} size="sm" />
-                    <ChevronRight size={16} color="#cbd5e1" />
+                    <ChevronRight size={16} color="#9ca3af" />
                   </div>
                 </Link>
               );

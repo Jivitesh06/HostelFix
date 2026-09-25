@@ -66,12 +66,13 @@ export default function WardenDashboard() {
               alignItems: 'center',
               gap: '0.45rem',
               backgroundColor: '#ffffff',
-              color: '#475569',
-              border: '1px solid #cbd5e1',
+              color: '#374151',
+              border: '1px solid #e5e7eb',
               padding: '0.6rem 1rem',
               borderRadius: '8px',
               fontSize: '0.875rem',
               fontWeight: 600,
+              textDecoration: 'none',
             }}
           >
             <Utensils size={16} />
@@ -84,14 +85,18 @@ export default function WardenDashboard() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.45rem',
-              backgroundColor: '#4f46e5',
+              backgroundColor: '#c8102e',
               color: '#ffffff',
               padding: '0.6rem 1.15rem',
               borderRadius: '8px',
               fontSize: '0.875rem',
               fontWeight: 600,
-              boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+              textDecoration: 'none',
+              boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+              transition: 'background-color 0.15s ease',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a50d25')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c8102e')}
           >
             <ClipboardList size={16} />
             <span>Manage All Tickets</span>
@@ -106,9 +111,9 @@ export default function WardenDashboard() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#eff6ff',
-            border: '1px solid #bfdbfe',
-            color: '#1e40af',
+            background: '#f8f8f8',
+            border: '1px solid #e5e7eb',
+            color: '#171717',
             padding: '0.85rem 1.25rem',
             borderRadius: '10px',
             marginBottom: '1.5rem',
@@ -119,7 +124,7 @@ export default function WardenDashboard() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <Building2 size={18} color="#2563eb" />
+            <Building2 size={18} color="#c8102e" />
             <span>
               Assigned Jurisdiction: <strong>{user.hostelName}</strong>. You are exclusively monitoring complaints submitted by students of <strong>{user.hostelName}</strong>.
             </span>
@@ -128,13 +133,22 @@ export default function WardenDashboard() {
             to="/warden/profile"
             style={{
               fontSize: '0.8rem',
-              color: '#2563eb',
+              color: '#c8102e',
               fontWeight: 600,
               textDecoration: 'none',
               background: '#ffffff',
               padding: '0.35rem 0.75rem',
               borderRadius: '6px',
-              border: '1px solid #bfdbfe',
+              border: '1px solid #e5e7eb',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c8102e';
+              e.currentTarget.style.backgroundColor = '#fdecef';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e5e7eb';
+              e.currentTarget.style.backgroundColor = '#ffffff';
             }}
           >
             Manage Assignment →
@@ -156,8 +170,8 @@ export default function WardenDashboard() {
           title="Total Registered"
           value={totalCount}
           subtitle="All hostel maintenance requests"
-          accentColor="#4f46e5"
-          accentBg="#eef2ff"
+          accentColor="#c8102e"
+          accentBg="#fdecef"
           loading={loading}
         />
 
@@ -197,7 +211,7 @@ export default function WardenDashboard() {
         <div
           style={{
             background: '#ffffff',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             borderRadius: '12px',
             padding: '1.25rem 1.5rem',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
@@ -212,10 +226,10 @@ export default function WardenDashboard() {
               marginBottom: '0.75rem',
             }}
           >
-            <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#171717' }}>
               Hostel Complaint Status Distribution
             </span>
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
               {totalCount} total cases tracked
             </span>
           </div>
@@ -338,7 +352,7 @@ export default function WardenDashboard() {
         style={{
           background: '#ffffff',
           borderRadius: '12px',
-          border: '1px solid #e2e8f0',
+          border: '1px solid #e5e7eb',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
           overflow: 'hidden',
         }}
@@ -346,17 +360,17 @@ export default function WardenDashboard() {
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#171717', margin: 0 }}>
               Administration Action Queue
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.2rem 0 0' }}>
+            <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.2rem 0 0' }}>
               Complaints requiring warden review, staff assignment, or final verification
             </p>
           </div>
@@ -366,10 +380,11 @@ export default function WardenDashboard() {
             style={{
               fontSize: '0.85rem',
               fontWeight: 600,
-              color: '#4f46e5',
+              color: '#c8102e',
               display: 'flex',
               alignItems: 'center',
               gap: '0.25rem',
+              textDecoration: 'none',
             }}
           >
             <span>Open All Tickets</span>
@@ -378,7 +393,7 @@ export default function WardenDashboard() {
         </div>
 
         {loading ? (
-          <div style={{ padding: '3.5rem', textAlign: 'center', color: '#64748b' }}>
+          <div style={{ padding: '3.5rem', textAlign: 'center', color: '#6b7280' }}>
             Loading action queue...
           </div>
         ) : actionRequiredComplaints.length === 0 ? (
@@ -404,7 +419,7 @@ export default function WardenDashboard() {
                     justifyContent: 'space-between',
                     padding: '1.1rem 1.5rem',
                     borderBottom:
-                      index < actionRequiredComplaints.length - 1 ? '1px solid #f1f5f9' : 'none',
+                      index < actionRequiredComplaints.length - 1 ? '1px solid #e5e7eb' : 'none',
                     flexWrap: 'wrap',
                     gap: '1rem',
                   }}
@@ -416,7 +431,7 @@ export default function WardenDashboard() {
                         style={{
                           fontSize: '0.9rem',
                           fontWeight: 600,
-                          color: '#0f172a',
+                          color: '#171717',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -424,7 +439,7 @@ export default function WardenDashboard() {
                       >
                         {c.description}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.15rem' }}>
                         Resident: <strong>{c.student?.name}</strong> (Room {c.student?.roomNumber}) &bull; {dateStr}
                       </div>
                     </div>
@@ -437,24 +452,25 @@ export default function WardenDashboard() {
                       to={`/warden/complaints/${c.id}`}
                       style={{
                         padding: '0.45rem 0.85rem',
-                        backgroundColor: '#eef2ff',
-                        color: '#4f46e5',
-                        border: '1px solid #c7d2fe',
+                        backgroundColor: '#fdecef',
+                        color: '#c8102e',
+                        border: '1px solid #fecdd3',
                         borderRadius: '6px',
                         fontSize: '0.8rem',
                         fontWeight: 600,
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.3rem',
+                        textDecoration: 'none',
                         transition: 'all 0.15s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#4f46e5';
+                        e.currentTarget.style.backgroundColor = '#c8102e';
                         e.currentTarget.style.color = '#ffffff';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#eef2ff';
-                        e.currentTarget.style.color = '#4f46e5';
+                        e.currentTarget.style.backgroundColor = '#fdecef';
+                        e.currentTarget.style.color = '#c8102e';
                       }}
                     >
                       <span>Take Action</span>

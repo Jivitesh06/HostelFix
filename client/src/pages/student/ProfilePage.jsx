@@ -182,7 +182,7 @@ export default function StudentProfilePage() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            background: '#4f46e5',
+            background: '#c8102e',
             color: '#ffffff',
             padding: '0.625rem 1.25rem',
             borderRadius: '8px',
@@ -190,8 +190,11 @@ export default function StudentProfilePage() {
             fontWeight: 600,
             cursor: loading ? 'not-allowed' : 'pointer',
             border: 'none',
-            boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)',
+            boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+            transition: 'background-color 0.15s ease',
           }}
+          onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+          onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c8102e')}
         >
           <Edit3 size={16} />
           <span>Edit Profile</span>
@@ -245,9 +248,9 @@ export default function StudentProfilePage() {
             background: '#ffffff',
             padding: '3.5rem',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             textAlign: 'center',
-            color: '#64748b',
+            color: '#6b7280',
           }}
         >
           Loading your student profile...
@@ -259,7 +262,7 @@ export default function StudentProfilePage() {
             style={{
               background: '#ffffff',
               borderRadius: '14px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               padding: '1.75rem 2rem',
               boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
               display: 'flex',
@@ -275,29 +278,29 @@ export default function StudentProfilePage() {
                   width: '68px',
                   height: '68px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                  color: '#ffffff',
+                  background: '#fdecef',
+                  color: '#c8102e',
+                  border: '1.5px solid #fecdd3',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.5rem',
                   fontWeight: 700,
                   letterSpacing: '0.05em',
-                  boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
                 }}
               >
                 {initials}
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                  <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#171717', margin: 0 }}>
                     {profile.name}
                   </h2>
                   <span
                     style={{
-                      background: '#eff6ff',
-                      color: '#1d4ed8',
-                      border: '1px solid #bfdbfe',
+                      background: '#f8f8f8',
+                      color: '#374151',
+                      border: '1px solid #e5e7eb',
                       padding: '0.2rem 0.65rem',
                       borderRadius: '9999px',
                       fontSize: '0.75rem',
@@ -312,26 +315,26 @@ export default function StudentProfilePage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    color: '#64748b',
+                    color: '#6b7280',
                     fontSize: '0.875rem',
                     marginTop: '0.4rem',
                     flexWrap: 'wrap',
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <Mail size={15} color="#94a3b8" />
+                    <Mail size={15} color="#9ca3af" />
                     {profile.email}
                   </span>
                   <span>•</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <Home size={15} color="#94a3b8" />
+                    <Home size={15} color="#9ca3af" />
                     Room {profile.roomNumber || '—'}
                   </span>
                   {profile.hostelName && (
                     <>
                       <span>•</span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <Building2 size={15} color="#94a3b8" />
+                        <Building2 size={15} color="#9ca3af" />
                         {profile.hostelName}
                       </span>
                     </>
@@ -347,15 +350,23 @@ export default function StudentProfilePage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.45rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  color: '#334155',
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  color: '#374151',
                   padding: '0.55rem 1rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'background-color 0.15s ease',
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#c8102e';
+                  e.currentTarget.style.color = '#c8102e';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e5e7eb';
+                  e.currentTarget.style.color = '#374151';
                 }}
               >
                 <Edit3 size={15} />
@@ -377,7 +388,7 @@ export default function StudentProfilePage() {
               style={{
                 background: '#ffffff',
                 borderRadius: '12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 padding: '1.5rem',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 display: 'flex',
@@ -389,7 +400,7 @@ export default function StudentProfilePage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.6rem',
-                  borderBottom: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #e5e7eb',
                   paddingBottom: '0.85rem',
                   marginBottom: '1.25rem',
                 }}
@@ -399,8 +410,8 @@ export default function StudentProfilePage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: '#eff6ff',
-                    color: '#2563eb',
+                    background: '#fdecef',
+                    color: '#c8102e',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -413,7 +424,7 @@ export default function StudentProfilePage() {
                     style={{
                       fontSize: '0.95rem',
                       fontWeight: 700,
-                      color: '#0f172a',
+                      color: '#171717',
                       margin: 0,
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -421,7 +432,7 @@ export default function StudentProfilePage() {
                   >
                     Personal Information
                   </h3>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                     Identity and emergency contact
                   </span>
                 </div>
@@ -515,7 +526,7 @@ export default function StudentProfilePage() {
               style={{
                 background: '#ffffff',
                 borderRadius: '12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 padding: '1.5rem',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 display: 'flex',
@@ -527,7 +538,7 @@ export default function StudentProfilePage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.6rem',
-                  borderBottom: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #e5e7eb',
                   paddingBottom: '0.85rem',
                   marginBottom: '1.25rem',
                 }}
@@ -537,8 +548,8 @@ export default function StudentProfilePage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: '#f5f3ff',
-                    color: '#7c3aed',
+                    background: '#eff6ff',
+                    color: '#2563eb',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -551,7 +562,7 @@ export default function StudentProfilePage() {
                     style={{
                       fontSize: '0.95rem',
                       fontWeight: 700,
-                      color: '#0f172a',
+                      color: '#171717',
                       margin: 0,
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -559,7 +570,7 @@ export default function StudentProfilePage() {
                   >
                     Academic Information
                   </h3>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                     University enrollment and discipline
                   </span>
                 </div>
@@ -574,18 +585,18 @@ export default function StudentProfilePage() {
                         style={{
                           display: 'inline-block',
                           fontFamily: 'monospace',
-                          background: '#f8fafc',
+                          background: '#f8f8f8',
                           padding: '0.2rem 0.5rem',
                           borderRadius: '6px',
-                          border: '1px solid #e2e8f0',
+                          border: '1px solid #e5e7eb',
                           fontWeight: 700,
-                          color: '#1e293b',
+                          color: '#171717',
                         }}
                       >
                         {profile.universityRollNumber}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>
                         Not provided
                       </span>
                     )}
@@ -597,11 +608,11 @@ export default function StudentProfilePage() {
                   <div style={valueStyle}>
                     {profile.branch ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <BookOpen size={14} color="#64748b" />
+                        <BookOpen size={14} color="#6b7280" />
                         {profile.branch}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>
                         Not specified
                       </span>
                     )}
@@ -617,8 +628,9 @@ export default function StudentProfilePage() {
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.35rem',
-                          background: '#f5f3ff',
-                          color: '#6d28d9',
+                          background: '#f8f8f8',
+                          color: '#374151',
+                          border: '1px solid #e5e7eb',
                           padding: '0.2rem 0.6rem',
                           borderRadius: '6px',
                           fontSize: '0.85rem',
@@ -629,7 +641,7 @@ export default function StudentProfilePage() {
                         {profile.year}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>
                         Not specified
                       </span>
                     )}
@@ -643,7 +655,7 @@ export default function StudentProfilePage() {
               style={{
                 background: '#ffffff',
                 borderRadius: '12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 padding: '1.5rem',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 display: 'flex',
@@ -655,7 +667,7 @@ export default function StudentProfilePage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.6rem',
-                  borderBottom: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #e5e7eb',
                   paddingBottom: '0.85rem',
                   marginBottom: '1.25rem',
                 }}
@@ -665,8 +677,8 @@ export default function StudentProfilePage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: '#f0fdf4',
-                    color: '#16a34a',
+                    background: '#fef3c7',
+                    color: '#d97706',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -679,7 +691,7 @@ export default function StudentProfilePage() {
                     style={{
                       fontSize: '0.95rem',
                       fontWeight: 700,
-                      color: '#0f172a',
+                      color: '#171717',
                       margin: 0,
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
@@ -687,7 +699,7 @@ export default function StudentProfilePage() {
                   >
                     Hostel Information
                   </h3>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                     Campus residence and room allocation
                   </span>
                 </div>
@@ -699,11 +711,11 @@ export default function StudentProfilePage() {
                   <div style={valueStyle}>
                     {profile.hostelName ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Building2 size={14} color="#64748b" />
+                        <Building2 size={14} color="#6b7280" />
                         {profile.hostelName}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>
                         Campus Hostel
                       </span>
                     )}
@@ -716,11 +728,11 @@ export default function StudentProfilePage() {
                     <span
                       style={{
                         fontWeight: 700,
-                        color: '#0f172a',
-                        background: '#f8fafc',
+                        color: '#171717',
+                        background: '#f8f8f8',
                         padding: '0.2rem 0.6rem',
                         borderRadius: '6px',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid #e5e7eb',
                       }}
                     >
                       Room {profile.roomNumber}
@@ -767,7 +779,7 @@ export default function StudentProfilePage() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 700,
-                color: '#4f46e5',
+                color: '#c8102e',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 marginBottom: '0.75rem',
@@ -821,7 +833,7 @@ export default function StudentProfilePage() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 700,
-                color: '#4f46e5',
+                color: '#c8102e',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 marginBottom: '0.75rem',
@@ -877,7 +889,7 @@ export default function StudentProfilePage() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 700,
-                color: '#4f46e5',
+                color: '#c8102e',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 marginBottom: '0.75rem',
@@ -905,7 +917,7 @@ export default function StudentProfilePage() {
                 ))}
               </select>
               {!formData.gender && (
-                <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', marginBottom: 0 }}>
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem', marginBottom: 0 }}>
                   Select gender above to filter available hostels.
                 </p>
               )}
@@ -931,7 +943,7 @@ export default function StudentProfilePage() {
               justifyContent: 'flex-end',
               gap: '0.75rem',
               marginTop: '0.75rem',
-              borderTop: '1px solid #f1f5f9',
+              borderTop: '1px solid #e5e7eb',
               paddingTop: '1rem',
             }}
           >
@@ -942,9 +954,9 @@ export default function StudentProfilePage() {
               style={{
                 padding: '0.625rem 1.15rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -961,14 +973,17 @@ export default function StudentProfilePage() {
                 gap: '0.45rem',
                 padding: '0.625rem 1.35rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 border: 'none',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: editLoading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+                transition: 'background-color 0.15s ease',
               }}
+              onMouseEnter={(e) => !editLoading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+              onMouseLeave={(e) => !editLoading && (e.currentTarget.style.backgroundColor = '#c8102e')}
             >
               <CheckCircle2 size={16} />
               <span>{editLoading ? 'Saving Changes...' : 'Save Changes'}</span>
@@ -984,7 +999,7 @@ const labelStyle = {
   fontSize: '0.75rem',
   fontWeight: 600,
   textTransform: 'uppercase',
-  color: '#64748b',
+  color: '#6b7280',
   display: 'block',
   marginBottom: '0.2rem',
   letterSpacing: '0.04em',
@@ -993,24 +1008,24 @@ const labelStyle = {
 const valueStyle = {
   fontSize: '0.925rem',
   fontWeight: 600,
-  color: '#0f172a',
+  color: '#171717',
 };
 
 const modalLabelStyle = {
   display: 'block',
   fontSize: '0.8rem',
   fontWeight: 600,
-  color: '#334155',
+  color: '#374151',
   marginBottom: '0.35rem',
 };
 
 const modalInputStyle = {
   width: '100%',
   padding: '0.65rem 0.75rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
-  color: '#0f172a',
+  color: '#171717',
   background: '#ffffff',
   outline: 'none',
   fontFamily: 'inherit',

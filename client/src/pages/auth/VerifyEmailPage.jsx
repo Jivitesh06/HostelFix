@@ -136,8 +136,9 @@ export default function VerifyEmailPage() {
       <div
         style={{
           flex: '1 1 45%',
-          background: 'linear-gradient(145deg, #1e1b4b 0%, #312e81 45%, #4338ca 100%)',
-          color: '#ffffff',
+          background: '#f8f8f8',
+          borderRight: '1px solid #e5e7eb',
+          color: '#171717',
           padding: '4rem 3.5rem',
           display: 'flex',
           flexDirection: 'column',
@@ -154,21 +155,21 @@ export default function VerifyEmailPage() {
                 width: '42px',
                 height: '42px',
                 borderRadius: '12px',
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
+                background: '#c8102e',
+                color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                boxShadow: '0 2px 4px rgba(200, 16, 46, 0.25)',
               }}
             >
               <Building2 size={24} color="#ffffff" />
             </div>
             <div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#171717', letterSpacing: '-0.02em' }}>
                 HostelFix
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#c7d2fe', fontWeight: 500 }}>
+              <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 500 }}>
                 Operations Platform
               </div>
             </div>
@@ -179,13 +180,13 @@ export default function VerifyEmailPage() {
           <span
             style={{
               display: 'inline-block',
-              background: 'rgba(255, 255, 255, 0.12)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              background: '#fdecef',
+              border: '1px solid #fecdd3',
               padding: '0.35rem 0.85rem',
               borderRadius: '9999px',
               fontSize: '0.8rem',
               fontWeight: 600,
-              color: '#e0e7ff',
+              color: '#c8102e',
               marginBottom: '1.25rem',
             }}
           >
@@ -196,6 +197,7 @@ export default function VerifyEmailPage() {
             style={{
               fontSize: '2.3rem',
               fontWeight: 800,
+              color: '#171717',
               lineHeight: 1.25,
               letterSpacing: '-0.03em',
               marginBottom: '1rem',
@@ -208,7 +210,7 @@ export default function VerifyEmailPage() {
           <p
             style={{
               fontSize: '1rem',
-              color: '#c7d2fe',
+              color: '#6b7280',
               lineHeight: 1.6,
               maxWidth: '440px',
               marginBottom: '2rem',
@@ -224,15 +226,15 @@ export default function VerifyEmailPage() {
                   width: '26px',
                   height: '26px',
                   borderRadius: '50%',
-                  background: 'rgba(52, 211, 153, 0.2)',
+                  background: '#ecfdf5',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <CheckCircle size={15} color="#34d399" />
+                <CheckCircle size={15} color="#059669" />
               </div>
-              <span style={{ fontSize: '0.9rem', color: '#e0e7ff' }}>
+              <span style={{ fontSize: '0.9rem', color: '#374151' }}>
                 Single-use 6-digit cryptographic verification code
               </span>
             </div>
@@ -243,22 +245,22 @@ export default function VerifyEmailPage() {
                   width: '26px',
                   height: '26px',
                   borderRadius: '50%',
-                  background: 'rgba(96, 165, 250, 0.2)',
+                  background: '#fdecef',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <ShieldCheck size={15} color="#60a5fa" />
+                <ShieldCheck size={15} color="#c8102e" />
               </div>
-              <span style={{ fontSize: '0.9rem', color: '#e0e7ff' }}>
+              <span style={{ fontSize: '0.9rem', color: '#374151' }}>
                 Strict Chitkara domain protection (@chitkarauniversity.edu.in)
               </span>
             </div>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.8rem', color: '#a5b4fc', position: 'relative', zIndex: 2 }}>
+        <div style={{ fontSize: '0.8rem', color: '#9ca3af', position: 'relative', zIndex: 2 }}>
           HostelFix Platform &bull; Student Identity Verification
         </div>
       </div>
@@ -271,7 +273,7 @@ export default function VerifyEmailPage() {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '3rem 2rem',
-          background: '#f8fafc',
+          background: '#f8f8f8',
           overflowY: 'auto',
         }}
       >
@@ -283,8 +285,8 @@ export default function VerifyEmailPage() {
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
-                background: '#e0e7ff',
-                color: '#4338ca',
+                background: '#fdecef',
+                color: '#c8102e',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -298,7 +300,7 @@ export default function VerifyEmailPage() {
               style={{
                 fontSize: '1.75rem',
                 fontWeight: 800,
-                color: '#0f172a',
+                color: '#171717',
                 letterSpacing: '-0.02em',
                 marginBottom: '0.5rem',
               }}
@@ -306,7 +308,7 @@ export default function VerifyEmailPage() {
               Verify Your Email
             </h1>
 
-            <p style={{ color: '#64748b', fontSize: '0.925rem', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ color: '#6b7280', fontSize: '0.925rem', lineHeight: 1.5, margin: 0 }}>
               Verification code sent to your university email.
             </p>
 
@@ -316,17 +318,17 @@ export default function VerifyEmailPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.45rem',
-                  background: '#f1f5f9',
-                  border: '1px solid #e2e8f0',
+                  background: '#ffffff',
+                  border: '1px solid #e5e7eb',
                   padding: '0.35rem 0.75rem',
                   borderRadius: '6px',
                   marginTop: '0.75rem',
                   fontSize: '0.85rem',
-                  color: '#334155',
+                  color: '#171717',
                   fontWeight: 600,
                 }}
               >
-                <Mail size={14} color="#6366f1" />
+                <Mail size={14} color="#c8102e" />
                 <span>{maskEmail(email)}</span>
               </div>
             )}
@@ -379,7 +381,7 @@ export default function VerifyEmailPage() {
             style={{
               background: '#ffffff',
               borderRadius: '14px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               padding: '2rem',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.04)',
             }}
@@ -393,7 +395,7 @@ export default function VerifyEmailPage() {
                       display: 'block',
                       fontSize: '0.85rem',
                       fontWeight: 600,
-                      color: '#334155',
+                      color: '#374151',
                       marginBottom: '0.4rem',
                     }}
                   >
@@ -408,11 +410,20 @@ export default function VerifyEmailPage() {
                     style={{
                       width: '100%',
                       padding: '0.7rem 0.85rem',
-                      border: '1px solid #cbd5e1',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '8px',
                       fontSize: '0.925rem',
+                      color: '#171717',
                       outline: 'none',
                       boxSizing: 'border-box',
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#c8102e';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(200, 16, 46, 0.15)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.boxShadow = 'none';
                     }}
                   />
                 </div>
@@ -425,7 +436,7 @@ export default function VerifyEmailPage() {
                     display: 'block',
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#334155',
+                    color: '#374151',
                     marginBottom: '0.4rem',
                   }}
                 >
@@ -446,24 +457,24 @@ export default function VerifyEmailPage() {
                     style={{
                       width: '100%',
                       padding: '0.85rem 1rem',
-                      border: '2px solid #cbd5e1',
+                      border: '2px solid #e5e7eb',
                       borderRadius: '10px',
                       fontSize: '1.6rem',
                       fontWeight: 700,
                       letterSpacing: '10px',
                       textAlign: 'center',
-                      color: '#1e1b4b',
-                      background: '#f8fafc',
+                      color: '#171717',
+                      background: '#ffffff',
                       outline: 'none',
                       transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                       boxSizing: 'border-box',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#4f46e5';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.15)';
+                      e.target.style.borderColor = '#c8102e';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(200, 16, 46, 0.15)';
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#cbd5e1';
+                      e.target.style.borderColor = '#e5e7eb';
                       e.target.style.boxShadow = 'none';
                     }}
                   />
@@ -471,7 +482,7 @@ export default function VerifyEmailPage() {
                 <div
                   style={{
                     fontSize: '0.78rem',
-                    color: '#64748b',
+                    color: '#6b7280',
                     marginTop: '0.4rem',
                     textAlign: 'center',
                   }}
@@ -491,7 +502,7 @@ export default function VerifyEmailPage() {
                   justifyContent: 'center',
                   gap: '0.5rem',
                   padding: '0.8rem 1rem',
-                  background: otp.length === 6 ? '#4f46e5' : '#94a3b8',
+                  background: otp.length === 6 ? '#c8102e' : '#9ca3af',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
@@ -499,7 +510,17 @@ export default function VerifyEmailPage() {
                   fontWeight: 600,
                   cursor: loading || otp.length !== 6 ? 'not-allowed' : 'pointer',
                   transition: 'background-color 0.15s ease',
-                  boxShadow: otp.length === 6 ? '0 1px 3px rgba(79, 70, 229, 0.3)' : 'none',
+                  boxShadow: otp.length === 6 ? '0 1px 3px rgba(200, 16, 46, 0.3)' : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading && otp.length === 6) {
+                    e.currentTarget.style.backgroundColor = '#a50d25';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading && otp.length === 6) {
+                    e.currentTarget.style.backgroundColor = '#c8102e';
+                  }
                 }}
               >
                 <span>{loading ? 'Verifying Code...' : 'Verify Email & Continue'}</span>
@@ -512,7 +533,7 @@ export default function VerifyEmailPage() {
               style={{
                 marginTop: '1.5rem',
                 paddingTop: '1.25rem',
-                borderTop: '1px solid #f1f5f9',
+                borderTop: '1px solid #e5e7eb',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -520,7 +541,7 @@ export default function VerifyEmailPage() {
                 gap: '0.75rem',
               }}
             >
-              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+              <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
                 Didn't receive the email?
               </div>
 
@@ -534,7 +555,7 @@ export default function VerifyEmailPage() {
                   gap: '0.35rem',
                   background: 'none',
                   border: 'none',
-                  color: cooldown > 0 ? '#94a3b8' : '#4f46e5',
+                  color: cooldown > 0 ? '#9ca3af' : '#c8102e',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   cursor: cooldown > 0 || resendLoading ? 'not-allowed' : 'pointer',
@@ -575,7 +596,7 @@ export default function VerifyEmailPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                color: '#64748b',
+                color: '#6b7280',
                 textDecoration: 'none',
                 fontWeight: 500,
               }}
@@ -584,12 +605,12 @@ export default function VerifyEmailPage() {
               <span>Change email / Return to sign up</span>
             </Link>
 
-            <span style={{ color: '#cbd5e1' }}>&bull;</span>
+            <span style={{ color: '#e5e7eb' }}>&bull;</span>
 
             <Link
               to="/login"
               style={{
-                color: '#4f46e5',
+                color: '#c8102e',
                 textDecoration: 'none',
                 fontWeight: 600,
               }}

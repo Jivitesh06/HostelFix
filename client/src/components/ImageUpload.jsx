@@ -234,12 +234,12 @@ export default function ImageUpload({
           onDragLeave={onDragLeave}
           onClick={() => !loading && fileInputRef.current?.click()}
           style={{
-            border: dragOver ? '2px dashed #4f46e5' : '2px dashed #cbd5e1',
+            border: dragOver ? '2px dashed #c8102e' : '2px dashed #e5e7eb',
             borderRadius: '10px',
             padding: '1.75rem 1rem',
             textAlign: 'center',
             cursor: loading ? 'wait' : 'pointer',
-            background: dragOver ? '#eef2ff' : '#f8fafc',
+            background: dragOver ? '#fdecef' : '#f8f8f8',
             transition: 'all 0.15s ease',
           }}
         >
@@ -249,13 +249,13 @@ export default function ImageUpload({
                 style={{
                   width: '28px',
                   height: '28px',
-                  border: '3px solid #cbd5e1',
-                  borderTopColor: '#4f46e5',
+                  border: '3px solid #e5e7eb',
+                  borderTopColor: '#c8102e',
                   borderRadius: '50%',
                   animation: 'spin 0.8s linear infinite',
                 }}
               />
-              <span style={{ fontSize: '0.85rem', color: '#4f46e5', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.85rem', color: '#c8102e', fontWeight: 600 }}>
                 Uploading to Cloudinary...
               </span>
             </div>
@@ -266,8 +266,8 @@ export default function ImageUpload({
                   width: '42px',
                   height: '42px',
                   borderRadius: '50%',
-                  background: '#e0e7ff',
-                  color: '#4f46e5',
+                  background: '#fdecef',
+                  color: '#c8102e',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -281,12 +281,12 @@ export default function ImageUpload({
                   margin: '0 0 0.25rem',
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  color: '#1e293b',
+                  color: '#171717',
                 }}
               >
                 Click to browse or drag & drop photo
               </p>
-              <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
+              <p style={{ margin: 0, fontSize: '0.78rem', color: '#6b7280' }}>
                 {helpText}
               </p>
             </div>

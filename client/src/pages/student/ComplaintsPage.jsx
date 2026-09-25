@@ -67,17 +67,17 @@ export default function StudentComplaints() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            backgroundColor: '#4f46e5',
+            backgroundColor: '#c8102e',
             color: '#ffffff',
             padding: '0.6rem 1.15rem',
             borderRadius: '8px',
             fontSize: '0.875rem',
             fontWeight: 600,
-            boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+            boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
             transition: 'background-color 0.15s ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#4338ca')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4f46e5')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a50d25')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c8102e')}
         >
           <PlusCircle size={16} />
           <span>Raise Complaint</span>
@@ -127,7 +127,7 @@ export default function StudentComplaints() {
           style={{
             fontSize: '0.75rem',
             fontWeight: 700,
-            color: '#64748b',
+            color: '#6b7280',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
             marginRight: '0.25rem',
@@ -150,10 +150,10 @@ export default function StudentComplaints() {
                 borderRadius: '9999px',
                 fontSize: '0.8rem',
                 fontWeight: isActive ? 600 : 500,
-                backgroundColor: isActive ? '#4f46e5' : '#ffffff',
-                color: isActive ? '#ffffff' : '#475569',
-                border: `1px solid ${isActive ? '#4f46e5' : '#e2e8f0'}`,
-                boxShadow: isActive ? '0 1px 2px rgba(79, 70, 229, 0.2)' : 'none',
+                backgroundColor: isActive ? '#c8102e' : '#ffffff',
+                color: isActive ? '#ffffff' : '#374151',
+                border: `1px solid ${isActive ? '#c8102e' : '#e5e7eb'}`,
+                boxShadow: isActive ? '0 1px 2px rgba(200, 16, 46, 0.2)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -185,7 +185,7 @@ export default function StudentComplaints() {
 
       {/* Main Content List */}
       {loading ? (
-        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e5e7eb', textAlign: 'center', color: '#6b7280' }}>
           Loading your complaints catalog...
         </div>
       ) : complaints.length === 0 ? (
@@ -214,7 +214,7 @@ export default function StudentComplaints() {
                 style={{
                   background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   padding: '1.5rem',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                   transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
@@ -236,7 +236,7 @@ export default function StudentComplaints() {
                     <StatusBadge status={c.status} />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#6b7280' }}>
                     <Clock size={13} />
                     <span>Submitted on {dateStr}</span>
                   </div>
@@ -244,13 +244,13 @@ export default function StudentComplaints() {
 
                 {/* Complaint ID & Description */}
                 <div style={{ marginBottom: '1rem' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, marginBottom: '0.3rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, marginBottom: '0.3rem' }}>
                     TICKET #{c.id.slice(-6).toUpperCase()}
                   </div>
                   <p
                     style={{
                       fontSize: '0.95rem',
-                      color: '#0f172a',
+                      color: '#171717',
                       lineHeight: 1.55,
                       margin: 0,
                     }}
@@ -285,17 +285,17 @@ export default function StudentComplaints() {
                     flexWrap: 'wrap',
                     gap: '0.75rem',
                     paddingTop: '0.85rem',
-                    borderTop: '1px solid #f1f5f9',
+                    borderTop: '1px solid #e5e7eb',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>
-                    <User size={15} color="#94a3b8" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
+                    <User size={15} color="#9ca3af" />
                     {c.assignedStaff ? (
                       <span>
-                        Assigned to: <strong style={{ color: '#0f172a' }}>{c.assignedStaff.name}</strong> ({c.assignedStaff.staffCategory || 'Maintenance'})
+                        Assigned to: <strong style={{ color: '#171717' }}>{c.assignedStaff.name}</strong> ({c.assignedStaff.staffCategory || 'Maintenance'})
                       </span>
                     ) : (
-                      <span style={{ fontStyle: 'italic', color: '#94a3b8' }}>Staff: Pending assignment</span>
+                      <span style={{ fontStyle: 'italic', color: '#6b7280' }}>Staff: Pending assignment</span>
                     )}
                   </div>
 
@@ -305,11 +305,14 @@ export default function StudentComplaints() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.35rem',
-                      color: '#4f46e5',
+                      color: '#c8102e',
                       fontSize: '0.875rem',
                       fontWeight: 600,
+                      textDecoration: 'none',
                       transition: 'color 0.15s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#a50d25')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#c8102e')}
                   >
                     <span>View Status Timeline</span>
                     <ArrowRight size={15} />

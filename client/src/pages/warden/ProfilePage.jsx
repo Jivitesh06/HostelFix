@@ -204,16 +204,17 @@ export default function WardenProfilePage() {
             {/* Header Hero Banner */}
             <div
               style={{
-                background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-                borderRadius: '14px',
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderTop: '3px solid #c8102e',
+                borderRadius: '12px',
                 padding: '1.75rem 2rem',
-                color: '#ffffff',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: '1.25rem',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
@@ -222,14 +223,14 @@ export default function WardenProfilePage() {
                     width: '64px',
                     height: '64px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+                    background: '#fdecef',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '1.5rem',
                     fontWeight: 700,
-                    color: '#ffffff',
-                    border: '3px solid rgba(255, 255, 255, 0.15)',
+                    color: '#c8102e',
+                    border: '2px solid #fecdd3',
                     textTransform: 'uppercase',
                   }}
                 >
@@ -237,7 +238,7 @@ export default function WardenProfilePage() {
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0, color: '#171717' }}>
                       {profile.name}
                     </h2>
                     <span
@@ -246,12 +247,12 @@ export default function WardenProfilePage() {
                         alignItems: 'center',
                         gap: '0.35rem',
                         fontSize: '0.75rem',
-                        background: 'rgba(99, 102, 241, 0.25)',
-                        color: '#a5b4fc',
+                        background: '#fdecef',
+                        color: '#c8102e',
                         padding: '0.2rem 0.65rem',
                         borderRadius: '9999px',
                         fontWeight: 600,
-                        border: '1px solid rgba(165, 180, 252, 0.3)',
+                        border: '1px solid #fecdd3',
                       }}
                     >
                       <Shield size={13} />
@@ -263,20 +264,20 @@ export default function WardenProfilePage() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '1rem',
-                      color: '#cbd5e1',
+                      color: '#6b7280',
                       fontSize: '0.875rem',
                       marginTop: '0.4rem',
                       flexWrap: 'wrap',
                     }}
                   >
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <Mail size={15} color="#94a3b8" />
+                      <Mail size={15} color="#9ca3af" />
                       {profile.email}
                     </span>
                     <span>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <Building2 size={15} color="#94a3b8" />
-                      Assigned to: <strong style={{ color: '#ffffff' }}>{profile.hostelName || 'Unassigned'}</strong>
+                      <Building2 size={15} color="#9ca3af" />
+                      Assigned to: <strong style={{ color: '#171717' }}>{profile.hostelName || 'Unassigned'}</strong>
                     </span>
                   </div>
                 </div>
@@ -289,15 +290,15 @@ export default function WardenProfilePage() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.45rem',
-                    background: '#ffffff',
+                    background: '#c8102e',
                     border: 'none',
-                    color: '#0f172a',
+                    color: '#ffffff',
                     padding: '0.6rem 1.15rem',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: 600,
                     cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
                   }}
                 >
                   <Edit3 size={15} />
@@ -319,7 +320,7 @@ export default function WardenProfilePage() {
                 style={{
                   background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   padding: '1.5rem',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
@@ -331,7 +332,7 @@ export default function WardenProfilePage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.6rem',
-                    borderBottom: '1px solid #f1f5f9',
+                    borderBottom: '1px solid #f3f4f6',
                     paddingBottom: '0.85rem',
                     marginBottom: '1.25rem',
                   }}
@@ -341,8 +342,8 @@ export default function WardenProfilePage() {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      background: '#eff6ff',
-                      color: '#2563eb',
+                      background: '#fdecef',
+                      color: '#c8102e',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -355,7 +356,7 @@ export default function WardenProfilePage() {
                       style={{
                         fontSize: '0.95rem',
                         fontWeight: 700,
-                        color: '#0f172a',
+                        color: '#171717',
                         margin: 0,
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
@@ -363,7 +364,7 @@ export default function WardenProfilePage() {
                     >
                       Personal Details
                     </h3>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                       Official warden profile & contact
                     </span>
                   </div>
@@ -456,7 +457,7 @@ export default function WardenProfilePage() {
                 style={{
                   background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   padding: '1.5rem',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
@@ -468,7 +469,7 @@ export default function WardenProfilePage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.6rem',
-                    borderBottom: '1px solid #f1f5f9',
+                    borderBottom: '1px solid #f3f4f6',
                     paddingBottom: '0.85rem',
                     marginBottom: '1.25rem',
                   }}
@@ -478,8 +479,8 @@ export default function WardenProfilePage() {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      background: '#f0fdf4',
-                      color: '#16a34a',
+                      background: '#fdecef',
+                      color: '#c8102e',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -492,7 +493,7 @@ export default function WardenProfilePage() {
                       style={{
                         fontSize: '0.95rem',
                         fontWeight: 700,
-                        color: '#0f172a',
+                        color: '#171717',
                         margin: 0,
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
@@ -500,7 +501,7 @@ export default function WardenProfilePage() {
                     >
                       Hostel Jurisdiction
                     </h3>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                       Assigned hostel and complaint scope
                     </span>
                   </div>
@@ -514,17 +515,17 @@ export default function WardenProfilePage() {
                         <span
                           style={{
                             fontWeight: 700,
-                            color: '#0f172a',
-                            background: '#eff6ff',
+                            color: '#171717',
+                            background: '#f8f8f8',
                             padding: '0.35rem 0.75rem',
                             borderRadius: '8px',
-                            border: '1px solid #bfdbfe',
+                            border: '1px solid #e5e7eb',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '0.45rem',
                           }}
                         >
-                          <Building2 size={16} color="#2563eb" />
+                          <Building2 size={16} color="#c8102e" />
                           {profile.hostelName}
                         </span>
                       ) : (
@@ -537,7 +538,7 @@ export default function WardenProfilePage() {
 
                   <div>
                     <span style={labelStyle}>Scope of Authority</span>
-                    <div style={{ ...valueStyle, fontSize: '0.85rem', color: '#475569', lineHeight: 1.5 }}>
+                    <div style={{ ...valueStyle, fontSize: '0.85rem', color: '#374151', lineHeight: 1.5 }}>
                       You receive, review, approve, and resolve complaints submitted by students living in{' '}
                       <strong>{profile.hostelName || 'your assigned hostel'}</strong>. Complaints from other hostels are isolated.
                     </div>
@@ -680,9 +681,9 @@ export default function WardenProfilePage() {
                 style={{
                   padding: '0.625rem 1.15rem',
                   borderRadius: '8px',
-                  border: '1px solid #cbd5e1',
+                  border: '1px solid #e5e7eb',
                   background: '#ffffff',
-                  color: '#475569',
+                  color: '#374151',
                   fontSize: '0.875rem',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -700,7 +701,7 @@ export default function WardenProfilePage() {
                   padding: '0.625rem 1.35rem',
                   borderRadius: '8px',
                   border: 'none',
-                  background: '#2563eb',
+                  background: '#c8102e',
                   color: '#ffffff',
                   fontSize: '0.875rem',
                   fontWeight: 600,
@@ -722,7 +723,7 @@ const labelStyle = {
   display: 'block',
   fontSize: '0.75rem',
   fontWeight: 600,
-  color: '#64748b',
+  color: '#6b7280',
   textTransform: 'uppercase',
   letterSpacing: '0.04em',
   marginBottom: '0.25rem',
@@ -731,25 +732,25 @@ const labelStyle = {
 const valueStyle = {
   fontSize: '0.95rem',
   fontWeight: 600,
-  color: '#0f172a',
+  color: '#171717',
 };
 
 const modalLabelStyle = {
   display: 'block',
   fontSize: '0.8rem',
   fontWeight: 600,
-  color: '#334155',
+  color: '#171717',
   marginBottom: '0.35rem',
 };
 
 const modalInputStyle = {
   width: '100%',
   padding: '0.6rem 0.8rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
-  color: '#0f172a',
-  background: '#f8fafc',
+  color: '#171717',
+  background: '#ffffff',
   boxSizing: 'border-box',
   outline: 'none',
   fontFamily: 'inherit',

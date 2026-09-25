@@ -63,13 +63,14 @@ export default function StudentComplaintDetail() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.4rem',
-            color: '#64748b',
+            color: '#374151',
             fontSize: '0.875rem',
             fontWeight: 600,
             padding: '0.5rem 0.85rem',
             borderRadius: '6px',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e5e7eb',
             background: '#ffffff',
+            textDecoration: 'none',
           }}
         >
           <ArrowLeft size={16} />
@@ -102,11 +103,11 @@ export default function StudentComplaintDetail() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '3rem',
               textAlign: 'center',
-              color: '#64748b',
+              color: '#6b7280',
             }}
           >
             Loading complaint details...
@@ -115,11 +116,11 @@ export default function StudentComplaintDetail() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '3rem',
               textAlign: 'center',
-              color: '#64748b',
+              color: '#6b7280',
             }}
           >
             Complaint record not found.
@@ -131,7 +132,7 @@ export default function StudentComplaintDetail() {
               style={{
                 background: '#ffffff',
                 borderRadius: '12px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 padding: '1.75rem',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 marginBottom: '1.5rem',
@@ -146,7 +147,7 @@ export default function StudentComplaintDetail() {
                   flexWrap: 'wrap',
                   gap: '0.75rem',
                   paddingBottom: '1.25rem',
-                  borderBottom: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #e5e7eb',
                   marginBottom: '1.25rem',
                 }}
               >
@@ -155,7 +156,7 @@ export default function StudentComplaintDetail() {
                   <StatusBadge status={complaint.status} />
                 </div>
 
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                   ID: #{complaint.id.toUpperCase()}
                 </div>
               </div>
@@ -189,7 +190,7 @@ export default function StudentComplaintDetail() {
                     fontWeight: 700,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: '#64748b',
+                    color: '#6b7280',
                     marginBottom: '0.5rem',
                   }}
                 >
@@ -197,11 +198,11 @@ export default function StudentComplaintDetail() {
                 </h4>
                 <div
                   style={{
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
+                    background: '#f8f8f8',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '8px',
                     padding: '1rem 1.25rem',
-                    color: '#0f172a',
+                    color: '#171717',
                     fontSize: '0.95rem',
                     lineHeight: 1.6,
                   }}
@@ -219,7 +220,7 @@ export default function StudentComplaintDetail() {
                       fontWeight: 700,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#64748b',
+                      color: '#6b7280',
                       marginBottom: '0.5rem',
                     }}
                   >
@@ -238,8 +239,8 @@ export default function StudentComplaintDetail() {
                       alignItems: 'center',
                       gap: '0.85rem',
                       padding: '0.65rem 1rem',
-                      background: '#f8fafc',
-                      border: '1px solid #cbd5e1',
+                      background: '#f8f8f8',
+                      border: '1px solid #e5e7eb',
                       borderRadius: '8px',
                       cursor: 'pointer',
                     }}
@@ -252,15 +253,15 @@ export default function StudentComplaintDetail() {
                         height: '48px',
                         objectFit: 'cover',
                         borderRadius: '6px',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid #e5e7eb',
                       }}
                     />
                     <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#171717', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <span>Inspect Issue Photo</span>
-                        <ZoomIn size={14} color="#64748b" />
+                        <ZoomIn size={14} color="#6b7280" />
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Click to view full size</span>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Click to view full size</span>
                     </div>
                   </div>
                 </div>
@@ -355,46 +356,46 @@ export default function StudentComplaintDetail() {
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                   gap: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
+                  background: '#f8f8f8',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '10px',
                   padding: '1rem 1.25rem',
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Location
                   </span>
-                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#171717', marginTop: '0.15rem' }}>
                     Room {complaint.student?.roomNumber}
                   </div>
                   {complaint.student?.hostelName && (
-                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                       {complaint.student.hostelName}
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Assigned Maintenance Staff
                   </span>
-                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#171717', marginTop: '0.15rem' }}>
                     {complaint.assignedStaff ? complaint.assignedStaff.name : 'Pending assignment'}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     {complaint.assignedStaff ? complaint.assignedStaff.staffCategory || 'Maintenance' : 'Warden review required'}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>
                     Submitted By
                   </span>
-                  <div style={{ fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#171717', marginTop: '0.15rem' }}>
                     {complaint.student?.name}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     {complaint.student?.email}
                   </div>
                 </div>

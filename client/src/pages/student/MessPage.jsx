@@ -193,10 +193,10 @@ export default function StudentMessPage() {
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 fontWeight: isActive ? 700 : 500,
-                backgroundColor: isActive ? '#4f46e5' : '#ffffff',
-                color: isActive ? '#ffffff' : '#475569',
-                border: `1px solid ${isActive ? '#4f46e5' : '#e2e8f0'}`,
-                boxShadow: isActive ? '0 2px 4px rgba(79, 70, 229, 0.2)' : '0 1px 2px rgba(0,0,0,0.03)',
+                backgroundColor: isActive ? '#c8102e' : '#ffffff',
+                color: isActive ? '#ffffff' : '#374151',
+                border: `1px solid ${isActive ? '#c8102e' : '#e5e7eb'}`,
+                boxShadow: isActive ? '0 1px 2px rgba(200, 16, 46, 0.2)' : '0 1px 2px rgba(0,0,0,0.03)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
@@ -210,7 +210,7 @@ export default function StudentMessPage() {
 
       {/* ── Meals Grid ───────────────────────────────────────────────── */}
       {loading ? (
-        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b' }}>
+        <div style={{ background: '#ffffff', padding: '3.5rem', borderRadius: '12px', border: '1px solid #e5e7eb', textAlign: 'center', color: '#6b7280' }}>
           Loading dining menu for {selectedDay}...
         </div>
       ) : dayMeals.length === 0 ? (
@@ -232,9 +232,9 @@ export default function StudentMessPage() {
               label: meal.mealType,
               time: 'Meal Slot',
               Icon: Utensils,
-              color: '#4f46e5',
-              bg: '#eef2ff',
-              border: '#c7d2fe',
+              color: '#c8102e',
+              bg: '#fdecef',
+              border: '#fecdd3',
             };
             const { Icon } = config;
 
@@ -244,7 +244,7 @@ export default function StudentMessPage() {
                 style={{
                   background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
                   flexDirection: 'column',
@@ -256,7 +256,7 @@ export default function StudentMessPage() {
                 <div
                   style={{
                     padding: '1.25rem 1.5rem',
-                    borderBottom: '1px solid #f1f5f9',
+                    borderBottom: '1px solid #e5e7eb',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -285,14 +285,14 @@ export default function StudentMessPage() {
                         style={{
                           fontSize: '1.05rem',
                           fontWeight: 700,
-                          color: '#0f172a',
+                          color: '#171717',
                           margin: 0,
                           lineHeight: 1.2,
                         }}
                       >
                         {config.label}
                       </h3>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                         {config.time}
                       </span>
                     </div>
@@ -321,7 +321,7 @@ export default function StudentMessPage() {
                       </span>
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                       No reviews
                     </span>
                   )}
@@ -333,7 +333,7 @@ export default function StudentMessPage() {
                     style={{
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: '#64748b',
+                      color: '#6b7280',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       marginBottom: '0.5rem',
@@ -344,13 +344,13 @@ export default function StudentMessPage() {
                   <p
                     style={{
                       margin: 0,
-                      color: '#1e293b',
+                      color: '#171717',
                       fontSize: '0.95rem',
                       lineHeight: 1.6,
-                      background: '#f8fafc',
+                      background: '#f8f8f8',
                       padding: '1rem',
                       borderRadius: '8px',
-                      border: '1px solid #f1f5f9',
+                      border: '1px solid #e5e7eb',
                     }}
                   >
                     {meal.items}
@@ -361,13 +361,13 @@ export default function StudentMessPage() {
                 <div
                   style={{
                     padding: '1rem 1.5rem',
-                    borderTop: '1px solid #f1f5f9',
+                    borderTop: '1px solid #e5e7eb',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
                 >
-                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                     {meal.feedbacks?.length || 0} resident review{meal.feedbacks?.length === 1 ? '' : 's'}
                   </span>
 
@@ -377,9 +377,9 @@ export default function StudentMessPage() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.4rem',
-                      background: '#eef2ff',
-                      color: '#4f46e5',
-                      border: '1px solid #c7d2fe',
+                      background: '#fdecef',
+                      color: '#c8102e',
+                      border: '1px solid #fecdd3',
                       padding: '0.45rem 0.85rem',
                       borderRadius: '6px',
                       fontSize: '0.8rem',
@@ -388,12 +388,12 @@ export default function StudentMessPage() {
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#4f46e5';
+                      e.currentTarget.style.backgroundColor = '#c8102e';
                       e.currentTarget.style.color = '#ffffff';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#eef2ff';
-                      e.currentTarget.style.color = '#4f46e5';
+                      e.currentTarget.style.backgroundColor = '#fdecef';
+                      e.currentTarget.style.color = '#c8102e';
                     }}
                   >
                     <Star size={14} />
@@ -406,15 +406,15 @@ export default function StudentMessPage() {
                   <div
                     style={{
                       padding: '0.85rem 1.5rem 1.25rem',
-                      background: '#f8fafc',
-                      borderTop: '1px solid #f1f5f9',
+                      background: '#f8f8f8',
+                      borderTop: '1px solid #e5e7eb',
                     }}
                   >
                     <span
                       style={{
                         fontSize: '0.7rem',
                         fontWeight: 700,
-                        color: '#94a3b8',
+                        color: '#6b7280',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
                         display: 'block',
@@ -432,7 +432,7 @@ export default function StudentMessPage() {
                             background: '#ffffff',
                             padding: '0.6rem 0.85rem',
                             borderRadius: '6px',
-                            border: '1px solid #e2e8f0',
+                            border: '1px solid #e5e7eb',
                             fontSize: '0.8rem',
                           }}
                         >
@@ -444,7 +444,7 @@ export default function StudentMessPage() {
                               marginBottom: '0.2rem',
                             }}
                           >
-                            <strong style={{ color: '#0f172a' }}>{fb.student?.name || 'Resident'}</strong>
+                            <strong style={{ color: '#171717' }}>{fb.student?.name || 'Resident'}</strong>
                             <div style={{ display: 'flex', gap: '2px' }}>
                               {[1, 2, 3, 4, 5].map((s) => (
                                 <Star
@@ -549,12 +549,20 @@ export default function StudentMessPage() {
               style={{
                 width: '100%',
                 padding: '0.75rem',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '8px',
                 fontSize: '0.9rem',
                 fontFamily: 'inherit',
                 outline: 'none',
                 resize: 'none',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#c8102e';
+                e.target.style.boxShadow = '0 0 0 3px rgba(200, 16, 46, 0.12)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#e5e7eb';
+                e.target.style.boxShadow = 'none';
               }}
             />
           </div>
@@ -566,11 +574,12 @@ export default function StudentMessPage() {
               style={{
                 padding: '0.65rem 1.15rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
+                cursor: 'pointer',
               }}
             >
               Cancel
@@ -582,12 +591,17 @@ export default function StudentMessPage() {
               style={{
                 padding: '0.65rem 1.4rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
+                border: 'none',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: submittingFeedback ? 'not-allowed' : 'pointer',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+                transition: 'background-color 0.15s ease',
               }}
+              onMouseEnter={(e) => !submittingFeedback && (e.currentTarget.style.backgroundColor = '#a50d25')}
+              onMouseLeave={(e) => !submittingFeedback && (e.currentTarget.style.backgroundColor = '#c8102e')}
             >
               {submittingFeedback ? 'Submitting...' : 'Submit Review'}
             </button>

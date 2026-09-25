@@ -7,7 +7,7 @@
 [![React](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Prisma%20ORM-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.prisma.io/)
-[![Tests](https://img.shields.io/badge/Tests-215%2F215%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
+[![Tests](https://img.shields.io/badge/Tests-274%2F274%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
 A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle, photo verification, weekly dining management, and resident & staff directory for college residences.
@@ -37,7 +37,7 @@ A high-accountability digital platform replacing informal communication channels
 - 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Hostel, Room Number) with warden inspection modals. Hostel block has been completely removed in favor of clean hostel hall and room numbers.
 - 🍽️ **Weekly Mess Management** — Day-by-day breakfast, lunch, snacks, and dinner schedules with verified 1–5 star student dining reviews.
 - 🛡️ **Secure Administrative Onboarding** — Dedicated `/admin/staff-register` portal protected by an administrative passkey (`HostelFix@Admin2026`) and hard 403 blocks against students.
-- 🎨 **Modern SaaS UI/UX** — Responsive, clean design built with modern CSS styling, Lucide icons, status badges, and zero icon overlaps.
+- 🎨 **Minimal Red + White UI/UX** — Clean, modern university administration aesthetic following a balanced 85–90% light neutral / 10–15% red accent palette with crisp white cards, `#C8102E` brand accents, and responsive layout across all viewports.
 - 🧪 **100% Test Coverage** — 274 automated backend unit and integration test assertions verifying security, workflows, photo validation, user management, OTP email verification, and database integrity.
 
 ---
@@ -155,8 +155,8 @@ The Warden portal includes a dedicated User Management hub at `/warden/users`:
 | **Backend** | Node.js, Express.js REST API, JSON Web Tokens (JWT), Bcrypt.js |
 | **Cloud Storage** | Cloudinary v2 SDK, Multer Memory Storage (5MB limit) |
 | **Database & ORM** | PostgreSQL (Supabase / Neon compatible), Prisma ORM 5.x |
-| **Testing** | Native Node.js Automated Test Suites (215 Assertions) |
-| **Styling** | Custom SaaS CSS Design System, Responsive Flex/Grid |
+| **Testing** | Native Node.js Automated Test Suites (274 Assertions) |
+| **Styling** | Minimal Red + White Design System, Responsive Flex/Grid |
 | **Deployment** | Vercel (Client SPA), Render / Railway (API Server), Supabase (DB) |
 
 ---
@@ -171,7 +171,7 @@ HostelFix/
 │   │   ├── constants/               # Hostel & gender configuration
 │   │   ├── context/                 # AuthContext (JWT session management)
 │   │   ├── pages/
-│   │   │   ├── auth/                # Login, Register, StaffRegisterPage
+│   │   │   ├── auth/                # Login, Register, VerifyEmailPage, StaffRegisterPage
 │   │   │   ├── student/             # Dashboard, Complaints, NewComplaint, Profile, Mess
 │   │   │   ├── warden/              # Dashboard, Complaints, Detail, Profile, Mess, UserManagement
 │   │   │   └── staff/               # Dashboard, Work Orders, Detail
@@ -194,11 +194,12 @@ HostelFix/
 │   │   ├── routes/                  # API endpoints (/auth, /complaints, /mess, /users, /upload)
 │   │   ├── utils/                   # Response helpers & hostel rules
 │   │   └── server.js                # Express app entry point
-│   ├── test-auth.js                 # 42 Auth & onboarding tests
+│   ├── test-auth.js                 # 43 Auth & onboarding tests
 │   ├── test-profile.js              # 57 Profile, gender & scoping tests
 │   ├── test-complaints.js           # 41 Complaint workflow & photo proof tests
 │   ├── test-mess.js                 # 26 Mess menu & review tests
 │   ├── test-user-management.js      # 49 User management & staff provisioning tests
+│   ├── test-email-verification.js   # 58 Student email verification & OTP tests
 │   ├── package.json
 │   └── .env.example
 │
@@ -281,13 +282,13 @@ npm run dev
 
 ## 🧪 Automated Test Verification
 
-HostelFix includes 5 comprehensive automated test suites covering all business logic, security constraints, and state transitions.
+HostelFix includes 6 comprehensive automated test suites covering all business logic, security constraints, and state transitions.
 
 Run with backend running on port 5001:
 ```bash
 cd server
 
-# 1. Authentication, Protected Routes & Staff Onboarding (42 tests)
+# 1. Authentication, Protected Routes & Staff Onboarding (43 tests)
 node test-auth.js
 
 # 2. Student Profile, Gender Validation & Warden Scoping (57 tests)

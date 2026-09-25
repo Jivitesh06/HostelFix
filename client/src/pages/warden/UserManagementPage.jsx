@@ -276,8 +276,8 @@ export default function UserManagementPage() {
         {user?.hostelName && (
           <div
             style={{
-              background: '#eef2ff',
-              border: '1px solid #c7d2fe',
+              background: '#f8f8f8',
+              border: '1px solid #e5e7eb',
               padding: '0.85rem 1.25rem',
               borderRadius: '10px',
               display: 'flex',
@@ -285,12 +285,12 @@ export default function UserManagementPage() {
               gap: '0.75rem',
               marginBottom: '1.5rem',
               fontSize: '0.875rem',
-              color: '#312e81',
+              color: '#374151',
             }}
           >
-            <Building2 size={18} color="#4f46e5" />
+            <Building2 size={18} color="#c8102e" />
             <div>
-              <strong>Active Hostel Scope: {user.hostelName}.</strong> You are viewing resident students
+              <strong style={{ color: '#171717' }}>Active Hostel Scope: {user.hostelName}.</strong> You are viewing resident students
               assigned to your hall. Maintenance staff are shared campus-wide across residence facilities.
             </div>
           </div>
@@ -371,7 +371,7 @@ export default function UserManagementPage() {
               background: '#ffffff',
               padding: '0.35rem',
               borderRadius: '10px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
             }}
           >
@@ -384,8 +384,8 @@ export default function UserManagementPage() {
                 padding: '0.55rem 1.15rem',
                 borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'STUDENTS' ? '#4f46e5' : 'transparent',
-                color: activeTab === 'STUDENTS' ? '#ffffff' : '#64748b',
+                background: activeTab === 'STUDENTS' ? '#c8102e' : 'transparent',
+                color: activeTab === 'STUDENTS' ? '#ffffff' : '#6b7280',
                 fontWeight: activeTab === 'STUDENTS' ? 700 : 500,
                 fontSize: '0.875rem',
                 cursor: 'pointer',
@@ -396,8 +396,8 @@ export default function UserManagementPage() {
               <span>Resident Students</span>
               <span
                 style={{
-                  background: activeTab === 'STUDENTS' ? 'rgba(255,255,255,0.25)' : '#f1f5f9',
-                  color: activeTab === 'STUDENTS' ? '#ffffff' : '#475569',
+                  background: activeTab === 'STUDENTS' ? 'rgba(255,255,255,0.25)' : '#f3f4f6',
+                  color: activeTab === 'STUDENTS' ? '#ffffff' : '#374151',
                   padding: '0.1rem 0.45rem',
                   borderRadius: '9999px',
                   fontSize: '0.75rem',
@@ -417,8 +417,8 @@ export default function UserManagementPage() {
                 padding: '0.55rem 1.15rem',
                 borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'STAFF' ? '#4f46e5' : 'transparent',
-                color: activeTab === 'STAFF' ? '#ffffff' : '#64748b',
+                background: activeTab === 'STAFF' ? '#c8102e' : 'transparent',
+                color: activeTab === 'STAFF' ? '#ffffff' : '#6b7280',
                 fontWeight: activeTab === 'STAFF' ? 700 : 500,
                 fontSize: '0.875rem',
                 cursor: 'pointer',
@@ -429,8 +429,8 @@ export default function UserManagementPage() {
               <span>Maintenance Staff</span>
               <span
                 style={{
-                  background: activeTab === 'STAFF' ? 'rgba(255,255,255,0.25)' : '#f1f5f9',
-                  color: activeTab === 'STAFF' ? '#ffffff' : '#475569',
+                  background: activeTab === 'STAFF' ? 'rgba(255,255,255,0.25)' : '#f3f4f6',
+                  color: activeTab === 'STAFF' ? '#ffffff' : '#374151',
                   padding: '0.1rem 0.45rem',
                   borderRadius: '9999px',
                   fontSize: '0.75rem',
@@ -454,18 +454,18 @@ export default function UserManagementPage() {
                 alignItems: 'center',
                 gap: '0.5rem',
                 padding: '0.65rem 1.25rem',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
                 transition: 'background-color 0.15s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#4338ca')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4f46e5')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a50d25')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c8102e')}
             >
               <Plus size={16} />
               <span>Add Staff Member</span>
@@ -668,9 +668,9 @@ export default function UserManagementPage() {
                                 alignItems: 'center',
                                 gap: '0.35rem',
                                 padding: '0.45rem 0.75rem',
-                                background: '#f8fafc',
-                                color: '#4f46e5',
-                                border: '1px solid #e2e8f0',
+                                background: '#f8f8f8',
+                                color: '#c8102e',
+                                border: '1px solid #e5e7eb',
                                 borderRadius: '6px',
                                 fontSize: '0.8rem',
                                 fontWeight: 600,
@@ -678,12 +678,12 @@ export default function UserManagementPage() {
                                 transition: 'all 0.15s ease',
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#eef2ff';
-                                e.currentTarget.style.borderColor = '#c7d2fe';
+                                e.currentTarget.style.backgroundColor = '#fdecef';
+                                e.currentTarget.style.borderColor = '#fecdd3';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#f8fafc';
-                                e.currentTarget.style.borderColor = '#e2e8f0';
+                                e.currentTarget.style.backgroundColor = '#f8f8f8';
+                                e.currentTarget.style.borderColor = '#e5e7eb';
                               }}
                             >
                               <Eye size={14} />
@@ -781,7 +781,7 @@ export default function UserManagementPage() {
                       onClick={() => setAddStaffModalOpen(true)}
                       style={{
                         padding: '0.5rem 1rem',
-                        background: '#4f46e5',
+                        background: '#c8102e',
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: '6px',
@@ -1007,8 +1007,9 @@ export default function UserManagementPage() {
                   width: '48px',
                   height: '48px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                  color: '#ffffff',
+                  background: '#fdecef',
+                  color: '#c8102e',
+                  border: '1px solid #fecdd3',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1025,14 +1026,14 @@ export default function UserManagementPage() {
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#171717' }}>
                     {selectedStudent.name}
                   </h3>
                   <span
                     style={{
-                      background: '#eff6ff',
-                      color: '#1d4ed8',
-                      border: '1px solid #bfdbfe',
+                      background: '#fdecef',
+                      color: '#c8102e',
+                      border: '1px solid #fecdd3',
                       padding: '0.15rem 0.5rem',
                       borderRadius: '9999px',
                       fontSize: '0.7rem',
@@ -1042,7 +1043,7 @@ export default function UserManagementPage() {
                     Resident
                   </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.2rem' }}>
                   {selectedStudent.email}
                 </div>
               </div>
@@ -1130,7 +1131,7 @@ export default function UserManagementPage() {
                 </div>
                 <div>
                   <span style={detailLabelStyle}>Room Number</span>
-                  <div style={{ ...detailValueStyle, color: '#4f46e5', fontWeight: 700 }}>
+                  <div style={{ ...detailValueStyle, color: '#c8102e', fontWeight: 700 }}>
                     {selectedStudent.roomNumber || 'Unassigned'}
                   </div>
                 </div>
@@ -1272,7 +1273,7 @@ export default function UserManagementPage() {
               disabled={addStaffLoading}
               style={{
                 padding: '0.55rem 1.25rem',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '6px',
@@ -1374,7 +1375,7 @@ export default function UserManagementPage() {
               disabled={editStaffLoading}
               style={{
                 padding: '0.55rem 1.25rem',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '6px',
@@ -1409,7 +1410,7 @@ const tableCellStyle = {
 const sectionHeadingStyle = {
   fontSize: '0.75rem',
   fontWeight: 700,
-  color: '#4f46e5',
+  color: '#c8102e',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
   marginBottom: '0.4rem',
@@ -1427,7 +1428,7 @@ const detailLabelStyle = {
 
 const detailValueStyle = {
   fontSize: '0.875rem',
-  color: '#0f172a',
+  color: '#171717',
   fontWeight: 600,
 };
 
@@ -1435,7 +1436,7 @@ const fieldLabelStyle = {
   display: 'block',
   fontSize: '0.8rem',
   fontWeight: 600,
-  color: '#334155',
+  color: '#171717',
   marginBottom: '0.35rem',
 };
 
@@ -1452,7 +1453,7 @@ const iconWrapperStyle = {
 const modalInputStyle = {
   width: '100%',
   padding: '0.6rem 0.75rem 0.6rem 2.2rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
   outline: 'none',
@@ -1462,7 +1463,7 @@ const modalInputStyle = {
 const modalSelectStyle = {
   width: '100%',
   padding: '0.6rem 0.75rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
   outline: 'none',

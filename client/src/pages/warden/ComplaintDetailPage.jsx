@@ -274,10 +274,10 @@ export default function WardenComplaintDetail() {
             <div
               style={{
                 background: '#ffffff',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 borderRadius: '12px',
                 padding: '1.25rem 1.5rem',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 marginBottom: '1.5rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -287,11 +287,11 @@ export default function WardenComplaintDetail() {
               }}
             >
               <div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.05em' }}>
                   Warden Workflow Control
                 </div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginTop: '0.15rem' }}>
-                  Current Status: <span style={{ color: '#4f46e5' }}>{complaint.status}</span>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#171717', marginTop: '0.15rem' }}>
+                  Current Status: <span style={{ color: '#c8102e' }}>{complaint.status}</span>
                 </div>
               </div>
 
@@ -308,6 +308,7 @@ export default function WardenComplaintDetail() {
                         gap: '0.45rem',
                         background: '#059669',
                         color: '#ffffff',
+                        border: 'none',
                         padding: '0.65rem 1.25rem',
                         borderRadius: '8px',
                         fontSize: '0.875rem',
@@ -351,15 +352,19 @@ export default function WardenComplaintDetail() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.45rem',
-                      background: '#4f46e5',
+                      background: '#c8102e',
                       color: '#ffffff',
+                      border: 'none',
                       padding: '0.65rem 1.35rem',
                       borderRadius: '8px',
                       fontSize: '0.875rem',
                       fontWeight: 600,
                       cursor: 'pointer',
-                      boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)',
+                      boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+                      transition: 'background-color 0.15s ease',
                     }}
+                    onMouseEnter={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+                    onMouseLeave={(e) => !actionLoading && (e.currentTarget.style.backgroundColor = '#c8102e')}
                   >
                     <UserPlus size={16} />
                     <span>Assign Maintenance Staff</span>
@@ -857,20 +862,21 @@ export default function WardenComplaintDetail() {
                       onClick={() => setSelectedStaffId(s.id)}
                       style={{
                         padding: '0.75rem 1rem',
-                        border: `1.5px solid ${isSelected ? '#4f46e5' : '#e2e8f0'}`,
-                        backgroundColor: isSelected ? '#eef2ff' : '#ffffff',
+                        border: `1.5px solid ${isSelected ? '#c8102e' : '#e5e7eb'}`,
+                        backgroundColor: isSelected ? '#fdecef' : '#ffffff',
                         borderRadius: '8px',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
+                        transition: 'all 0.15s ease',
                       }}
                     >
                       <div>
-                        <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.9rem' }}>
+                        <div style={{ fontWeight: 600, color: '#171717', fontSize: '0.9rem' }}>
                           {s.name}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                           {s.staffCategory || 'Maintenance'} &bull; {s.email}
                         </div>
                       </div>
@@ -879,6 +885,7 @@ export default function WardenComplaintDetail() {
                         name="staffRadio"
                         checked={isSelected}
                         onChange={() => setSelectedStaffId(s.id)}
+                        style={{ accentColor: '#c8102e' }}
                       />
                     </div>
                   );
@@ -894,11 +901,12 @@ export default function WardenComplaintDetail() {
               style={{
                 padding: '0.65rem 1.15rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.875rem',
                 fontWeight: 600,
+                cursor: 'pointer',
               }}
             >
               Cancel
@@ -909,11 +917,17 @@ export default function WardenComplaintDetail() {
               style={{
                 padding: '0.65rem 1.35rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
+                border: 'none',
                 fontSize: '0.875rem',
                 fontWeight: 600,
+                cursor: actionLoading || staffList.length === 0 ? 'not-allowed' : 'pointer',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+                transition: 'background-color 0.15s ease',
               }}
+              onMouseEnter={(e) => !actionLoading && staffList.length > 0 && (e.currentTarget.style.backgroundColor = '#a50d25')}
+              onMouseLeave={(e) => !actionLoading && staffList.length > 0 && (e.currentTarget.style.backgroundColor = '#c8102e')}
             >
               {actionLoading ? 'Assigning...' : 'Dispatch Staff'}
             </button>
@@ -1007,10 +1021,10 @@ export default function WardenComplaintDetail() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1rem',
-                background: '#f8fafc',
+                background: '#f8f8f8',
                 padding: '1rem',
                 borderRadius: '10px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
               }}
             >
               <div
@@ -1018,8 +1032,9 @@ export default function WardenComplaintDetail() {
                   width: '48px',
                   height: '48px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                  color: '#ffffff',
+                  background: '#fdecef',
+                  color: '#c8102e',
+                  border: '1.5px solid #fecdd3',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1036,14 +1051,14 @@ export default function WardenComplaintDetail() {
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#171717' }}>
                     {studentDetails?.name || complaint?.student?.name}
                   </h3>
                   <span
                     style={{
-                      background: '#eff6ff',
-                      color: '#1d4ed8',
-                      border: '1px solid #bfdbfe',
+                      background: '#f8f8f8',
+                      color: '#374151',
+                      border: '1px solid #e5e7eb',
                       padding: '0.15rem 0.5rem',
                       borderRadius: '9999px',
                       fontSize: '0.7rem',
@@ -1053,7 +1068,7 @@ export default function WardenComplaintDetail() {
                     Resident
                   </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.2rem' }}>
                   {studentDetails?.email || complaint?.student?.email}
                 </div>
               </div>
@@ -1065,7 +1080,7 @@ export default function WardenComplaintDetail() {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#4f46e5',
+                  color: '#c8102e',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   marginBottom: '0.5rem',
@@ -1079,7 +1094,7 @@ export default function WardenComplaintDetail() {
                   gridTemplateColumns: '1fr 1fr',
                   gap: '0.75rem',
                   background: '#ffffff',
-                  border: '1px solid #f1f5f9',
+                  border: '1px solid #e5e7eb',
                   padding: '0.75rem',
                   borderRadius: '8px',
                 }}
@@ -1108,7 +1123,7 @@ export default function WardenComplaintDetail() {
                         {(studentDetails?.gender || complaint?.student?.gender) === 'MALE' ? 'Male Resident' : (studentDetails?.gender || complaint?.student?.gender) === 'FEMALE' ? 'Female Resident' : (studentDetails?.gender || complaint?.student?.gender)}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not specified</span>
                     )}
                   </div>
                 </div>
@@ -1117,11 +1132,11 @@ export default function WardenComplaintDetail() {
                   <div style={detailValueStyle}>
                     {studentDetails?.mobileNumber || complaint?.student?.mobileNumber ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <Phone size={13} color="#64748b" />
+                        <Phone size={13} color="#6b7280" />
                         {studentDetails?.mobileNumber || complaint?.student?.mobileNumber}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not provided</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not provided</span>
                     )}
                   </div>
                 </div>
@@ -1134,7 +1149,7 @@ export default function WardenComplaintDetail() {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#4f46e5',
+                  color: '#c8102e',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   marginBottom: '0.5rem',
@@ -1148,7 +1163,7 @@ export default function WardenComplaintDetail() {
                   gridTemplateColumns: '1fr 1fr',
                   gap: '0.75rem',
                   background: '#ffffff',
-                  border: '1px solid #f1f5f9',
+                  border: '1px solid #e5e7eb',
                   padding: '0.75rem',
                   borderRadius: '8px',
                 }}
@@ -1160,17 +1175,18 @@ export default function WardenComplaintDetail() {
                       <span
                         style={{
                           fontFamily: 'monospace',
-                          background: '#f8fafc',
+                          background: '#f8f8f8',
                           padding: '0.15rem 0.4rem',
                           borderRadius: '4px',
-                          border: '1px solid #e2e8f0',
+                          border: '1px solid #e5e7eb',
                           fontWeight: 700,
+                          color: '#171717',
                         }}
                       >
                         {studentDetails?.universityRollNumber || complaint?.student?.universityRollNumber}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not provided</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not provided</span>
                     )}
                   </div>
                 </div>
@@ -1180,8 +1196,9 @@ export default function WardenComplaintDetail() {
                     {studentDetails?.year || complaint?.student?.year ? (
                       <span
                         style={{
-                          background: '#f5f3ff',
-                          color: '#6d28d9',
+                          background: '#f8f8f8',
+                          color: '#374151',
+                          border: '1px solid #e5e7eb',
                           padding: '0.15rem 0.5rem',
                           borderRadius: '6px',
                           fontSize: '0.8rem',
@@ -1191,7 +1208,7 @@ export default function WardenComplaintDetail() {
                         {studentDetails?.year || complaint?.student?.year}
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not specified</span>
                     )}
                   </div>
                 </div>
@@ -1199,7 +1216,7 @@ export default function WardenComplaintDetail() {
                   <span style={detailLabelStyle}>Branch / Specialization</span>
                   <div style={detailValueStyle}>
                     {studentDetails?.branch || complaint?.student?.branch || (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Not specified</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not specified</span>
                     )}
                   </div>
                 </div>
@@ -1212,7 +1229,7 @@ export default function WardenComplaintDetail() {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#4f46e5',
+                  color: '#c8102e',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   marginBottom: '0.5rem',
@@ -1226,7 +1243,7 @@ export default function WardenComplaintDetail() {
                   gridTemplateColumns: '1fr 1fr',
                   gap: '0.75rem',
                   background: '#ffffff',
-                  border: '1px solid #f1f5f9',
+                  border: '1px solid #e5e7eb',
                   padding: '0.75rem',
                   borderRadius: '8px',
                 }}
@@ -1253,20 +1270,21 @@ export default function WardenComplaintDetail() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  background: '#f8fafc',
+                  background: '#f8f8f8',
                   padding: '0.75rem 1rem',
                   borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #e5e7eb',
                   fontSize: '0.85rem',
                 }}
               >
-                <span style={{ color: '#64748b', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <ClipboardList size={16} color="#64748b" /> Total Maintenance Tickets Submitted
+                <span style={{ color: '#6b7280', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ClipboardList size={16} color="#6b7280" /> Total Maintenance Tickets Submitted
                 </span>
                 <span
                   style={{
-                    background: '#e0e7ff',
-                    color: '#3730a3',
+                    background: '#fdecef',
+                    color: '#c8102e',
+                    border: '1px solid #fecdd3',
                     padding: '0.2rem 0.6rem',
                     borderRadius: '9999px',
                     fontWeight: 700,
@@ -1285,13 +1303,17 @@ export default function WardenComplaintDetail() {
                 style={{
                   padding: '0.6rem 1.25rem',
                   borderRadius: '8px',
-                  background: '#4f46e5',
+                  background: '#c8102e',
                   color: '#ffffff',
                   border: 'none',
                   fontSize: '0.875rem',
                   fontWeight: 600,
                   cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+                  transition: 'background-color 0.15s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#a50d25')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#c8102e')}
               >
                 Close Profile
               </button>
@@ -1315,7 +1337,7 @@ const detailLabelStyle = {
   fontSize: '0.75rem',
   fontWeight: 600,
   textTransform: 'uppercase',
-  color: '#64748b',
+  color: '#6b7280',
   display: 'block',
   marginBottom: '0.2rem',
   letterSpacing: '0.04em',
@@ -1324,5 +1346,5 @@ const detailLabelStyle = {
 const detailValueStyle = {
   fontSize: '0.875rem',
   fontWeight: 600,
-  color: '#0f172a',
+  color: '#171717',
 };

@@ -130,7 +130,7 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                   left: '24px',
                   width: `${(currentStepIndex / (STANDARD_STEPS.length - 1)) * 100}%`,
                   height: '3px',
-                  backgroundColor: '#4f46e5',
+                  backgroundColor: '#c8102e',
                   zIndex: 2,
                   transition: 'width 0.3s ease',
                 }}
@@ -161,16 +161,16 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      backgroundColor: isCurrent ? '#4f46e5' : isPast ? '#ffffff' : '#ffffff',
+                      backgroundColor: isCurrent ? '#c8102e' : isPast ? '#ffffff' : '#ffffff',
                       border: isCurrent
-                        ? '3px solid #c7d2fe'
+                        ? '3px solid #fecdd3'
                         : isPast
-                        ? '2.5px solid #4f46e5'
-                        : '2px solid #cbd5e1',
-                      color: isCurrent ? '#ffffff' : isPast ? '#4f46e5' : '#94a3b8',
+                        ? '2.5px solid #c8102e'
+                        : '2px solid #e5e7eb',
+                      color: isCurrent ? '#ffffff' : isPast ? '#c8102e' : '#9ca3af',
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      boxShadow: isCurrent ? '0 0 0 4px rgba(79, 70, 229, 0.15)' : 'none',
+                      boxShadow: isCurrent ? '0 0 0 4px rgba(200, 16, 46, 0.15)' : 'none',
                     }}
                   >
                     {isPast ? <CheckCheck size={14} strokeWidth={2.5} /> : idx + 1}
@@ -180,7 +180,7 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                     style={{
                       fontSize: '0.75rem',
                       fontWeight: isCurrent ? 700 : isPast ? 600 : 500,
-                      color: isCurrent ? '#4f46e5' : isPast ? '#1e293b' : '#94a3b8',
+                      color: isCurrent ? '#c8102e' : isPast ? '#171717' : '#9ca3af',
                       marginTop: '0.5rem',
                       whiteSpace: 'nowrap',
                     }}
@@ -200,14 +200,14 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
           style={{
             fontSize: '1rem',
             fontWeight: 700,
-            color: '#0f172a',
+            color: '#171717',
             marginBottom: '1.25rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <FileText size={18} color="#4f46e5" />
+          <FileText size={18} color="#c8102e" />
           Audit Trail & Status History
         </h3>
 
@@ -220,7 +220,7 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
               bottom: '12px',
               left: '11px',
               width: '2px',
-              backgroundColor: '#e2e8f0',
+              backgroundColor: '#e5e7eb',
             }}
           />
 
@@ -249,13 +249,13 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                     width: '24px',
                     height: '24px',
                     borderRadius: '50%',
-                    backgroundColor: isLatest ? '#4f46e5' : '#ffffff',
-                    border: isLatest ? '2px solid #ffffff' : '2px solid #cbd5e1',
-                    color: isLatest ? '#ffffff' : '#64748b',
+                    backgroundColor: isLatest ? '#c8102e' : '#ffffff',
+                    border: isLatest ? '2px solid #ffffff' : '2px solid #e5e7eb',
+                    color: isLatest ? '#ffffff' : '#6b7280',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: isLatest ? '0 0 0 3px rgba(79, 70, 229, 0.2)' : 'none',
+                    boxShadow: isLatest ? '0 0 0 3px rgba(200, 16, 46, 0.2)' : 'none',
                     zIndex: 2,
                   }}
                 >
@@ -266,7 +266,7 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                 <div
                   style={{
                     background: '#ffffff',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '10px',
                     padding: '1rem 1.25rem',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
@@ -285,26 +285,26 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <StatusBadge status={log.newStatus} size="sm" />
                       {log.oldStatus && (
-                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
                           transitioned from <strong>{log.oldStatus}</strong>
                         </span>
                       )}
                     </div>
 
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontVariantNumeric: 'tabular-nums' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontVariantNumeric: 'tabular-nums' }}>
                       {dateStr}
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '0.85rem', color: '#334155' }}>
-                    <span style={{ color: '#64748b' }}>Updated by: </span>
-                    <strong style={{ color: '#0f172a' }}>{log.changedBy?.name || 'System'}</strong>
+                  <div style={{ fontSize: '0.85rem', color: '#374151' }}>
+                    <span style={{ color: '#6b7280' }}>Updated by: </span>
+                    <strong style={{ color: '#171717' }}>{log.changedBy?.name || 'System'}</strong>
                     {log.changedBy?.role && (
                       <span
                         style={{
                           fontSize: '0.7rem',
-                          background: '#f1f5f9',
-                          color: '#475569',
+                          background: '#f4f4f5',
+                          color: '#374151',
                           padding: '0.1rem 0.4rem',
                           borderRadius: '4px',
                           marginLeft: '0.4rem',
@@ -321,11 +321,11 @@ export default function StatusTimeline({ logs = [], currentStatus }) {
                       style={{
                         marginTop: '0.5rem',
                         fontSize: '0.85rem',
-                        color: '#475569',
-                        background: '#f8fafc',
+                        color: '#374151',
+                        background: '#f8f8f8',
                         padding: '0.5rem 0.75rem',
                         borderRadius: '6px',
-                        border: '1px solid #f1f5f9',
+                        border: '1px solid #e5e7eb',
                         fontStyle: 'italic',
                       }}
                     >

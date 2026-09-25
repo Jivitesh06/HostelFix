@@ -53,7 +53,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
   const getRoleBadge = () => {
     if (user?.role === 'WARDEN') {
       const hostelSnippet = user?.hostelName ? ` • ${user.hostelName}` : '';
-      return { label: `Warden${hostelSnippet}`, bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' };
+      return { label: `Warden${hostelSnippet}`, bg: '#fdecef', color: '#c8102e', border: '#fecdd3' };
     }
     if (user?.role === 'STAFF') {
       return { label: `Staff • ${user?.staffCategory || 'Maintenance'}`, bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' };
@@ -61,22 +61,22 @@ export default function AppShell({ children, title, subtitle, actions }) {
     const locSnippet = user?.hostelName ? ` • ${user.hostelName}` : (user?.roomNumber ? ` • Rm ${user.roomNumber}` : '');
     return {
       label: `Resident${locSnippet}`,
-      bg: '#eff6ff',
-      color: '#1d4ed8',
-      border: '#bfdbfe',
+      bg: '#f3f4f6',
+      color: '#374151',
+      border: '#e5e7eb',
     };
   };
 
   const roleBadge = getRoleBadge();
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f8f8' }}>
       {/* ── Desktop Left Sidebar ────────────────────────────────────────── */}
       <aside
         style={{
           width: '260px',
           background: '#ffffff',
-          borderRight: '1px solid #e2e8f0',
+          borderRight: '1px solid #e5e7eb',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -91,7 +91,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #f1f5f9',
+            borderBottom: '1px solid #f3f4f6',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
@@ -102,12 +102,12 @@ export default function AppShell({ children, title, subtitle, actions }) {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+              background: '#c8102e',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
+              boxShadow: '0 2px 4px rgba(200, 16, 46, 0.25)',
               flexShrink: 0,
             }}
           >
@@ -118,14 +118,14 @@ export default function AppShell({ children, title, subtitle, actions }) {
               style={{
                 fontSize: '1.15rem',
                 fontWeight: 700,
-                color: '#0f172a',
+                color: '#171717',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.2,
               }}
             >
               HostelFix
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>
+            <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 500 }}>
               Smart Hostel Platform
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
             style={{
               fontSize: '0.7rem',
               fontWeight: 700,
-              color: '#94a3b8',
+              color: '#9ca3af',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
               padding: '0 0.65rem 0.65rem',
@@ -167,26 +167,26 @@ export default function AppShell({ children, title, subtitle, actions }) {
                     borderRadius: '8px',
                     fontSize: '0.875rem',
                     fontWeight: active ? 600 : 500,
-                    color: active ? '#4f46e5' : '#475569',
-                    backgroundColor: active ? '#eef2ff' : 'transparent',
+                    color: active ? '#c8102e' : '#4b5563',
+                    backgroundColor: active ? '#fdecef' : 'transparent',
                     transition: 'all 0.15s ease',
                   }}
                   onMouseEnter={(e) => {
                     if (!active) {
-                      e.currentTarget.style.backgroundColor = '#f8fafc';
-                      e.currentTarget.style.color = '#0f172a';
+                      e.currentTarget.style.backgroundColor = '#f8f8f8';
+                      e.currentTarget.style.color = '#171717';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!active) {
                       e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = '#475569';
+                      e.currentTarget.style.color = '#4b5563';
                     }
                   }}
                 >
                   <Icon
                     size={18}
-                    color={active ? '#4f46e5' : '#64748b'}
+                    color={active ? '#c8102e' : '#6b7280'}
                     strokeWidth={active ? 2.25 : 2}
                   />
                   <span>{item.label}</span>
@@ -200,7 +200,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
         <div
           style={{
             padding: '1rem 1.25rem',
-            borderTop: '1px solid #f1f5f9',
+            borderTop: '1px solid #e5e7eb',
             background: '#ffffff',
           }}
         >
@@ -217,14 +217,14 @@ export default function AppShell({ children, title, subtitle, actions }) {
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                background: '#f1f5f9',
-                color: '#334155',
+                background: '#f8f8f8',
+                color: '#171717',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 700,
                 fontSize: '0.9rem',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #e5e7eb',
                 flexShrink: 0,
               }}
             >
@@ -236,7 +236,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: '#0f172a',
+                  color: '#171717',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -272,23 +272,23 @@ export default function AppShell({ children, title, subtitle, actions }) {
               gap: '0.5rem',
               padding: '0.55rem',
               borderRadius: '6px',
-              border: '1px solid #e2e8f0',
-              background: '#f8fafc',
-              color: '#64748b',
+              border: '1px solid #e5e7eb',
+              background: '#ffffff',
+              color: '#6b7280',
               fontSize: '0.8rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#fee2e2';
-              e.currentTarget.style.borderColor = '#fca5a5';
-              e.currentTarget.style.color = '#b91c1c';
+              e.currentTarget.style.background = '#fdecef';
+              e.currentTarget.style.borderColor = '#fecdd3';
+              e.currentTarget.style.color = '#c8102e';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#f8fafc';
-              e.currentTarget.style.borderColor = '#e2e8f0';
-              e.currentTarget.style.color = '#64748b';
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.borderColor = '#e5e7eb';
+              e.currentTarget.style.color = '#6b7280';
             }}
           >
             <LogOut size={14} />
@@ -307,7 +307,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
           right: 0,
           height: '60px',
           background: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e5e7eb',
           display: 'none',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -321,7 +321,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+              background: '#c8102e',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
@@ -330,7 +330,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
           >
             <Building2 size={16} />
           </div>
-          <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#0f172a' }}>
+          <span style={{ fontWeight: 700, fontSize: '1.05rem', color: '#171717' }}>
             HostelFix
           </span>
         </div>
@@ -339,9 +339,9 @@ export default function AppShell({ children, title, subtitle, actions }) {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           style={{
             padding: '0.45rem',
-            background: '#f1f5f9',
+            background: '#f4f4f5',
             borderRadius: '6px',
-            color: '#475569',
+            color: '#374151',
           }}
         >
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -392,8 +392,8 @@ export default function AppShell({ children, title, subtitle, actions }) {
                       borderRadius: '8px',
                       fontSize: '0.9rem',
                       fontWeight: active ? 600 : 500,
-                      color: active ? '#4f46e5' : '#475569',
-                      backgroundColor: active ? '#eef2ff' : 'transparent',
+                      color: active ? '#c8102e' : '#4b5563',
+                      backgroundColor: active ? '#fdecef' : 'transparent',
                     }}
                   >
                     <Icon size={18} />
@@ -415,8 +415,8 @@ export default function AppShell({ children, title, subtitle, actions }) {
                 gap: '0.5rem',
                 padding: '0.65rem',
                 borderRadius: '6px',
-                background: '#fee2e2',
-                color: '#b91c1c',
+                background: '#fdecef',
+                color: '#c8102e',
                 fontSize: '0.85rem',
                 fontWeight: 600,
                 marginTop: 'auto',
@@ -451,7 +451,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
               gap: '1rem',
               marginBottom: '2rem',
               paddingBottom: '1.25rem',
-              borderBottom: '1px solid #e2e8f0',
+              borderBottom: '1px solid #e5e7eb',
             }}
           >
             <div>
@@ -460,7 +460,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
                   style={{
                     fontSize: '1.65rem',
                     fontWeight: 700,
-                    color: '#0f172a',
+                    color: '#171717',
                     letterSpacing: '-0.02em',
                     lineHeight: 1.25,
                     margin: 0,
@@ -473,7 +473,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
                 <p
                   style={{
                     fontSize: '0.875rem',
-                    color: '#64748b',
+                    color: '#6b7280',
                     margin: '0.35rem 0 0',
                     lineHeight: 1.4,
                   }}

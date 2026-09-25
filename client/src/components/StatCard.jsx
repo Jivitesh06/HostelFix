@@ -3,8 +3,8 @@ export default function StatCard({
   title,
   value,
   subtitle,
-  accentColor = '#4f46e5',
-  accentBg = '#eef2ff',
+  accentColor = '#c8102e',
+  accentBg = '#fdecef',
   loading = false,
   onClick,
 }) {
@@ -13,10 +13,10 @@ export default function StatCard({
       onClick={onClick}
       style={{
         background: '#ffffff',
-        border: '1px solid #e2e8f0',
+        border: '1px solid #e5e7eb',
         borderRadius: '12px',
         padding: '1.25rem 1.5rem',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.04)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -35,8 +35,8 @@ export default function StatCard({
       onMouseLeave={(e) => {
         if (onClick) {
           e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.05)';
-          e.currentTarget.style.borderColor = '#e2e8f0';
+          e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.04)';
+          e.currentTarget.style.borderColor = '#e5e7eb';
         }
       }}
     >
@@ -57,7 +57,7 @@ export default function StatCard({
           style={{
             fontSize: '0.85rem',
             fontWeight: 600,
-            color: '#475569',
+            color: '#6b7280',
             letterSpacing: '0.01em',
           }}
         >
@@ -87,7 +87,7 @@ export default function StatCard({
           style={{
             fontSize: '1.85rem',
             fontWeight: 700,
-            color: '#0f172a',
+            color: '#171717',
             lineHeight: 1.1,
             marginBottom: '0.35rem',
             fontVariantNumeric: 'tabular-nums',
@@ -99,7 +99,7 @@ export default function StatCard({
           <p
             style={{
               fontSize: '0.8rem',
-              color: '#64748b',
+              color: '#6b7280',
               margin: 0,
               lineHeight: 1.4,
             }}

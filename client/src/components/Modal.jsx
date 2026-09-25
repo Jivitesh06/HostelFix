@@ -43,8 +43,8 @@ export default function Modal({
           borderRadius: '12px',
           width: '100%',
           maxWidth,
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-          border: '1px solid #e2e8f0',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #e5e7eb',
           overflow: 'hidden',
           animation: 'fadeIn 0.2s ease-out',
         }}
@@ -54,7 +54,7 @@ export default function Modal({
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -65,14 +65,14 @@ export default function Modal({
               style={{
                 fontSize: '1.1rem',
                 fontWeight: 600,
-                color: '#0f172a',
+                color: '#171717',
                 margin: 0,
               }}
             >
               {title}
             </h3>
             {subtitle && (
-              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.2rem 0 0' }}>
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.2rem 0 0' }}>
                 {subtitle}
               </p>
             )}
@@ -80,7 +80,7 @@ export default function Modal({
           <button
             onClick={onClose}
             style={{
-              background: '#f1f5f9',
+              background: '#f4f4f5',
               border: 'none',
               borderRadius: '6px',
               width: '30px',
@@ -88,17 +88,17 @@ export default function Modal({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#64748b',
+              color: '#6b7280',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#e2e8f0';
-              e.currentTarget.style.color = '#0f172a';
+              e.currentTarget.style.background = '#fdecef';
+              e.currentTarget.style.color = '#c8102e';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#f1f5f9';
-              e.currentTarget.style.color = '#64748b';
+              e.currentTarget.style.background = '#f4f4f5';
+              e.currentTarget.style.color = '#6b7280';
             }}
           >
             <X size={16} />

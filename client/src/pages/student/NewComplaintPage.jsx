@@ -131,7 +131,7 @@ export default function NewComplaintPage() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '1.5rem',
               boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
@@ -143,13 +143,13 @@ export default function NewComplaintPage() {
                 display: 'block',
                 fontSize: '0.9rem',
                 fontWeight: 700,
-                color: '#0f172a',
+                color: '#171717',
                 marginBottom: '0.3rem',
               }}
             >
               Select Maintenance Category *
             </label>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 1rem' }}>
+            <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0 0 1rem' }}>
               Choose the category that best matches your maintenance requirement.
             </p>
 
@@ -169,8 +169,8 @@ export default function NewComplaintPage() {
                     key={cat.value}
                     onClick={() => setForm({ ...form, category: cat.value })}
                     style={{
-                      border: `1.5px solid ${isSelected ? '#4f46e5' : '#e2e8f0'}`,
-                      backgroundColor: isSelected ? '#eef2ff' : '#ffffff',
+                      border: isSelected ? '1.5px solid #c8102e' : '1px solid #e5e7eb',
+                      backgroundColor: isSelected ? '#fdecef' : '#ffffff',
                       borderRadius: '10px',
                       padding: '1rem',
                       cursor: 'pointer',
@@ -186,8 +186,8 @@ export default function NewComplaintPage() {
                           width: '30px',
                           height: '30px',
                           borderRadius: '8px',
-                          backgroundColor: isSelected ? '#4f46e5' : '#f1f5f9',
-                          color: isSelected ? '#ffffff' : '#475569',
+                          backgroundColor: isSelected ? '#c8102e' : '#f3f4f6',
+                          color: isSelected ? '#ffffff' : '#374151',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -199,13 +199,13 @@ export default function NewComplaintPage() {
                         style={{
                           fontSize: '0.875rem',
                           fontWeight: 600,
-                          color: isSelected ? '#3730a3' : '#0f172a',
+                          color: isSelected ? '#a50d25' : '#171717',
                         }}
                       >
                         {cat.label}
                       </span>
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.2rem' }}>
                       {cat.desc}
                     </span>
                   </div>
@@ -218,7 +218,7 @@ export default function NewComplaintPage() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
+              border: '1px solid #e5e7eb',
               borderRadius: '12px',
               padding: '1.5rem',
               boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
@@ -231,12 +231,12 @@ export default function NewComplaintPage() {
                   style={{
                     fontSize: '0.9rem',
                     fontWeight: 700,
-                    color: '#0f172a',
+                    color: '#171717',
                   }}
                 >
                   Problem Description *
                 </label>
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                   Min 5 characters
                 </span>
               </div>
@@ -250,7 +250,7 @@ export default function NewComplaintPage() {
                 style={{
                   width: '100%',
                   padding: '0.8rem 1rem',
-                  border: '1px solid #cbd5e1',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '8px',
                   fontSize: '0.925rem',
                   fontFamily: 'inherit',
@@ -259,11 +259,11 @@ export default function NewComplaintPage() {
                   resize: 'vertical',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#4f46e5';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(79, 70, 229, 0.15)';
+                  e.target.style.borderColor = '#c8102e';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(200, 16, 46, 0.12)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#cbd5e1';
+                  e.target.style.borderColor = '#e5e7eb';
                   e.target.style.boxShadow = 'none';
                 }}
               />
@@ -287,9 +287,9 @@ export default function NewComplaintPage() {
               style={{
                 padding: '0.7rem 1.25rem',
                 borderRadius: '8px',
-                border: '1px solid #cbd5e1',
+                border: '1px solid #e5e7eb',
                 background: '#ffffff',
-                color: '#475569',
+                color: '#374151',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -304,16 +304,17 @@ export default function NewComplaintPage() {
               style={{
                 padding: '0.7rem 1.5rem',
                 borderRadius: '8px',
-                background: '#4f46e5',
+                background: '#c8102e',
                 color: '#ffffff',
+                border: 'none',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 1px 2px 0 rgba(79, 70, 229, 0.2)',
+                boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
                 transition: 'background-color 0.15s ease',
               }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4338ca')}
-              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c8102e')}
             >
               {loading ? 'Submitting...' : 'Register Complaint'}
             </button>

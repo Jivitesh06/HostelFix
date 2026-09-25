@@ -190,7 +190,7 @@ export default function RegisterPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#f8fafc',
+        background: '#f8f8f8',
         padding: '2.5rem 1.5rem',
         fontFamily: 'var(--font-sans)',
       }}
@@ -202,8 +202,8 @@ export default function RegisterPage() {
           background: '#ffffff',
           borderRadius: '16px',
           padding: '2.5rem',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)',
-          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.04)',
+          border: '1px solid #e5e7eb',
         }}
       >
         {/* Brand Header */}
@@ -213,13 +213,13 @@ export default function RegisterPage() {
               width: '46px',
               height: '46px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+              background: '#c8102e',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 0.75rem',
-              boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.25)',
+              boxShadow: '0 2px 4px rgba(200, 16, 46, 0.25)',
             }}
           >
             <Building2 size={24} />
@@ -228,14 +228,14 @@ export default function RegisterPage() {
             style={{
               fontSize: '1.6rem',
               fontWeight: 800,
-              color: '#0f172a',
+              color: '#171717',
               letterSpacing: '-0.02em',
               margin: '0 0 0.35rem',
             }}
           >
             Create Resident Account
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
             Register your student profile to submit maintenance tickets and access mess portals.
           </p>
         </div>
@@ -285,7 +285,7 @@ export default function RegisterPage() {
             <div style={{ marginBottom: '0.85rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
                 <label style={{ ...fieldLabelStyle, marginBottom: 0 }}>University Institutional Email *</label>
-                <span style={{ fontSize: '0.72rem', color: '#6366f1', fontWeight: 600 }}>@chitkarauniversity.edu.in</span>
+                <span style={{ fontSize: '0.72rem', color: '#c8102e', fontWeight: 600 }}>@chitkarauniversity.edu.in</span>
               </div>
               <div style={{ position: 'relative' }}>
                 <div style={iconWrapperStyle}><Mail size={16} /></div>
@@ -482,7 +482,7 @@ export default function RegisterPage() {
             style={{
               width: '100%',
               padding: '0.75rem',
-              background: '#4f46e5',
+              background: '#c8102e',
               color: '#ffffff',
               borderRadius: '8px',
               fontSize: '0.95rem',
@@ -495,9 +495,10 @@ export default function RegisterPage() {
               transition: 'background-color 0.15s ease',
               marginTop: '0.5rem',
               border: 'none',
+              boxShadow: '0 1px 2px 0 rgba(200, 16, 46, 0.2)',
             }}
-            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4338ca')}
-            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c8102e')}
           >
             <span>{loading ? 'Creating Account...' : 'Complete Registration'}</span>
             <ArrowRight size={16} />
@@ -509,13 +510,13 @@ export default function RegisterPage() {
             marginTop: '1.5rem',
             textAlign: 'center',
             fontSize: '0.875rem',
-            color: '#64748b',
+            color: '#6b7280',
           }}
         >
           Already have an account?{' '}
           <Link
             to="/login"
-            style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none' }}
+            style={{ color: '#c8102e', fontWeight: 600, textDecoration: 'none' }}
           >
             Sign In here
           </Link>
@@ -525,10 +526,10 @@ export default function RegisterPage() {
           style={{
             marginTop: '1.25rem',
             paddingTop: '0.85rem',
-            borderTop: '1px solid #f1f5f9',
+            borderTop: '1px solid #e5e7eb',
             textAlign: 'center',
             fontSize: '0.75rem',
-            color: '#94a3b8',
+            color: '#9ca3af',
           }}
         >
           Warden and Maintenance Staff accounts are provisioned directly by the hostel office.
@@ -541,7 +542,7 @@ export default function RegisterPage() {
 const sectionHeadingStyle = {
   fontSize: '0.75rem',
   fontWeight: 700,
-  color: '#4f46e5',
+  color: '#c8102e',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
   marginBottom: '0.65rem',
@@ -551,7 +552,7 @@ const fieldLabelStyle = {
   display: 'block',
   fontSize: '0.8rem',
   fontWeight: 600,
-  color: '#334155',
+  color: '#374151',
   marginBottom: '0.35rem',
 };
 
@@ -560,7 +561,7 @@ const iconWrapperStyle = {
   left: '12px',
   top: '50%',
   transform: 'translateY(-50%)',
-  color: '#94a3b8',
+  color: '#9ca3af',
   display: 'flex',
   alignItems: 'center',
 };
@@ -568,25 +569,26 @@ const iconWrapperStyle = {
 const inputWithIconStyle = {
   width: '100%',
   padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
   outline: 'none',
   boxSizing: 'border-box',
   fontFamily: 'inherit',
   background: '#ffffff',
+  color: '#171717',
 };
 
 const selectStyle = {
   width: '100%',
   padding: '0.65rem 0.85rem',
-  border: '1px solid #cbd5e1',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
   fontSize: '0.875rem',
   outline: 'none',
   boxSizing: 'border-box',
   fontFamily: 'inherit',
   background: '#ffffff',
-  color: '#0f172a',
+  color: '#171717',
   cursor: 'pointer',
 };
