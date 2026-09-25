@@ -305,7 +305,7 @@ async function runProfileTests() {
       gender: 'MALE',
       hostelName: 'Aryabhata Hostel',
       mobileNumber: '9123456780',
-      universityRollNumber: 'CUH2024CS099',
+      universityRollNumber: `CUH${Date.now().toString().slice(-6)}`,
       branch: 'Computer Science',
       year: '1st Year',
     });

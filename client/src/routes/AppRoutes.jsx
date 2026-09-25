@@ -21,6 +21,7 @@ import WardenComplaints from '../pages/warden/ComplaintsPage';
 import WardenComplaintDetail from '../pages/warden/ComplaintDetailPage';
 import WardenMessPage from '../pages/warden/MessPage';
 import WardenProfilePage from '../pages/warden/ProfilePage';
+import WardenUsersPage from '../pages/warden/UserManagementPage';
 
 // Staff pages
 import StaffDashboard from '../pages/staff/DashboardPage';
@@ -117,6 +118,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute role="WARDEN"><WardenMessPage /></RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/warden/users"
+        element={
+          <ProtectedRoute>
+            <RoleRoute role="WARDEN"><WardenUsersPage /></RoleRoute>
           </ProtectedRoute>
         }
       />

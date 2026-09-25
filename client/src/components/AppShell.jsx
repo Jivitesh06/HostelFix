@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   User,
+  Users,
   Shield,
   Wrench,
 } from 'lucide-react';
@@ -27,6 +28,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
         { label: 'Dashboard', path: '/warden/dashboard', icon: LayoutDashboard },
         { label: 'All Complaints', path: '/warden/complaints', icon: ClipboardList },
         { label: 'Mess Admin', path: '/warden/mess', icon: Utensils },
+        { label: 'User Management', path: '/warden/users', icon: Users },
         { label: 'My Profile', path: '/warden/profile', icon: User },
       ];
     }

@@ -16,6 +16,7 @@ const {
 } = require('../utils/hostelConfig');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[0-9+\-\s]{7,15}$/;
 const MIN_PASSWORD_LENGTH = 6;
 const SALT_ROUNDS = 10;
 
@@ -69,6 +70,17 @@ const register = async (req, res, next) => {
       );
     }
 
+    // Validate mobile number if provided
+    if (mobileNumber && typeof mobileNumber === 'string' && mobileNumber.trim()) {
+      if (!PHONE_REGEX.test(mobileNumber.trim())) {
+        return sendError(
+          res,
+          'Please provide a valid contact mobile number (7-15 digits)',
+          400
+        );
+      }
+    }
+
     // Validate gender if provided
     let cleanGender = null;
     if (gender) {
@@ -102,6 +114,20 @@ const register = async (req, res, next) => {
       );
     }
 
+    // Check for duplicate university roll number (HTTP 409 Conflict) if provided
+    if (universityRollNumber && typeof universityRollNumber === 'string' && universityRollNumber.trim()) {
+      const existingRoll = await prisma.user.findFirst({
+        where: { universityRollNumber: universityRollNumber.trim() },
+      });
+      if (existingRoll) {
+        return sendError(
+          res,
+          'A student with this university roll number is already registered',
+          409
+        );
+      }
+    }
+
     // Hash password with bcrypt
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -121,6 +147,7 @@ const register = async (req, res, next) => {
         branch: branch && typeof branch === 'string' ? branch.trim() : null,
         year: year && typeof year === 'string' ? year.trim() : null,
         staffCategory: null,
+        isActive: true,
       },
       select: {
         id: true,
@@ -135,6 +162,7 @@ const register = async (req, res, next) => {
         universityRollNumber: true,
         branch: true,
         year: true,
+        isActive: true,
         createdAt: true,
       },
     });
@@ -200,6 +228,7 @@ const login = async (req, res, next) => {
       branch: user.branch,
       year: user.year,
       staffCategory: user.staffCategory,
+      isActive: user.isActive !== undefined ? user.isActive : true,
     };
 
     return sendSuccess(res, {
@@ -232,6 +261,7 @@ const getMe = async (req, res, next) => {
       branch: req.user.branch,
       year: req.user.year,
       staffCategory: req.user.staffCategory,
+      isActive: req.user.isActive !== undefined ? req.user.isActive : true,
     };
 
     return sendSuccess(res, {

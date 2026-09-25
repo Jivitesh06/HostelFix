@@ -7,12 +7,12 @@
 [![React](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Prisma%20ORM-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.prisma.io/)
-[![Tests](https://img.shields.io/badge/Tests-166%2F166%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
+[![Tests](https://img.shields.io/badge/Tests-215%2F215%20Passing-brightgreen?style=flat-square&logo=checkmarx&logoColor=white)](./server)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle, photo verification, and weekly dining management system for college residences.
+A high-accountability digital platform replacing informal communication channels (paper registers, WhatsApp groups, verbal notices) with a transparent, role-enforced complaint lifecycle, photo verification, weekly dining management, and resident & staff directory for college residences.
 
-[Key Features](#-key-features) • [User Roles](#-user-roles--access-matrix) • [Hostel Scoping](#-campus-hostels--gender-scoping) • [Complaint Workflow](#-complaint-lifecycle-workflow) • [Photo Proof](#-photo-upload--work-completion-proof) • [Deployment](#-production-deployment-guide) • [Quick Start](#-quick-start-guide) • [Evaluation Accounts](#-evaluation-demo-accounts)
+[Key Features](#-key-features) • [User Roles](#-user-roles--access-matrix) • [Hostel Scoping](#-campus-hostels--gender-scoping) • [Complaint Workflow](#-complaint-lifecycle-workflow) • [Photo Proof](#-photo-upload--work-completion-proof) • [User Management](#-warden-user-management--staff-provisioning) • [Deployment](#-production-deployment-guide) • [Quick Start](#-quick-start-guide) • [Evaluation Accounts](#-evaluation-demo-accounts)
 
 ---
 
@@ -21,7 +21,7 @@ A high-accountability digital platform replacing informal communication channels
 ## 📌 Problem & Solution
 
 * **The Problem:** Campus hostels face unorganized maintenance reporting — complaints get buried in WhatsApp chats or lost in paper registers, students lack status visibility, and administrators lack audit trails and physical proof to hold workers accountable.
-* **The Solution:** **HostelFix** implements an immutable, 6-stage complaint state machine with role-based routing, warden multi-hostel scoping, student profile verification, dining menu schedules with verified reviews, Cloudinary image upload with mandatory technician work completion proof, and a secure administrative onboarding gate.
+* **The Solution:** **HostelFix** implements an immutable, 6-stage complaint state machine with role-based routing, warden multi-hostel scoping, student profile verification, dining menu schedules with verified reviews, Cloudinary image upload with mandatory technician work completion proof, a dedicated Warden User Management suite for resident and staff oversight, and a secure administrative onboarding gate.
 
 ---
 
@@ -30,13 +30,14 @@ A high-accountability digital platform replacing informal communication channels
 - 📋 **6-Stage Complaint Lifecycle** — `PENDING` → `APPROVED` → `ASSIGNED` → `IN_PROGRESS` → `RESOLVED` → `CLOSED` (or `REJECTED` with mandatory justification).
 - 📸 **Cloudinary Photo Verification** — Students attach optional issue photos on complaint submission; maintenance staff are strictly required to upload work completion proof photos when resolving complaints.
 - 🔍 **Interactive Lightbox Inspection** — Wardens, staff, and students can click any photo to inspect high-resolution images in a lightbox modal.
+- 👥 **Warden User Management Suite** — Wardens access a dedicated `/warden/users` dashboard to browse resident students (scoped to their hostel) and manage maintenance workers (provision new staff, edit trade specializations, toggle active duty status).
 - 📜 **Immutable Audit Trail** — Every status transition records an unalterable log with timestamp, actor ID, previous status, and notes.
-- 🏢 **Multi-Hostel & Gender Scoping** — Strict scoping ensures wardens only view and manage complaints originating from their assigned residence hall.
-- 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Room) with warden inspection modals.
+- 🏢 **Multi-Hostel & Gender Scoping** — Strict scoping ensures wardens only view and manage complaints and students originating from their assigned residence hall.
+- 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Room, Block) with warden inspection modals.
 - 🍽️ **Weekly Mess Management** — Day-by-day breakfast, lunch, snacks, and dinner schedules with verified 1–5 star student dining reviews.
 - 🛡️ **Secure Administrative Onboarding** — Dedicated `/admin/staff-register` portal protected by an administrative passkey (`HostelFix@Admin2026`) and hard 403 blocks against students.
 - 🎨 **Modern SaaS UI/UX** — Responsive, clean design built with modern CSS styling, Lucide icons, status badges, and zero icon overlaps.
-- 🧪 **100% Test Coverage** — 166 automated backend unit and integration test assertions verifying security, workflows, photo validation, and database integrity.
+- 🧪 **100% Test Coverage** — 215 automated backend unit and integration test assertions verifying security, workflows, photo validation, user management, and database integrity.
 
 ---
 
@@ -128,6 +129,23 @@ HostelFix integrates **Cloudinary** for secure, persistent image hosting without
 
 ---
 
+---
+
+## 👥 Warden User Management & Staff Provisioning
+
+The Warden portal includes a dedicated User Management hub at `/warden/users`:
+1. **Resident Students Registry:**
+   - Automatically scoped to the Warden's residential jurisdiction (e.g. Sarabhai Hostel vs. Gargi Hostel).
+   - Real-time search across student name, roll number, room allocation, and academic branch.
+   - Comprehensive resident profile inspector modal displaying personal, academic, and hostel residence data.
+2. **Maintenance Worker Directory:**
+   - Centralized registry of all campus maintenance technicians (Plumbers, Electricians, Carpenters, Cleaners, etc.).
+   - Displays current workload (active assigned work order tickets) and duty status.
+   - **Add Staff Member:** Directly provision new maintenance worker accounts with bcrypt hashed passwords and trade categorization.
+   - **Edit Staff & Duty Status:** Wardens can update worker phone numbers, trade classifications, and toggle active duty status (`Active` / `Inactive` on leave).
+
+---
+
 ## 💻 Tech Stack
 
 | Layer | Technology |
@@ -136,7 +154,7 @@ HostelFix integrates **Cloudinary** for secure, persistent image hosting without
 | **Backend** | Node.js, Express.js REST API, JSON Web Tokens (JWT), Bcrypt.js |
 | **Cloud Storage** | Cloudinary v2 SDK, Multer Memory Storage (5MB limit) |
 | **Database & ORM** | PostgreSQL (Supabase / Neon compatible), Prisma ORM 5.x |
-| **Testing** | Native Node.js Automated Test Suites (166 Assertions) |
+| **Testing** | Native Node.js Automated Test Suites (215 Assertions) |
 | **Styling** | Custom SaaS CSS Design System, Responsive Flex/Grid |
 | **Deployment** | Vercel (Client SPA), Render / Railway (API Server), Supabase (DB) |
 
@@ -148,16 +166,16 @@ HostelFix integrates **Cloudinary** for secure, persistent image hosting without
 HostelFix/
 ├── client/                          # React Frontend (Vite)
 │   ├── src/
-│   │   ├── components/              # ProtectedRoute, RoleRoute
+│   │   ├── components/              # AppShell, Modal, ProtectedRoute, RoleRoute
 │   │   ├── constants/               # Hostel & gender configuration
 │   │   ├── context/                 # AuthContext (JWT session management)
 │   │   ├── pages/
 │   │   │   ├── auth/                # Login, Register, StaffRegisterPage
 │   │   │   ├── student/             # Dashboard, Complaints, NewComplaint, Profile, Mess
-│   │   │   ├── warden/              # Dashboard, Complaints, Detail, Profile, Mess
+│   │   │   ├── warden/              # Dashboard, Complaints, Detail, Profile, Mess, UserManagement
 │   │   │   └── staff/               # Dashboard, Work Orders, Detail
 │   │   ├── routes/                  # AppRoutes configuration
-│   │   ├── services/                # Axios instance with auth interceptors
+│   │   ├── services/                # Axios instance with auth interceptors (api, complaint, mess, user)
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── package.json
@@ -169,16 +187,17 @@ HostelFix/
 │   │   ├── seed.js                  # Evaluation demo accounts & mess menu
 │   │   └── migrations/              # Database migration history
 │   ├── src/
-│   │   ├── config/                  # Environment and Prisma clients
-│   │   ├── controllers/             # Auth, complaints, mess, user controllers
-│   │   ├── middleware/              # JWT verification, RBAC, error handlers
-│   │   ├── routes/                  # API endpoints (/auth, /complaints, /mess, /users)
+│   │   ├── config/                  # Environment, Prisma & Cloudinary clients
+│   │   ├── controllers/             # Auth, complaints, mess, user, upload controllers
+│   │   ├── middleware/              # JWT verification, RBAC, error & upload handlers
+│   │   ├── routes/                  # API endpoints (/auth, /complaints, /mess, /users, /upload)
 │   │   ├── utils/                   # Response helpers & hostel rules
 │   │   └── server.js                # Express app entry point
 │   ├── test-auth.js                 # 42 Auth & onboarding tests
 │   ├── test-profile.js              # 57 Profile, gender & scoping tests
-│   ├── test-complaints.js           # 39 Complaint workflow tests
+│   ├── test-complaints.js           # 41 Complaint workflow & photo proof tests
 │   ├── test-mess.js                 # 26 Mess menu & review tests
+│   ├── test-user-management.js      # 49 User management & staff provisioning tests
 │   ├── package.json
 │   └── .env.example
 │
@@ -261,7 +280,7 @@ npm run dev
 
 ## 🧪 Automated Test Verification
 
-HostelFix includes 4 comprehensive automated test suites covering all business logic, security constraints, and state transitions.
+HostelFix includes 5 comprehensive automated test suites covering all business logic, security constraints, and state transitions.
 
 Run with backend running on port 5001:
 ```bash
@@ -278,11 +297,14 @@ node test-complaints.js
 
 # 4. Weekly Mess Scheduling & Rating Feedback (26 tests)
 node test-mess.js
+
+# 5. Warden User Management, Staff Provisioning & Duty Status (49 tests)
+node test-user-management.js
 ```
 
 ```text
 ============================================================
-Test Suite Results: 166 / 166 Tests Passed (100% Success Rate)
+Test Suite Results: 215 / 215 Tests Passed (100% Success Rate)
 ============================================================
 ```
 
@@ -337,7 +359,7 @@ All seeded demo accounts share the password: **`Demo@1234`**
 | **Student (Male)** | `student@hostelfix.demo` | `Demo@1234` | Sarabhai Hostel, Room A-101 |
 | **Student (Female)** | `student2@hostelfix.demo` | `Demo@1234` | Gargi Hostel, Room B-205 |
 | **Warden (Sarabhai)** | `warden@hostelfix.demo` | `Demo@1234` | Sarabhai Hostel (Boys) |
-| **Warden (Gargi)** | `warden2@hostelfix.demo` | `Demo@1234` | Gargi Hostel (Girls) |
+| **Warden (Gargi)** | `warden_girls@hostelfix.demo` | `Demo@1234` | Gargi Hostel (Girls) |
 | **Staff (Plumber)** | `staff@hostelfix.demo` | `Demo@1234` | Plumbing Maintenance |
 | **Staff (Electrician)** | `staff2@hostelfix.demo` | `Demo@1234` | Electrical Maintenance |
 

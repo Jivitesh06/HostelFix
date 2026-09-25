@@ -68,6 +68,7 @@ model User {
   branch                String?
   year                  String?
   staffCategory         String?
+  isActive              Boolean  @default(true)
   createdAt             DateTime @default(now())
 
   // A student can submit many complaints

@@ -54,6 +54,33 @@ export const userService = {
     const res = await api.get('/users/staff');
     return res.data.data;
   },
+
+  /**
+   * Fetch list of students scoped to warden's hostel.
+   * Access: WARDEN
+   */
+  getStudents: async (params = {}) => {
+    const res = await api.get('/users/students', { params });
+    return res.data.data;
+  },
+
+  /**
+   * Provision a new maintenance staff / worker account.
+   * Access: WARDEN
+   */
+  createStaff: async (data) => {
+    const res = await api.post('/users/staff', data);
+    return res.data.data;
+  },
+
+  /**
+   * Update an existing staff member's details or active status.
+   * Access: WARDEN
+   */
+  updateStaff: async (id, data) => {
+    const res = await api.put(`/users/staff/${id}`, data);
+    return res.data.data;
+  },
 };
 
 export default userService;

@@ -43,6 +43,7 @@ export default function RegisterPage() {
     branch: '',
     year: '',
     hostelName: '',
+    hostelBlock: '',
     roomNumber: '',
     password: '',
     confirmPassword: '',
@@ -82,29 +83,59 @@ export default function RegisterPage() {
       branch,
       year,
       hostelName,
+      hostelBlock,
       roomNumber,
       password,
       confirmPassword,
     } = form;
 
-    if (
-      !name.trim() ||
-      !email.trim() ||
-      !roomNumber.trim() ||
-      !password ||
-      !confirmPassword
-    ) {
-      setError('Name, email, room number, and password are required.');
+    if (!name.trim()) {
+      setError('Full name is required.');
       return;
     }
 
-    if (!EMAIL_REGEX.test(email.trim())) {
-      setError('Please provide a valid email address (e.g. student@college.edu).');
+    if (!email.trim() || !EMAIL_REGEX.test(email.trim())) {
+      setError('Please provide a valid college email address (e.g. student@college.edu).');
       return;
     }
 
-    if (mobileNumber.trim() && !PHONE_REGEX.test(mobileNumber.trim())) {
+    if (!mobileNumber.trim()) {
+      setError('Mobile contact number is required.');
+      return;
+    }
+
+    if (!PHONE_REGEX.test(mobileNumber.trim())) {
       setError('Please provide a valid mobile contact number (7-15 digits).');
+      return;
+    }
+
+    if (!universityRollNumber.trim()) {
+      setError('University Roll Number is required.');
+      return;
+    }
+
+    if (!branch.trim()) {
+      setError('Academic branch / program is required.');
+      return;
+    }
+
+    if (!year.trim()) {
+      setError('Current year of study is required.');
+      return;
+    }
+
+    if (!hostelName.trim()) {
+      setError('Please select your assigned hostel name.');
+      return;
+    }
+
+    if (!hostelBlock.trim()) {
+      setError('Hostel block / wing is required (e.g. Block A).');
+      return;
+    }
+
+    if (!roomNumber.trim()) {
+      setError('Room number is required (e.g. A-101).');
       return;
     }
 
@@ -125,12 +156,13 @@ export default function RegisterPage() {
         name: name.trim(),
         email: email.trim().toLowerCase(),
         gender: gender || null,
+        mobileNumber: mobileNumber.trim(),
+        universityRollNumber: universityRollNumber.trim(),
+        branch: branch.trim(),
+        year: year.trim(),
+        hostelName: hostelName.trim(),
+        hostelBlock: hostelBlock.trim(),
         roomNumber: roomNumber.trim(),
-        hostelName: hostelName.trim() || null,
-        mobileNumber: mobileNumber.trim() || null,
-        universityRollNumber: universityRollNumber.trim() || null,
-        branch: branch.trim() || null,
-        year: year.trim() || null,
         password,
       });
 
@@ -266,7 +298,7 @@ export default function RegisterPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
-                <label style={fieldLabelStyle}>Mobile Number</label>
+                <label style={fieldLabelStyle}>Mobile Number *</label>
                 <div style={{ position: 'relative' }}>
                   <div style={iconWrapperStyle}><Phone size={16} /></div>
                   <input
@@ -275,6 +307,7 @@ export default function RegisterPage() {
                     value={form.mobileNumber}
                     onChange={handleChange}
                     placeholder="e.g. 9876543210"
+                    required
                     style={inputWithIconStyle}
                   />
                 </div>
@@ -302,7 +335,7 @@ export default function RegisterPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.85rem' }}>
               <div>
-                <label style={fieldLabelStyle}>University Roll Number</label>
+                <label style={fieldLabelStyle}>University Roll Number *</label>
                 <div style={{ position: 'relative' }}>
                   <div style={iconWrapperStyle}><GraduationCap size={16} /></div>
                   <input
@@ -311,16 +344,18 @@ export default function RegisterPage() {
                     value={form.universityRollNumber}
                     onChange={handleChange}
                     placeholder="e.g. CUH2024CS001"
+                    required
                     style={inputWithIconStyle}
                   />
                 </div>
               </div>
               <div>
-                <label style={fieldLabelStyle}>Year of Study</label>
+                <label style={fieldLabelStyle}>Year of Study *</label>
                 <select
                   name="year"
                   value={form.year}
                   onChange={handleChange}
+                  required
                   style={selectStyle}
                 >
                   <option value="">Select current year</option>
@@ -333,7 +368,7 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label style={fieldLabelStyle}>Branch / Specialization</label>
+              <label style={fieldLabelStyle}>Branch / Specialization *</label>
               <div style={{ position: 'relative' }}>
                 <div style={iconWrapperStyle}><BookOpen size={16} /></div>
                 <input
@@ -342,6 +377,7 @@ export default function RegisterPage() {
                   value={form.branch}
                   onChange={handleChange}
                   placeholder="e.g. Computer Science & Engineering"
+                  required
                   style={inputWithIconStyle}
                 />
               </div>
@@ -355,12 +391,13 @@ export default function RegisterPage() {
             </div>
             <div style={{ marginBottom: '0.85rem' }}>
               <label style={fieldLabelStyle}>
-                Hostel / Hall Name {form.gender ? `(${form.gender === 'MALE' ? 'Boys Hostels' : 'Girls Hostels'})` : ''}
+                Hostel / Hall Name * {form.gender ? `(${form.gender === 'MALE' ? 'Boys Hostels' : 'Girls Hostels'})` : ''}
               </label>
               <select
                 name="hostelName"
                 value={form.hostelName}
                 onChange={handleChange}
+                required
                 style={selectStyle}
               >
                 <option value="">
@@ -378,19 +415,36 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-            <div>
-              <label style={fieldLabelStyle}>Room Number *</label>
-              <div style={{ position: 'relative' }}>
-                <div style={iconWrapperStyle}><Home size={16} /></div>
-                <input
-                  type="text"
-                  name="roomNumber"
-                  value={form.roomNumber}
-                  onChange={handleChange}
-                  placeholder="e.g. A-101"
-                  required
-                  style={inputWithIconStyle}
-                />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={fieldLabelStyle}>Hostel Block / Wing *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Building2 size={16} /></div>
+                  <input
+                    type="text"
+                    name="hostelBlock"
+                    value={form.hostelBlock}
+                    onChange={handleChange}
+                    placeholder="e.g. Block A"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={fieldLabelStyle}>Room Number *</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Home size={16} /></div>
+                  <input
+                    type="text"
+                    name="roomNumber"
+                    value={form.roomNumber}
+                    onChange={handleChange}
+                    placeholder="e.g. A-101"
+                    required
+                    style={inputWithIconStyle}
+                  />
+                </div>
               </div>
             </div>
           </div>
