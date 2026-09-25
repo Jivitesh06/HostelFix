@@ -85,13 +85,14 @@ Represents all application users — students, wardens, and staff.
 | `passwordHash` | String | Not null | bcrypt-hashed password |
 | `role` | `Role` enum | Not null | STUDENT / WARDEN / STAFF |
 | `roomNumber` | String | Nullable | Room number (Students only) |
-| `hostelBlock` | String | Nullable | Hostel block (Students only) |
+| `hostelName` | String | Nullable | Assigned hostel hall (Students and Wardens) |
+| `emailVerified` | Boolean | Not null, default: false | Institutional email verified |
 | `staffCategory` | String | Nullable | Work category of staff (e.g., "Electrician") |
 | `createdAt` | DateTime | Not null, default: now() | Account creation timestamp |
 
 **Constraints:**
 - `email` must be unique across all users.
-- `roomNumber` and `hostelBlock` are required for STUDENT accounts; nullable for WARDEN and STAFF.
+- `roomNumber` and `hostelName` are required for STUDENT accounts; nullable for WARDEN and STAFF.
 - `staffCategory` is informational for STAFF accounts; nullable for others.
 - `passwordHash` must never store plain text.
 

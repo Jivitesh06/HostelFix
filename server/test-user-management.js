@@ -106,7 +106,7 @@ async function runTests() {
   if (firstStudent) {
     assert(firstStudent.name !== undefined, 'Student has name');
     assert(firstStudent.roomNumber !== undefined, 'Student has roomNumber');
-    assert(firstStudent.hostelBlock !== undefined, 'Student has hostelBlock');
+    assert(firstStudent.hostelBlock === undefined, 'Hostel block is completely removed from student');
     assert(firstStudent.isActive === true, 'Student has isActive=true');
     assert(firstStudent.complaintsCount !== undefined, 'Student includes complaintsCount');
   }
@@ -283,10 +283,9 @@ async function runTests() {
   const duplicateRoll = `ROLL_${Date.now()}`;
   const firstReg = await request('POST', '/api/auth/register', {
     name: 'First Student Roll',
-    email: `roll1_${Date.now()}@college.edu`,
+    email: `roll1_${Date.now()}@chitkarauniversity.edu.in`,
     password: 'Password@123',
     roomNumber: 'B-101',
-    hostelBlock: 'Block B',
     hostelName: 'Sarabhai Hostel',
     mobileNumber: '9876543211',
     universityRollNumber: duplicateRoll,
@@ -297,10 +296,9 @@ async function runTests() {
 
   const secondReg = await request('POST', '/api/auth/register', {
     name: 'Second Student Duplicate Roll',
-    email: `roll2_${Date.now()}@college.edu`,
+    email: `roll2_${Date.now()}@chitkarauniversity.edu.in`,
     password: 'Password@123',
     roomNumber: 'B-102',
-    hostelBlock: 'Block B',
     hostelName: 'Sarabhai Hostel',
     mobileNumber: '9876543212',
     universityRollNumber: duplicateRoll, // Duplicate roll number

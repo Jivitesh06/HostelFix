@@ -14,16 +14,32 @@ const {
   getHostelsByGender,
   isValidHostelForGender,
 } = require('../utils/hostelConfig');
+const {
+  generateOtp,
+  hashOtp,
+  verifyOtpHash,
+  recordTestOtp,
+} = require('../services/otp.service');
+const {
+  sendVerificationOtpEmail,
+  maskEmail,
+} = require('../services/email.service');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CHITKARA_EMAIL_DOMAIN = '@chitkarauniversity.edu.in';
 const PHONE_REGEX = /^[0-9+\-\s]{7,15}$/;
 const MIN_PASSWORD_LENGTH = 6;
 const SALT_ROUNDS = 10;
+const OTP_EXPIRY_MINUTES = 10;
+const RESEND_COOLDOWN_MS = 60 * 1000;
+const MAX_VERIFICATION_ATTEMPTS = 5;
 
 /**
  * POST /api/auth/register
  * Student self-registration only.
+ * Requires institutional @chitkarauniversity.edu.in email.
  * Role is strictly enforced as STUDENT on the backend.
+ * Generates single-use 6-digit OTP and dispatches verification email.
  */
 const register = async (req, res, next) => {
   try {
@@ -32,7 +48,6 @@ const register = async (req, res, next) => {
       email,
       password,
       roomNumber,
-      hostelBlock,
       hostelName,
       gender,
       mobileNumber,
@@ -55,10 +70,18 @@ const register = async (req, res, next) => {
       return sendError(res, 'Fields cannot be empty or whitespace only', 400);
     }
 
-    // Validate email format
+    // Validate email format and strict institutional Chitkara domain
     const cleanEmail = email.trim().toLowerCase();
     if (!EMAIL_REGEX.test(cleanEmail)) {
       return sendError(res, 'Please provide a valid email address', 400);
+    }
+
+    if (!cleanEmail.endsWith(CHITKARA_EMAIL_DOMAIN)) {
+      return sendError(
+        res,
+        'Registration requires an institutional Chitkara University email address (@chitkarauniversity.edu.in). Personal email accounts are not permitted.',
+        400
+      );
     }
 
     // Validate password length
@@ -131,7 +154,13 @@ const register = async (req, res, next) => {
     // Hash password with bcrypt
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Create student user - role is ALWAYS STUDENT regardless of any client input
+    // Generate cryptographically secure 6-digit OTP
+    const otp = generateOtp();
+    const otpHash = hashOtp(otp);
+    const otpExpiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+    const otpLastSentAt = new Date();
+
+    // Create student user - role is ALWAYS STUDENT; emailVerified is false
     const newUser = await prisma.user.create({
       data: {
         name: name.trim(),
@@ -139,7 +168,6 @@ const register = async (req, res, next) => {
         passwordHash,
         role: 'STUDENT',
         roomNumber: roomNumber.trim(),
-        hostelBlock: hostelBlock && typeof hostelBlock === 'string' ? hostelBlock.trim() : null,
         hostelName: hostelName && typeof hostelName === 'string' ? hostelName.trim() : null,
         gender: cleanGender,
         mobileNumber: mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
@@ -148,6 +176,11 @@ const register = async (req, res, next) => {
         year: year && typeof year === 'string' ? year.trim() : null,
         staffCategory: null,
         isActive: true,
+        emailVerified: false,
+        otpHash,
+        otpExpiresAt,
+        otpAttempts: 0,
+        otpLastSentAt,
       },
       select: {
         id: true,
@@ -155,7 +188,6 @@ const register = async (req, res, next) => {
         email: true,
         role: true,
         roomNumber: true,
-        hostelBlock: true,
         hostelName: true,
         gender: true,
         mobileNumber: true,
@@ -163,11 +195,193 @@ const register = async (req, res, next) => {
         branch: true,
         year: true,
         isActive: true,
+        emailVerified: true,
         createdAt: true,
       },
     });
 
-    return sendCreated(res, newUser);
+    // Record test OTP strictly for test suites in test environment
+    recordTestOtp(cleanEmail, otp);
+
+    // Dispatch verification email (NEVER logs plain OTP)
+    await sendVerificationOtpEmail({
+      to: cleanEmail,
+      otp,
+      expiryMinutes: OTP_EXPIRY_MINUTES,
+    });
+
+    return sendCreated(res, {
+      ...newUser,
+      maskedEmail: maskEmail(cleanEmail),
+      message: 'Verification code sent to your university email.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/verify-email
+ * Verifies single-use OTP and marks student account as emailVerified = true.
+ */
+const verifyEmail = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return sendError(
+        res,
+        'Email and 6-digit verification code are required',
+        400
+      );
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanOtp = otp.toString().trim();
+
+    if (!/^\d{6}$/.test(cleanOtp)) {
+      return sendError(res, 'Verification code must be a 6-digit number', 400);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user) {
+      return sendError(res, 'Invalid verification request', 400);
+    }
+
+    if (user.emailVerified) {
+      return sendSuccess(res, {
+        message: 'Your email is already verified. You can now sign in.',
+        emailVerified: true,
+      });
+    }
+
+    if (!user.otpHash || !user.otpExpiresAt) {
+      return sendError(
+        res,
+        'No active verification code found. Please request a new code.',
+        400
+      );
+    }
+
+    if (user.otpAttempts >= MAX_VERIFICATION_ATTEMPTS) {
+      return sendError(
+        res,
+        'Maximum verification attempts exceeded. Please request a new verification code.',
+        400
+      );
+    }
+
+    if (new Date() > new Date(user.otpExpiresAt)) {
+      return sendError(
+        res,
+        'Verification code has expired. Please request a new code.',
+        400
+      );
+    }
+
+    // Verify OTP against stored SHA-256 hash
+    const isValid = verifyOtpHash(cleanOtp, user.otpHash);
+    if (!isValid) {
+      // Increment attempt counter
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { otpAttempts: { increment: 1 } },
+      });
+      return sendError(res, 'Invalid verification code. Please check and try again.', 400);
+    }
+
+    // Success: mark emailVerified = true and invalidate OTP
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        otpHash: null,
+        otpExpiresAt: null,
+        otpAttempts: 0,
+        otpLastSentAt: null,
+      },
+    });
+
+    return sendSuccess(res, {
+      message: 'University email verified successfully! You can now sign in.',
+      email: cleanEmail,
+      emailVerified: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/resend-verification
+ * Resends verification code with 60-second cooldown enforcement.
+ * Invalidates previous OTP.
+ */
+const resendVerification = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return sendError(res, 'Email address is required', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user) {
+      return sendError(res, 'Account not found with this email', 400);
+    }
+
+    if (user.emailVerified) {
+      return sendError(res, 'Email is already verified. Please sign in.', 400);
+    }
+
+    // Enforce 60-second resend cooldown
+    if (user.otpLastSentAt) {
+      const elapsed = Date.now() - new Date(user.otpLastSentAt).getTime();
+      if (elapsed < RESEND_COOLDOWN_MS) {
+        const remainingSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000);
+        return sendError(
+          res,
+          `Please wait ${remainingSeconds} seconds before requesting a new verification code.`,
+          429
+        );
+      }
+    }
+
+    // Invalidate previous OTP and generate fresh one
+    const otp = generateOtp();
+    const otpHash = hashOtp(otp);
+    const otpExpiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+    const otpLastSentAt = new Date();
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        otpHash,
+        otpExpiresAt,
+        otpAttempts: 0,
+        otpLastSentAt,
+      },
+    });
+
+    recordTestOtp(cleanEmail, otp);
+    await sendVerificationOtpEmail({
+      to: cleanEmail,
+      otp,
+      expiryMinutes: OTP_EXPIRY_MINUTES,
+    });
+
+    return sendSuccess(res, {
+      message: 'A new verification code has been dispatched to your email.',
+      email: cleanEmail,
+      maskedEmail: maskEmail(cleanEmail),
+    });
   } catch (error) {
     next(error);
   }
@@ -175,7 +389,7 @@ const register = async (req, res, next) => {
 
 /**
  * POST /api/auth/login
- * Verifies email & password, returns JWT token and safe user profile.
+ * Verifies email & password, prevents unverified students from logging in, returns JWT.
  */
 const login = async (req, res, next) => {
   try {
@@ -202,6 +416,16 @@ const login = async (req, res, next) => {
       return sendUnauthorized(res, 'Invalid email or password');
     }
 
+    // Login Protection: Student accounts must have verified their institutional email
+    if (user.role === 'STUDENT' && !user.emailVerified) {
+      return res.status(403).json({
+        success: false,
+        isUnverified: true,
+        email: user.email,
+        message: 'Please verify your university email before logging in.',
+      });
+    }
+
     // Generate JWT token with userId and role
     const token = jwt.sign(
       {
@@ -220,7 +444,6 @@ const login = async (req, res, next) => {
       email: user.email,
       role: user.role,
       roomNumber: user.roomNumber,
-      hostelBlock: user.hostelBlock,
       hostelName: user.hostelName,
       gender: user.gender,
       mobileNumber: user.mobileNumber,
@@ -229,6 +452,7 @@ const login = async (req, res, next) => {
       year: user.year,
       staffCategory: user.staffCategory,
       isActive: user.isActive !== undefined ? user.isActive : true,
+      emailVerified: user.emailVerified !== undefined ? user.emailVerified : false,
     };
 
     return sendSuccess(res, {
@@ -253,7 +477,6 @@ const getMe = async (req, res, next) => {
       email: req.user.email,
       role: req.user.role,
       roomNumber: req.user.roomNumber,
-      hostelBlock: req.user.hostelBlock,
       hostelName: req.user.hostelName,
       gender: req.user.gender,
       mobileNumber: req.user.mobileNumber,
@@ -262,6 +485,7 @@ const getMe = async (req, res, next) => {
       year: req.user.year,
       staffCategory: req.user.staffCategory,
       isActive: req.user.isActive !== undefined ? req.user.isActive : true,
+      emailVerified: req.user.emailVerified !== undefined ? req.user.emailVerified : false,
     };
 
     return sendSuccess(res, {
@@ -400,10 +624,10 @@ const staffRegister = async (req, res, next) => {
         mobileNumber:
           mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
         roomNumber: null,
-        hostelBlock: null,
         universityRollNumber: null,
         branch: null,
         year: null,
+        emailVerified: true,
       },
       select: {
         id: true,
@@ -414,6 +638,7 @@ const staffRegister = async (req, res, next) => {
         hostelName: true,
         staffCategory: true,
         mobileNumber: true,
+        emailVerified: true,
         createdAt: true,
       },
     });
@@ -426,6 +651,8 @@ const staffRegister = async (req, res, next) => {
 
 module.exports = {
   register,
+  verifyEmail,
+  resendVerification,
   staffRegister,
   login,
   getMe,

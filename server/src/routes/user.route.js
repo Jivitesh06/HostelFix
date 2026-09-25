@@ -36,13 +36,13 @@ router.get('/profile', verifyToken, requireRole('STUDENT'), async (req, res, nex
         email: true,
         role: true,
         roomNumber: true,
-        hostelBlock: true,
         hostelName: true,
         gender: true,
         mobileNumber: true,
         universityRollNumber: true,
         branch: true,
         year: true,
+        emailVerified: true,
         createdAt: true,
       },
     });
@@ -73,7 +73,6 @@ router.put('/profile', verifyToken, requireRole('STUDENT'), async (req, res, nex
       year,
       hostelName,
       roomNumber,
-      hostelBlock,
     } = req.body;
 
     const dataToUpdate = {};
@@ -156,13 +155,6 @@ router.put('/profile', verifyToken, requireRole('STUDENT'), async (req, res, nex
       dataToUpdate.roomNumber = roomNumber.trim();
     }
 
-    if (hostelBlock !== undefined) {
-      dataToUpdate.hostelBlock =
-        hostelBlock && typeof hostelBlock === 'string' && hostelBlock.trim()
-          ? hostelBlock.trim()
-          : null;
-    }
-
     const updatedUser = await prisma.user.update({
       where: { id: req.user.id },
       data: dataToUpdate,
@@ -172,13 +164,13 @@ router.put('/profile', verifyToken, requireRole('STUDENT'), async (req, res, nex
         email: true,
         role: true,
         roomNumber: true,
-        hostelBlock: true,
         hostelName: true,
         gender: true,
         mobileNumber: true,
         universityRollNumber: true,
         branch: true,
         year: true,
+        emailVerified: true,
         createdAt: true,
       },
     });
@@ -339,7 +331,6 @@ router.get('/students', verifyToken, requireRole('WARDEN'), async (req, res, nex
         email: true,
         role: true,
         roomNumber: true,
-        hostelBlock: true,
         hostelName: true,
         gender: true,
         mobileNumber: true,
@@ -392,7 +383,6 @@ router.get('/students/:id', verifyToken, requireRole('WARDEN'), async (req, res,
         email: true,
         role: true,
         roomNumber: true,
-        hostelBlock: true,
         hostelName: true,
         gender: true,
         mobileNumber: true,

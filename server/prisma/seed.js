@@ -37,7 +37,7 @@ async function main() {
       gender: 'MALE',
       hostelName: 'Sarabhai Hostel',
       roomNumber: 'A-101',
-      hostelBlock: 'Block A',
+      emailVerified: true,
     },
     create: {
       name: 'Demo Student',
@@ -45,13 +45,13 @@ async function main() {
       passwordHash,
       role: 'STUDENT',
       roomNumber: 'A-101',
-      hostelBlock: 'Block A',
       gender: 'MALE',
       hostelName: 'Sarabhai Hostel',
       mobileNumber: '9876543210',
       universityRollNumber: 'CUH2024CS001',
       branch: 'Computer Science & Engineering',
       year: '3rd Year',
+      emailVerified: true,
     },
   });
 
@@ -65,7 +65,7 @@ async function main() {
       gender: 'FEMALE',
       hostelName: 'Gargi Hostel',
       roomNumber: 'B-205',
-      hostelBlock: 'Block B',
+      emailVerified: true,
     },
     create: {
       name: 'Priya Sharma',
@@ -73,13 +73,13 @@ async function main() {
       passwordHash,
       role: 'STUDENT',
       roomNumber: 'B-205',
-      hostelBlock: 'Block B',
       gender: 'FEMALE',
       hostelName: 'Gargi Hostel',
       mobileNumber: '9876543211',
       universityRollNumber: 'CUH2024EC042',
       branch: 'Electronics & Communication',
       year: '2nd Year',
+      emailVerified: true,
     },
   });
 
@@ -89,6 +89,7 @@ async function main() {
       gender: 'MALE',
       hostelName: 'Sarabhai Hostel',
       mobileNumber: '9876543200',
+      emailVerified: true,
     },
     create: {
       name: 'Demo Warden',
@@ -98,6 +99,7 @@ async function main() {
       gender: 'MALE',
       hostelName: 'Sarabhai Hostel',
       mobileNumber: '9876543200',
+      emailVerified: true,
     },
   });
 
@@ -107,6 +109,7 @@ async function main() {
       gender: 'FEMALE',
       hostelName: 'Gargi Hostel',
       mobileNumber: '9876543201',
+      emailVerified: true,
     },
     create: {
       name: 'Pooja Warden',
@@ -116,30 +119,33 @@ async function main() {
       gender: 'FEMALE',
       hostelName: 'Gargi Hostel',
       mobileNumber: '9876543201',
+      emailVerified: true,
     },
   });
 
   const staff = await prisma.user.upsert({
     where: { email: 'staff@hostelfix.demo' },
-    update: {},
+    update: { emailVerified: true },
     create: {
       name: 'Demo Staff',
       email: 'staff@hostelfix.demo',
       passwordHash,
       role: 'STAFF',
       staffCategory: 'Plumber',
+      emailVerified: true,
     },
   });
 
   const staff2 = await prisma.user.upsert({
     where: { email: 'staff2@hostelfix.demo' },
-    update: {},
+    update: { emailVerified: true },
     create: {
       name: 'Ravi Electrician',
       email: 'staff2@hostelfix.demo',
       passwordHash,
       role: 'STAFF',
       staffCategory: 'Electrician',
+      emailVerified: true,
     },
   });
 

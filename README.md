@@ -33,11 +33,12 @@ A high-accountability digital platform replacing informal communication channels
 - 👥 **Warden User Management Suite** — Wardens access a dedicated `/warden/users` dashboard to browse resident students (scoped to their hostel) and manage maintenance workers (provision new staff, edit trade specializations, toggle active duty status).
 - 📜 **Immutable Audit Trail** — Every status transition records an unalterable log with timestamp, actor ID, previous status, and notes.
 - 🏢 **Multi-Hostel & Gender Scoping** — Strict scoping ensures wardens only view and manage complaints and students originating from their assigned residence hall.
-- 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Room, Block) with warden inspection modals.
+- ✉️ **Chitkara University Institutional Email Verification** — Student registration strictly requires `@chitkarauniversity.edu.in` institutional email. Generates single-use 6-digit cryptographic OTPs hashed with SHA-256 (10-minute expiry, 60s cooldown) with hard login gating preventing unverified students from signing in.
+- 👨‍🎓 **Comprehensive Student Profiles** — Detailed student academic records (University Roll No, Branch, Year of Study, Mobile, Hostel, Room Number) with warden inspection modals. Hostel block has been completely removed in favor of clean hostel hall and room numbers.
 - 🍽️ **Weekly Mess Management** — Day-by-day breakfast, lunch, snacks, and dinner schedules with verified 1–5 star student dining reviews.
 - 🛡️ **Secure Administrative Onboarding** — Dedicated `/admin/staff-register` portal protected by an administrative passkey (`HostelFix@Admin2026`) and hard 403 blocks against students.
 - 🎨 **Modern SaaS UI/UX** — Responsive, clean design built with modern CSS styling, Lucide icons, status badges, and zero icon overlaps.
-- 🧪 **100% Test Coverage** — 215 automated backend unit and integration test assertions verifying security, workflows, photo validation, user management, and database integrity.
+- 🧪 **100% Test Coverage** — 274 automated backend unit and integration test assertions verifying security, workflows, photo validation, user management, OTP email verification, and database integrity.
 
 ---
 
@@ -300,11 +301,14 @@ node test-mess.js
 
 # 5. Warden User Management, Staff Provisioning & Duty Status (49 tests)
 node test-user-management.js
+
+# 6. Student Institutional Email Verification, OTP & Hostel Block Removal (58 tests)
+node test-email-verification.js
 ```
 
 ```text
 ============================================================
-Test Suite Results: 215 / 215 Tests Passed (100% Success Rate)
+Test Suite Results: 274 / 274 Tests Passed (100% Success Rate)
 ============================================================
 ```
 
@@ -335,6 +339,8 @@ HostelFix is fully pre-configured for production deployment across cloud provide
    - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
    - `CLOUDINARY_API_KEY`: Your Cloudinary API key
    - `CLOUDINARY_API_SECRET`: Your Cloudinary API secret
+   - `EMAIL_PROVIDER_API_KEY`: Your transactional email provider API key (Resend/SendGrid)
+   - `EMAIL_FROM`: `HostelFix <noreply@hostelfix.chitkara.edu.in>`
 4. Optional: Run seed once via Render Shell: `npm run db:seed`.
 
 ### Step 3: Frontend Client SPA (Vercel)

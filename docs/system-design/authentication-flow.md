@@ -110,7 +110,7 @@ Student
  │
  ▼
 Register Form (React)
- │  { name, email, password, roomNumber, hostelBlock }
+ │  { name, email (@chitkarauniversity.edu.in), password, roomNumber, hostelName }
  ▼
 POST /api/auth/register
  │
@@ -225,10 +225,11 @@ Response (200 OK):
     "data": {
       "id": "...",
       "name": "Rahul Sharma",
-      "email": "rahul@college.edu",
+      "email": "rahul.sharma@chitkarauniversity.edu.in",
       "role": "STUDENT",
       "roomNumber": "A-204",
-      "hostelBlock": "Block A"
+      "hostelName": "Sarabhai Hostel",
+      "emailVerified": true
     }
   }
 ```

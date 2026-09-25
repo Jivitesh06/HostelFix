@@ -43,10 +43,10 @@ Authentication is provided via the `Authorization: Bearer <token>` header.
 ```json
 {
   "name": "Rahul Sharma",
-  "email": "rahul@college.edu",
+  "email": "rahul.sharma@chitkarauniversity.edu.in",
   "password": "securepassword123",
-  "roomNumber": "A-204",
-  "hostelBlock": "Block A"
+  "hostelName": "Sarabhai Hostel",
+  "roomNumber": "A-204"
 }
 ```
 
@@ -135,10 +135,10 @@ Authentication is provided via the `Authorization: Bearer <token>` header.
   "data": {
     "id": "clx1abc123",
     "name": "Rahul Sharma",
-    "email": "rahul@college.edu",
+    "email": "rahul.sharma@chitkarauniversity.edu.in",
     "role": "STUDENT",
-    "roomNumber": "A-204",
-    "hostelBlock": "Block A"
+    "hostelName": "Sarabhai Hostel",
+    "roomNumber": "A-204"
   }
 }
 ```
@@ -230,8 +230,8 @@ Authentication is provided via the `Authorization: Bearer <token>` header.
       "createdAt": "2026-08-25T04:00:00.000Z",
       "student": {
         "name": "Rahul Sharma",
-        "roomNumber": "A-204",
-        "hostelBlock": "Block A"
+        "hostelName": "Sarabhai Hostel",
+        "roomNumber": "A-204"
       }
     }
   ]

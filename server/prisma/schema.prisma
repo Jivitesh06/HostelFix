@@ -50,7 +50,7 @@ enum MealType {
 // ─────────────────────────────────────────────────────────────────────────────
 // USER
 // Stores all roles in a single table; role field discriminates behavior.
-// roomNumber + hostelBlock: required for STUDENT accounts (nullable for others)
+// roomNumber: required for STUDENT accounts (nullable for others)
 // staffCategory: informational for STAFF accounts (nullable for others)
 // ─────────────────────────────────────────────────────────────────────────────
 model User {
@@ -60,7 +60,6 @@ model User {
   passwordHash  String
   role          Role
   roomNumber            String?
-  hostelBlock           String?
   hostelName            String?
   gender                String?
   mobileNumber          String?
@@ -68,8 +67,13 @@ model User {
   branch                String?
   year                  String?
   staffCategory         String?
-  isActive              Boolean  @default(true)
-  createdAt             DateTime @default(now())
+  isActive              Boolean   @default(true)
+  emailVerified         Boolean   @default(false)
+  otpHash               String?
+  otpExpiresAt          DateTime?
+  otpAttempts           Int       @default(0)
+  otpLastSentAt         DateTime?
+  createdAt             DateTime  @default(now())
 
   // A student can submit many complaints
   complaintsSubmitted Complaint[]  @relation("StudentComplaints")

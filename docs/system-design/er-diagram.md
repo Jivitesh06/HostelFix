@@ -23,7 +23,7 @@ erDiagram
         string passwordHash
         string role
         string roomNumber
-        string hostelBlock
+        string hostelName
         string staffCategory
         datetime createdAt
     }
@@ -87,7 +87,7 @@ erDiagram
 │─────────────────────────────────────────────────────────────│
 │ id (PK)          │ name             │ email (UK)            │
 │ passwordHash     │ role             │ roomNumber            │
-│ hostelBlock      │ staffCategory    │ createdAt             │
+│ hostelName       │ staffCategory    │ createdAt             │
 └────────────────────────────────────────────────────────────-┘
          │                    │                    │
          │ 1                  │ 1                  │ 1

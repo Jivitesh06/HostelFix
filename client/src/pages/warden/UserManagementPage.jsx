@@ -129,7 +129,6 @@ export default function UserManagementPage() {
       s.name?.toLowerCase().includes(q) ||
       s.email?.toLowerCase().includes(q) ||
       s.roomNumber?.toLowerCase().includes(q) ||
-      s.hostelBlock?.toLowerCase().includes(q) ||
       s.universityRollNumber?.toLowerCase().includes(q) ||
       s.branch?.toLowerCase().includes(q)
     );
@@ -557,7 +556,7 @@ export default function UserManagementPage() {
                     <thead>
                       <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                         <th style={tableHeaderStyle}>Resident Student</th>
-                        <th style={tableHeaderStyle}>Room & Block</th>
+                        <th style={tableHeaderStyle}>Room Number</th>
                         <th style={tableHeaderStyle}>Roll Number & Branch</th>
                         <th style={tableHeaderStyle}>Year</th>
                         <th style={tableHeaderStyle}>Mobile</th>
@@ -608,13 +607,10 @@ export default function UserManagementPage() {
                             </div>
                           </td>
 
-                          {/* Room & Block */}
+                          {/* Room Number */}
                           <td style={tableCellStyle}>
                             <div style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.875rem' }}>
                               Room {st.roomNumber || '—'}
-                            </div>
-                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                              {st.hostelBlock || 'Block Unassigned'}
                             </div>
                           </td>
 
@@ -1137,10 +1133,6 @@ export default function UserManagementPage() {
                   <div style={{ ...detailValueStyle, color: '#4f46e5', fontWeight: 700 }}>
                     {selectedStudent.roomNumber || 'Unassigned'}
                   </div>
-                </div>
-                <div>
-                  <span style={detailLabelStyle}>Hostel Block</span>
-                  <div style={detailValueStyle}>{selectedStudent.hostelBlock || 'Unassigned'}</div>
                 </div>
                 <div>
                   <span style={detailLabelStyle}>Complaints Filed</span>

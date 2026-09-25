@@ -71,13 +71,12 @@ async function runTests() {
   assert(health.status === 200 && health.body.success === true, 'Health check endpoint returns 200 OK');
 
   // 2. Student Registration Tests
-  const uniqueTestEmail = `test.student.${Date.now()}@college.edu`;
+  const uniqueTestEmail = `test.student.${Date.now()}@chitkarauniversity.edu.in`;
   const regValid = await request('POST', '/api/auth/register', {
     name: 'New Test Student',
     email: uniqueTestEmail,
     password: 'password123',
     roomNumber: 'C-301',
-    hostelBlock: 'Block C',
     role: 'WARDEN', // Security test: should be ignored by backend
   });
   assert(regValid.status === 201 && regValid.body.success === true, 'Valid registration returns 201 Created');
@@ -90,13 +89,12 @@ async function runTests() {
     email: uniqueTestEmail,
     password: 'password123',
     roomNumber: 'C-302',
-    hostelBlock: 'Block C',
   });
   assert(regDup.status === 409 && regDup.body.success === false, 'Duplicate email registration returns 409 Conflict');
 
   // Missing fields registration (400 Bad Request)
   const regMissing = await request('POST', '/api/auth/register', {
-    email: 'incomplete@college.edu',
+    email: 'incomplete@chitkarauniversity.edu.in',
     password: 'password123',
   });
   assert(regMissing.status === 400 && regMissing.body.success === false, 'Missing fields registration returns 400 Bad Request');
@@ -107,17 +105,15 @@ async function runTests() {
     email: 'not-an-email',
     password: 'password123',
     roomNumber: 'A-1',
-    hostelBlock: 'A',
   });
   assert(regInvalidEmail.status === 400 && regInvalidEmail.body.success === false, 'Invalid email format returns 400 Bad Request');
 
   // Short password (400 Bad Request)
   const regShortPass = await request('POST', '/api/auth/register', {
     name: 'Short Pass',
-    email: `short.${Date.now()}@college.edu`,
+    email: `short.${Date.now()}@chitkarauniversity.edu.in`,
     password: '123',
     roomNumber: 'A-1',
-    hostelBlock: 'A',
   });
   assert(regShortPass.status === 400 && regShortPass.body.success === false, 'Password < 6 chars returns 400 Bad Request');
 
@@ -226,12 +222,26 @@ async function runTests() {
   assert(loginStaff.status === 200 && loginStaff.body.data.user.role === 'STAFF', 'Staff login returns 200 OK and role STAFF');
   const staffToken = loginStaff.body.data.token;
 
-  // Newly Registered Student Login
+  // Unverified newly registered student login is rejected (403)
+  const loginUnverified = await request('POST', '/api/auth/login', {
+    email: uniqueTestEmail,
+    password: 'password123',
+  });
+  assert(loginUnverified.status === 403 && loginUnverified.body.isUnverified === true, 'Unverified student login rejected with 403 Forbidden');
+
+  // Verify student email to allow login
+  const prismaClient = require('./src/config/prisma');
+  await prismaClient.user.update({
+    where: { email: uniqueTestEmail },
+    data: { emailVerified: true },
+  });
+
+  // Newly Registered Student Login after verification
   const loginNewStudent = await request('POST', '/api/auth/login', {
     email: uniqueTestEmail,
     password: 'password123',
   });
-  assert(loginNewStudent.status === 200 && loginNewStudent.body.data.user.role === 'STUDENT', 'Newly registered student can log in');
+  assert(loginNewStudent.status === 200 && loginNewStudent.body.data.user.role === 'STUDENT', 'Newly registered student can log in after verification');
 
   // Wrong password (401 Unauthorized)
   const loginWrongPass = await request('POST', '/api/auth/login', {

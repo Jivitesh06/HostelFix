@@ -18,6 +18,7 @@ import {
 import { getHostelsByGender } from '../../constants/hostelConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CHITKARA_EMAIL_DOMAIN = '@chitkarauniversity.edu.in';
 const MIN_PASSWORD_LENGTH = 6;
 const PHONE_REGEX = /^[0-9+\-\s]{7,15}$/;
 
@@ -43,7 +44,6 @@ export default function RegisterPage() {
     branch: '',
     year: '',
     hostelName: '',
-    hostelBlock: '',
     roomNumber: '',
     password: '',
     confirmPassword: '',
@@ -83,7 +83,6 @@ export default function RegisterPage() {
       branch,
       year,
       hostelName,
-      hostelBlock,
       roomNumber,
       password,
       confirmPassword,
@@ -94,8 +93,16 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!email.trim() || !EMAIL_REGEX.test(email.trim())) {
-      setError('Please provide a valid college email address (e.g. student@college.edu).');
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
+      setError('Please provide a valid university email address.');
+      return;
+    }
+
+    if (!cleanEmail.endsWith(CHITKARA_EMAIL_DOMAIN)) {
+      setError(
+        'Registration requires an institutional Chitkara University email address (@chitkarauniversity.edu.in). Personal email accounts are not permitted.'
+      );
       return;
     }
 
@@ -129,11 +136,6 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!hostelBlock.trim()) {
-      setError('Hostel block / wing is required (e.g. Block A).');
-      return;
-    }
-
     if (!roomNumber.trim()) {
       setError('Room number is required (e.g. A-101).');
       return;
@@ -154,21 +156,21 @@ export default function RegisterPage() {
     try {
       await api.post('/auth/register', {
         name: name.trim(),
-        email: email.trim().toLowerCase(),
+        email: cleanEmail,
         gender: gender || null,
         mobileNumber: mobileNumber.trim(),
         universityRollNumber: universityRollNumber.trim(),
         branch: branch.trim(),
         year: year.trim(),
         hostelName: hostelName.trim(),
-        hostelBlock: hostelBlock.trim(),
         roomNumber: roomNumber.trim(),
         password,
       });
 
-      navigate('/login', {
+      navigate(`/verify-email?email=${encodeURIComponent(cleanEmail)}`, {
         state: {
-          message: 'Student account registered successfully! You can now sign in.',
+          message: 'Verification code sent to your university email.',
+          email: cleanEmail,
         },
       });
     } catch (err) {
@@ -281,7 +283,10 @@ export default function RegisterPage() {
             </div>
 
             <div style={{ marginBottom: '0.85rem' }}>
-              <label style={fieldLabelStyle}>College Email *</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                <label style={{ ...fieldLabelStyle, marginBottom: 0 }}>University Institutional Email *</label>
+                <span style={{ fontSize: '0.72rem', color: '#6366f1', fontWeight: 600 }}>@chitkarauniversity.edu.in</span>
+              </div>
               <div style={{ position: 'relative' }}>
                 <div style={iconWrapperStyle}><Mail size={16} /></div>
                 <input
@@ -289,7 +294,7 @@ export default function RegisterPage() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="student@college.edu"
+                  placeholder="e.g. rahul.sharma@chitkarauniversity.edu.in"
                   required
                   style={inputWithIconStyle}
                 />
@@ -415,36 +420,19 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={fieldLabelStyle}>Hostel Block / Wing *</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Building2 size={16} /></div>
-                  <input
-                    type="text"
-                    name="hostelBlock"
-                    value={form.hostelBlock}
-                    onChange={handleChange}
-                    placeholder="e.g. Block A"
-                    required
-                    style={inputWithIconStyle}
-                  />
-                </div>
-              </div>
-              <div>
-                <label style={fieldLabelStyle}>Room Number *</label>
-                <div style={{ position: 'relative' }}>
-                  <div style={iconWrapperStyle}><Home size={16} /></div>
-                  <input
-                    type="text"
-                    name="roomNumber"
-                    value={form.roomNumber}
-                    onChange={handleChange}
-                    placeholder="e.g. A-101"
-                    required
-                    style={inputWithIconStyle}
-                  />
-                </div>
+            <div>
+              <label style={fieldLabelStyle}>Room Number *</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><Home size={16} /></div>
+                <input
+                  type="text"
+                  name="roomNumber"
+                  value={form.roomNumber}
+                  onChange={handleChange}
+                  placeholder="e.g. A-101"
+                  required
+                  style={inputWithIconStyle}
+                />
               </div>
             </div>
           </div>

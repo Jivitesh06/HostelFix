@@ -120,7 +120,7 @@ async function runProfileTests() {
     assert(getProfile.body.data.email === 'student@hostelfix.demo', 'Profile contains student email');
     assert(getProfile.body.data.role === 'STUDENT', 'Profile contains STUDENT role');
     assert(getProfile.body.data.roomNumber === 'A-101', 'Profile contains roomNumber');
-    assert(getProfile.body.data.hostelBlock === 'Block A', 'Profile contains hostelBlock');
+    assert(getProfile.body.data.hostelBlock === undefined, 'Hostel block is completely removed');
     assert(getProfile.body.data.hostelName === 'Sarabhai Hostel', 'Profile contains boys hostelName (Sarabhai Hostel)');
     assert(getProfile.body.data.gender === 'MALE', 'Profile contains gender (MALE)');
     assert(getProfile.body.data.mobileNumber === '9876543210', 'Profile contains mobileNumber');
@@ -149,7 +149,6 @@ async function runProfileTests() {
         branch: 'Information Technology',
         year: '4th Year',
         roomNumber: 'A-204',
-        hostelBlock: 'Block A',
         gender: 'MALE',
         hostelName: 'Bose Hostel', // valid for male
       },
@@ -182,7 +181,6 @@ async function runProfileTests() {
         branch: 'Computer Science & Engineering',
         year: '3rd Year',
         roomNumber: 'A-101',
-        hostelBlock: 'Block A',
         gender: 'MALE',
         hostelName: 'Sarabhai Hostel',
       },
@@ -287,10 +285,9 @@ async function runProfileTests() {
     // 16. Registration validation: Gender-hostel matching
     const invalidReg = await request('POST', '/api/auth/register', {
       name: 'Test Male',
-      email: `invalid_male_${Date.now()}@college.edu`,
+      email: `invalid_male_${Date.now()}@chitkarauniversity.edu.in`,
       password: 'Password@123',
       roomNumber: 'A-201',
-      hostelBlock: 'Block A',
       gender: 'MALE',
       hostelName: 'Kalpana Hostel', // girls hostel
     });
@@ -298,10 +295,9 @@ async function runProfileTests() {
 
     const validReg = await request('POST', '/api/auth/register', {
       name: 'Rohan Sharma',
-      email: `valid_boy_${Date.now()}@college.edu`,
+      email: `valid_boy_${Date.now()}@chitkarauniversity.edu.in`,
       password: 'Password@123',
       roomNumber: 'A-301',
-      hostelBlock: 'Block A',
       gender: 'MALE',
       hostelName: 'Aryabhata Hostel',
       mobileNumber: '9123456780',

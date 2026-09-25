@@ -23,23 +23,27 @@ export default function LoginPage() {
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [unverifiedInfo, setUnverifiedInfo] = useState(null);
   const [successMsg, setSuccessMsg] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (error) setError('');
+    if (unverifiedInfo) setUnverifiedInfo(null);
   };
 
   const fillDemo = (email, password) => {
     setForm({ email, password });
     setError('');
+    setUnverifiedInfo(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
+    setUnverifiedInfo(null);
 
     if (!form.email.trim() || !form.password) {
       setError('Please provide both email and password.');
@@ -63,6 +67,13 @@ export default function LoginPage() {
         navigate('/');
       }
     } catch (err) {
+      const isUnverified = err.response?.data?.isUnverified;
+      if (isUnverified) {
+        setUnverifiedInfo({
+          isUnverified: true,
+          email: err.response?.data?.email || form.email.trim(),
+        });
+      }
       const msg =
         err.response?.data?.message ||
         'Unable to connect to server. Please ensure the backend is running.';
@@ -303,7 +314,54 @@ export default function LoginPage() {
             </div>
           )}
 
-          {error && (
+          {unverifiedInfo ? (
+            <div
+              style={{
+                background: '#fffbeb',
+                color: '#92400e',
+                border: '1px solid #fde68a',
+                padding: '1rem',
+                borderRadius: '8px',
+                marginBottom: '1.5rem',
+                fontSize: '0.875rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <AlertCircle size={18} color="#d97706" />
+                <span style={{ fontWeight: 600 }}>Please verify your university email before logging in.</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(`/verify-email?email=${encodeURIComponent(unverifiedInfo.email)}`, {
+                      state: { email: unverifiedInfo.email },
+                    })
+                  }
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    background: '#4f46e5',
+                    color: '#ffffff',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)',
+                  }}
+                >
+                  <span>Verify your email</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
+            </div>
+          ) : error ? (
             <div
               style={{
                 background: '#fff1f2',
@@ -321,7 +379,7 @@ export default function LoginPage() {
               <AlertCircle size={16} color="#e11d48" />
               <span>{error}</span>
             </div>
-          )}
+          ) : null}
 
           {/* Sign In Form */}
           <form onSubmit={handleSubmit}>

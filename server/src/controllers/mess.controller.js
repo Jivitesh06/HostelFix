@@ -271,7 +271,7 @@ const getFeedback = async (req, res, next) => {
             id: true,
             name: true,
             roomNumber: true,
-            hostelBlock: true,
+            hostelName: true,
           },
         },
         messMenu: {
