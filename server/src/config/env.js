@@ -20,4 +20,10 @@ module.exports = {
   },
   clientUrl: process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173',
   adminRegistrationKey: process.env.ADMIN_REGISTRATION_KEY || 'HostelFix@Admin2026',
+  gmail: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    from: process.env.EMAIL_FROM,
+  },
 };

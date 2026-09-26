@@ -340,8 +340,10 @@ HostelFix is fully pre-configured for production deployment across cloud provide
    - `CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name
    - `CLOUDINARY_API_KEY`: Your Cloudinary API key
    - `CLOUDINARY_API_SECRET`: Your Cloudinary API secret
-   - `EMAIL_PROVIDER_API_KEY`: Your transactional email provider API key (Resend/SendGrid)
-   - `EMAIL_FROM`: `HostelFix <noreply@hostelfix.chitkara.edu.in>`
+   - `GOOGLE_CLIENT_ID`: Google OAuth 2.0 Client ID (see `docs/GMAIL_API_SETUP.md`)
+   - `GOOGLE_CLIENT_SECRET`: Google OAuth 2.0 Client Secret
+   - `GOOGLE_REFRESH_TOKEN`: Gmail API refresh token (run `node scripts/google-oauth.js` locally)
+   - `EMAIL_FROM`: Your Gmail address used to send OTP emails
 4. Optional: Run seed once via Render Shell: `npm run db:seed`.
 
 ### Step 3: Frontend Client SPA (Vercel)
