@@ -41,6 +41,7 @@ export default function AppRoutes() {
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/reset-password/*" element={<ResetPasswordPage />} />
       {/* Secure administrative onboarding for wardens and staff/workers */}
       <Route path="/admin/staff-register" element={<StaffRegisterPage />} />
       <Route path="/staff-portal/register" element={<StaffRegisterPage />} />

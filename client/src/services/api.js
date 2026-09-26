@@ -34,16 +34,15 @@ api.interceptors.response.use(
       localStorage.removeItem('hostelfix_token');
 
       // Only redirect if not already on an authentication page
-      const currentPath = window.location.pathname;
-      const isPublicAuthPage = [
-        '/login',
-        '/register',
-        '/verify-email',
-        '/forgot-password',
-        '/reset-password',
-        '/admin/staff-register',
-        '/staff-portal/register',
-      ].includes(currentPath);
+      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      const isPublicAuthPage =
+        currentPath.startsWith('/login') ||
+        currentPath.startsWith('/register') ||
+        currentPath.startsWith('/verify-email') ||
+        currentPath.startsWith('/forgot-password') ||
+        currentPath.startsWith('/reset-password') ||
+        currentPath.startsWith('/admin/staff-register') ||
+        currentPath.startsWith('/staff-portal/register');
 
       if (!isPublicAuthPage) {
         window.location.href = '/login';
