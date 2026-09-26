@@ -716,9 +716,11 @@ const forgotPassword = async (req, res, next) => {
     // Record for tests in test environment
     recordTestResetToken(cleanEmail, rawToken);
 
-    // Build reset URL
-    const frontendBaseUrl = config.clientUrl || 'http://localhost:5173';
-    const resetUrl = `${frontendBaseUrl}/reset-password?token=${rawToken}`;
+    // Build reset URL: ensure strictly ${CLIENT_URL}/reset-password?token=<raw-token>
+    // Strips any accidental trailing slash or /login subpath from the configured CLIENT_URL
+    const rawBaseUrl = process.env.CLIENT_URL || config.clientUrl || 'http://localhost:5173';
+    const cleanBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '').replace(/\/login\/?$/i, '');
+    const resetUrl = `${cleanBaseUrl}/reset-password?token=${rawToken}`;
 
     // Send email via Gmail API
     await sendPasswordResetEmail({

@@ -10,6 +10,9 @@ for (const key of requiredVars) {
   }
 }
 
+const rawClientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173';
+const cleanClientUrl = rawClientUrl.trim().replace(/\/+$/, '').replace(/\/login\/?$/i, '');
+
 module.exports = {
   port: parseInt(process.env.PORT) || 5001,
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -18,7 +21,7 @@ module.exports = {
     secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
-  clientUrl: process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173',
+  clientUrl: cleanClientUrl,
   adminRegistrationKey: process.env.ADMIN_REGISTRATION_KEY || 'HostelFix@Admin2026',
   gmail: {
     clientId: process.env.GOOGLE_CLIENT_ID,

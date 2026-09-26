@@ -323,6 +323,9 @@ const sendPasswordResetEmail = async ({ to, userName, resetUrl, expiryMinutes = 
 
   const subject = 'HostelFix — Password Reset Request';
 
+  // Defensive sanitization: Guarantee path is strictly /reset-password, never /login/reset-password
+  const cleanResetUrl = (resetUrl || '').replace('/login/reset-password', '/reset-password');
+
   const htmlBody = `
 <!DOCTYPE html>
 <html>
@@ -351,7 +354,7 @@ const sendPasswordResetEmail = async ({ to, userName, resetUrl, expiryMinutes = 
     </div>
 
     <div class="btn-container">
-      <a href="${resetUrl}" class="reset-btn" target="_blank" rel="noopener noreferrer">Reset Password &rarr;</a>
+      <a href="${cleanResetUrl}" class="reset-btn" target="_blank" rel="noopener noreferrer">Reset Password &rarr;</a>
     </div>
 
     <div class="info-card">
@@ -359,7 +362,7 @@ const sendPasswordResetEmail = async ({ to, userName, resetUrl, expiryMinutes = 
       &bull; This link is valid for <strong>${expiryMinutes} minutes</strong> only.<br>
       &bull; This link can only be used once.<br>
       &bull; If the button above does not work, copy and paste this link into your browser:<br>
-      <a href="${resetUrl}" class="link-alt">${resetUrl}</a>
+      <a href="${cleanResetUrl}" class="link-alt">${cleanResetUrl}</a>
     </div>
 
     <div class="warning">
@@ -370,7 +373,7 @@ const sendPasswordResetEmail = async ({ to, userName, resetUrl, expiryMinutes = 
 </html>
 `;
 
-  const textBody = `HostelFix — Password Reset Request\n\nHello ${userName || 'there'},\n\nWe received a request to reset the password for your HostelFix account.\n\nPlease visit the link below to set a new password:\n${resetUrl}\n\nThis link is valid for ${expiryMinutes} minutes only and can be used once.\n\nIf you did not request this, please ignore this email. Your password will remain unchanged.`;
+  const textBody = `HostelFix — Password Reset Request\n\nHello ${userName || 'there'},\n\nWe received a request to reset the password for your HostelFix account.\n\nPlease visit the link below to set a new password:\n${cleanResetUrl}\n\nThis link is valid for ${expiryMinutes} minutes only and can be used once.\n\nIf you did not request this, please ignore this email. Your password will remain unchanged.`;
 
   // If Gmail API credentials are not configured, safely simulate delivery
   if (!clientId || !clientSecret || !refreshToken) {

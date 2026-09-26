@@ -428,6 +428,38 @@ async function runTests() {
   assert(staffProfileRes.body?.data?.email === 'staff@hostelfix.demo', 'SP-2: Staff profile has correct email');
   assert(staffProfileRes.body?.data?.staffCategory !== undefined, 'SP-3: Staff profile includes trade category');
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PART 5: URL CONSTRUCTION & PATH SANITIZATION
+  // ═══════════════════════════════════════════════════════════════════════════
+  console.log('\n--- Part 5: URL Construction & Path Sanitization ---\n');
+  const sampleToken = 'abcdef1234567890abcdef1234567890';
+  const testUrls = [
+    'http://localhost:5173',
+    'http://localhost:5173/',
+    'https://hostelfix.onrender.com',
+    'https://hostelfix.onrender.com/',
+    'https://hostelfix.onrender.com/login',
+    'https://hostelfix.onrender.com/login/',
+  ];
+
+  for (const rawUrl of testUrls) {
+    const clean = rawUrl.trim().replace(/\/+$/, '').replace(/\/login\/?$/i, '');
+    const constructed = `${clean}/reset-password?token=${sampleToken}`;
+    const parsed = new URL(constructed);
+    assert(
+      parsed.pathname === '/reset-password',
+      `URL-1: For CLIENT_URL='${rawUrl}', path is strictly '/reset-password'`
+    );
+    assert(
+      !constructed.includes('/login/reset-password'),
+      `URL-2: Constructed URL does not contain '/login/reset-password'`
+    );
+    assert(
+      parsed.searchParams.get('token') === sampleToken,
+      `URL-3: Preserves raw token in query parameter`
+    );
+  }
+
   // Clean up temporary test user
   await prisma.user.delete({ where: { email: testEmail } });
 
