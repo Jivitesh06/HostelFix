@@ -34,7 +34,16 @@ const createGmailClient = () => {
 };
 
 /**
+ * Helper to wrap base64 strings to 76 characters per line (RFC 2045)
+ */
+const wrapBase64 = (str) => {
+  return str.match(/.{1,76}/g)?.join('\r\n') || str;
+};
+
+/**
  * Builds an RFC 2822 MIME message string.
+ * Uses RFC 2047 encoded-word format for UTF-8 headers to prevent mojibake.
+ * Uses base64 Content-Transfer-Encoding for body parts to safely transport UTF-8.
  * @param {object} params
  * @param {string} params.from - Sender email address
  * @param {string} params.to - Recipient email address
@@ -46,29 +55,37 @@ const createGmailClient = () => {
 const buildMimeMessage = ({ from, to, subject, htmlBody, textBody }) => {
   const boundary = `boundary_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
+  // Encode subject according to RFC 2047 if it contains non-ASCII characters
+  const encodedSubject = /[\u0080-\uffff]/.test(subject)
+    ? `=?UTF-8?B?${Buffer.from(subject, 'utf-8').toString('base64')}?=`
+    : subject;
+
+  const base64Text = wrapBase64(Buffer.from(textBody, 'utf-8').toString('base64'));
+  const base64Html = wrapBase64(Buffer.from(htmlBody, 'utf-8').toString('base64'));
+
   const mimeMessage = [
     `From: ${from}`,
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: ${encodedSubject}`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
     `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    'Content-Transfer-Encoding: 7bit',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
     '',
-    textBody,
+    base64Text,
     '',
     `--${boundary}`,
-    'Content-Type: text/html; charset="UTF-8"',
-    'Content-Transfer-Encoding: 7bit',
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
     '',
-    htmlBody,
+    base64Html,
     '',
     `--${boundary}--`,
   ].join('\r\n');
 
-  return Buffer.from(mimeMessage)
+  return Buffer.from(mimeMessage, 'utf-8')
     .toString('base64')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -168,4 +185,5 @@ const sendVerificationOtpEmail = async ({ to, otp, expiryMinutes = 10 }) => {
 module.exports = {
   sendVerificationOtpEmail,
   maskEmail,
+  buildMimeMessage,
 };
