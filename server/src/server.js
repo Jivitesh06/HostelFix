@@ -60,11 +60,27 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ── Start server ──────────────────────────────────────────────────────────────
-const HOST = process.env.HOST || '0.0.0.0';
-app.listen(config.port, HOST, () => {
-  console.log(`[Server] HostelFix API running on http://${HOST}:${config.port}`);
-  console.log(`[Server] Environment: ${config.nodeEnv}`);
-  console.log(`[Server] Health check: http://localhost:${config.port}/api/health`);
-});
+const startServer = async () => {
+  // Safe one-time demo accounts seeding when explicitly enabled
+  if (process.env.SEED_DEMO_ACCOUNTS === 'true') {
+    console.log('[Server] SEED_DEMO_ACCOUNTS=true detected. Provisioning demo accounts...');
+    try {
+      const { seedDemoAccounts } = require('../scripts/seed-demo-accounts');
+      await seedDemoAccounts();
+      console.log('[Server] Demo accounts provisioning completed successfully.');
+    } catch (err) {
+      console.error('[Server] Error provisioning demo accounts on startup:', err.message);
+    }
+  }
+
+  const HOST = process.env.HOST || '0.0.0.0';
+  app.listen(config.port, HOST, () => {
+    console.log(`[Server] HostelFix API running on http://${HOST}:${config.port}`);
+    console.log(`[Server] Environment: ${config.nodeEnv}`);
+    console.log(`[Server] Health check: http://localhost:${config.port}/api/health`);
+  });
+};
+
+startServer();
 
 module.exports = app;

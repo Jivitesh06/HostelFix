@@ -83,7 +83,7 @@ const DEMO_ACCOUNTS = [
   },
 ];
 
-async function main() {
+async function seedDemoAccounts() {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
   console.log('║        HostelFix — Demo Accounts Provisioner            ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
@@ -153,11 +153,18 @@ async function main() {
   console.log('\nAll demo accounts are synchronized and ready for login.\n');
 }
 
-main()
-  .catch((err) => {
-    console.error('Error provisioning demo accounts:', err.message);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (require.main === module) {
+  seedDemoAccounts()
+    .catch((err) => {
+      console.error('Error provisioning demo accounts:', err.message);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}
+
+module.exports = {
+  seedDemoAccounts,
+  DEMO_ACCOUNTS,
+};
