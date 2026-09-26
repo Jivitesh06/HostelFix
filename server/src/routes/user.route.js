@@ -624,4 +624,228 @@ router.put('/staff/:id', verifyToken, requireRole('WARDEN'), async (req, res, ne
   }
 });
 
+/**
+ * GET /api/users/wardens
+ * Returns a list of all wardens for directory and management.
+ * Access: WARDEN only
+ */
+router.get('/wardens', verifyToken, requireRole('WARDEN'), async (req, res, next) => {
+  try {
+    const wardens = await prisma.user.findMany({
+      where: { role: 'WARDEN' },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        gender: true,
+        hostelName: true,
+        mobileNumber: true,
+        isActive: true,
+        createdAt: true,
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return sendSuccess(res, wardens);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/users/warden
+ * Allows an authenticated Warden to provision a new Warden account.
+ * Scoping: If creator warden is assigned to a hostel, the new warden must be assigned to the same hostel.
+ * Access: WARDEN only
+ */
+router.post('/warden', verifyToken, requireRole('WARDEN'), async (req, res, next) => {
+  try {
+    const { name, email, password, gender, hostelName, mobileNumber } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !gender) {
+      return sendError(
+        res,
+        'Name, email, password, and gender are required',
+        400
+      );
+    }
+
+    if (!name.trim()) {
+      return sendError(res, 'Name cannot be empty', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return sendError(res, 'Please provide a valid email address', 400);
+    }
+
+    if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
+      return sendError(
+        res,
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+        400
+      );
+    }
+
+    const cleanGender = gender.toString().trim().toUpperCase();
+    if (!GENDERS.includes(cleanGender)) {
+      return sendError(res, 'Invalid gender. Allowed values: MALE, FEMALE', 400);
+    }
+
+    // Determine assigned hostel:
+    // If the authenticated creator warden has a specific hostel assigned, the new warden must be assigned to that same hostel
+    let assignedHostel = req.user.hostelName;
+    if (req.user.hostelName) {
+      if (hostelName && hostelName.trim() !== req.user.hostelName) {
+        return sendError(
+          res,
+          `Wardens can only assign new wardens to their own managed hostel: ${req.user.hostelName}`,
+          400
+        );
+      }
+      assignedHostel = req.user.hostelName;
+    } else {
+      // Creator has no specific hostel assigned; require explicit hostelName
+      if (!hostelName || !hostelName.trim()) {
+        return sendError(res, 'Assigned hostel is required', 400);
+      }
+      assignedHostel = hostelName.trim();
+    }
+
+    // Verify hostel is valid for gender
+    if (!isValidHostelForGender(assignedHostel, cleanGender)) {
+      return sendError(
+        res,
+        `Selected hostel "${assignedHostel}" is not valid for ${cleanGender.toLowerCase()} wardens. Allowed hostels: ${getHostelsByGender(cleanGender).join(', ')}`,
+        400
+      );
+    }
+
+    // Validate optional mobile number
+    if (mobileNumber && typeof mobileNumber === 'string' && mobileNumber.trim()) {
+      if (!PHONE_REGEX.test(mobileNumber.trim())) {
+        return sendError(res, 'Please provide a valid contact mobile number (7-15 digits)', 400);
+      }
+    }
+
+    // Check duplicate email
+    const existing = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+    if (existing) {
+      return sendError(res, 'An account with this email already exists', 409);
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+    // Create warden user - role is strictly forced to WARDEN; emailVerified is true
+    const newWarden = await prisma.user.create({
+      data: {
+        name: name.trim(),
+        email: cleanEmail,
+        passwordHash,
+        role: 'WARDEN',
+        gender: cleanGender,
+        hostelName: assignedHostel,
+        mobileNumber: mobileNumber && typeof mobileNumber === 'string' ? mobileNumber.trim() : null,
+        staffCategory: null,
+        roomNumber: null,
+        universityRollNumber: null,
+        branch: null,
+        year: null,
+        isActive: true,
+        emailVerified: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        gender: true,
+        hostelName: true,
+        mobileNumber: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return sendCreated(res, newWarden);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PUT /api/users/wardens/:id
+ * Allows Warden to edit basic warden details and active status.
+ * Safety: A warden cannot deactivate their own account.
+ * Access: WARDEN only
+ */
+router.put('/wardens/:id', verifyToken, requireRole('WARDEN'), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, mobileNumber, isActive } = req.body;
+
+    const targetWarden = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!targetWarden || targetWarden.role !== 'WARDEN') {
+      return sendNotFound(res, 'Warden not found');
+    }
+
+    // Safety guard: prevent self-deactivation
+    if (isActive === false && targetWarden.id === req.user.id) {
+      return sendError(res, 'You cannot deactivate your own warden account', 400);
+    }
+
+    const dataToUpdate = {};
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || !name.trim()) {
+        return sendError(res, 'Name cannot be empty', 400);
+      }
+      dataToUpdate.name = name.trim();
+    }
+
+    if (mobileNumber !== undefined) {
+      if (mobileNumber !== null && mobileNumber !== '') {
+        if (typeof mobileNumber !== 'string' || !PHONE_REGEX.test(mobileNumber.trim())) {
+          return sendError(res, 'Please provide a valid contact mobile number (7-15 digits)', 400);
+        }
+        dataToUpdate.mobileNumber = mobileNumber.trim();
+      } else {
+        dataToUpdate.mobileNumber = null;
+      }
+    }
+
+    if (isActive !== undefined) {
+      dataToUpdate.isActive = Boolean(isActive);
+    }
+
+    const updated = await prisma.user.update({
+      where: { id },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        gender: true,
+        hostelName: true,
+        mobileNumber: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return sendSuccess(res, updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

@@ -307,6 +307,113 @@ async function runTests() {
   });
   assert(secondReg.status === 409, 'Duplicate university roll number returns 409 Conflict');
 
+  // 12. Warden Management & Creation Tests
+  // A. List Wardens
+  const wardensListRes = await request('GET', '/api/users/wardens', null, warden1Token);
+  assert(wardensListRes.status === 200, 'Warden can fetch wardens list (200)');
+  assert(Array.isArray(wardensListRes.body.data), 'Wardens list is an array');
+
+  // B. Warden 1 (Sarabhai Hostel) creates a new Warden
+  const uniqueWardenEmail = `new.warden.${Date.now()}@hostelfix.demo`;
+  const createWardenRes = await request('POST', '/api/users/warden', {
+    name: 'New Peer Warden',
+    email: uniqueWardenEmail,
+    password: 'Password@123',
+    gender: 'MALE',
+    hostelName: 'Sarabhai Hostel',
+    mobileNumber: '9876543299',
+    role: 'STUDENT', // Attempt role tamper
+  }, warden1Token);
+
+  assert(createWardenRes.status === 201, 'Warden creates new Warden (201)');
+  assert(createWardenRes.body.data.role === 'WARDEN', 'Security: Role strictly forced to WARDEN regardless of body');
+  assert(createWardenRes.body.data.passwordHash === undefined, 'Security: passwordHash not leaked in response');
+  assert(createWardenRes.body.data.email === uniqueWardenEmail, 'Created warden has correct email');
+  assert(createWardenRes.body.data.hostelName === 'Sarabhai Hostel', 'Created warden has correct hostel');
+  assert(createWardenRes.body.data.isActive === true, 'Created warden defaults to isActive=true');
+
+  // C. Newly created Warden can log in
+  const newWardenLogin = await request('POST', '/api/auth/login', {
+    email: uniqueWardenEmail,
+    password: 'Password@123',
+  });
+  assert(newWardenLogin.status === 200, 'Newly provisioned warden can log in');
+  assert(newWardenLogin.body.data.user.role === 'WARDEN', 'Logged in user has role WARDEN');
+
+  // D. Hostel scoping: Warden 1 (Sarabhai Hostel) attempting to assign to Gargi Hostel rejected
+  const mismatchedHostelRes = await request('POST', '/api/users/warden', {
+    name: 'Mismatched Warden',
+    email: `mismatch.${Date.now()}@hostelfix.demo`,
+    password: 'Password@123',
+    gender: 'FEMALE',
+    hostelName: 'Gargi Hostel',
+  }, warden1Token);
+  assert(mismatchedHostelRes.status === 400, 'Warden attempting to assign mismatched hostel rejected (400)');
+
+  // E. Duplicate email rejected
+  const dupWardenEmailRes = await request('POST', '/api/users/warden', {
+    name: 'Duplicate Warden',
+    email: uniqueWardenEmail,
+    password: 'Password@123',
+    gender: 'MALE',
+    hostelName: 'Sarabhai Hostel',
+  }, warden1Token);
+  assert(dupWardenEmailRes.status === 409, 'Duplicate warden email returns 409 Conflict');
+
+  // F. Validation checks
+  const missingFieldRes = await request('POST', '/api/users/warden', {
+    email: `missing.${Date.now()}@hostelfix.demo`,
+    password: 'Password@123',
+  }, warden1Token);
+  assert(missingFieldRes.status === 400, 'Missing required warden fields returns 400 Bad Request');
+
+  const shortPassRes = await request('POST', '/api/users/warden', {
+    name: 'Short Pass',
+    email: `short.${Date.now()}@hostelfix.demo`,
+    password: '123',
+    gender: 'MALE',
+  }, warden1Token);
+  assert(shortPassRes.status === 400, 'Password < 6 chars returns 400 Bad Request');
+
+  // G. RBAC isolation: Student and Staff cannot create warden
+  const studentCreateWarden = await request('POST', '/api/users/warden', {
+    name: 'Student Tamper',
+    email: `student.tamper.${Date.now()}@hostelfix.demo`,
+    password: 'Password@123',
+    gender: 'MALE',
+  }, studentToken);
+  assert(studentCreateWarden.status === 403, 'Student accessing POST /api/users/warden rejected (403)');
+
+  const staffCreateWarden = await request('POST', '/api/users/warden', {
+    name: 'Staff Tamper',
+    email: `staff.tamper.${Date.now()}@hostelfix.demo`,
+    password: 'Password@123',
+    gender: 'MALE',
+  }, staffToken);
+  assert(staffCreateWarden.status === 403, 'Staff accessing POST /api/users/warden rejected (403)');
+
+  const unauthCreateWarden = await request('POST', '/api/users/warden', {
+    name: 'Unauth Tamper',
+    email: `unauth.${Date.now()}@hostelfix.demo`,
+    password: 'Password@123',
+    gender: 'MALE',
+  });
+  assert(unauthCreateWarden.status === 401, 'Unauthenticated POST /api/users/warden rejected (401)');
+
+  // H. Warden lifecycle & self-deactivation guard
+  const warden1Id = warden1Login.body.data.user.id;
+  const selfDeactivateRes = await request('PUT', `/api/users/wardens/${warden1Id}`, {
+    isActive: false,
+  }, warden1Token);
+  assert(selfDeactivateRes.status === 400, 'Warden self-deactivation blocked (400)');
+
+  const createdWardenId = createWardenRes.body.data.id;
+  const toggleWardenRes = await request('PUT', `/api/users/wardens/${createdWardenId}`, {
+    isActive: false,
+  }, warden1Token);
+  assert(toggleWardenRes.status === 200, 'Warden toggles other warden active status (200)');
+  assert(toggleWardenRes.body.data.isActive === false, 'Warden duty status successfully set to inactive');
+
   console.log(`\n=== Results: ${passed}/${total} tests passed ===`);
   if (passed === total) {
     console.log('🎉 ALL USER MANAGEMENT & ONBOARDING TESTS PASSED!\n');

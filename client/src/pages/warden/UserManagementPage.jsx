@@ -27,6 +27,7 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
+import { getHostelsByGender, ALL_HOSTELS } from '../../constants/hostelConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s]{7,15}$/;
@@ -46,13 +47,30 @@ const STAFF_CATEGORIES = [
 export default function UserManagementPage() {
   const { user } = useAuth();
 
-  // Active Tab: 'STUDENTS' or 'STAFF'
+  // Active Tab: 'STUDENTS', 'WARDENS', or 'STAFF'
   const [activeTab, setActiveTab] = useState('STUDENTS');
 
   // Students state
   const [students, setStudents] = useState([]);
   const [studentsLoading, setStudentsLoading] = useState(true);
   const [studentSearch, setStudentSearch] = useState('');
+
+  // Wardens state
+  const [wardensList, setWardensList] = useState([]);
+  const [wardensLoading, setWardensLoading] = useState(true);
+  const [wardenSearch, setWardenSearch] = useState('');
+
+  // Add Warden Modal
+  const [addWardenModalOpen, setAddWardenModalOpen] = useState(false);
+  const [addWardenLoading, setAddWardenLoading] = useState(false);
+  const [addWardenForm, setAddWardenForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    gender: 'MALE',
+    hostelName: user?.hostelName || 'Sarabhai Hostel',
+    mobileNumber: '',
+  });
 
   // Staff state
   const [staffList, setStaffList] = useState([]);
@@ -116,8 +134,22 @@ export default function UserManagementPage() {
     }
   };
 
+  // Load Wardens
+  const loadWardens = async () => {
+    setWardensLoading(true);
+    try {
+      const data = await userService.getWardens();
+      setWardensList(data);
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to load wardens list.');
+    } finally {
+      setWardensLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadStudents();
+    loadWardens();
     loadStaff();
   }, []);
 
@@ -131,6 +163,19 @@ export default function UserManagementPage() {
       s.roomNumber?.toLowerCase().includes(q) ||
       s.universityRollNumber?.toLowerCase().includes(q) ||
       s.branch?.toLowerCase().includes(q)
+    );
+  });
+
+  // Filtered Wardens
+  const filteredWardens = wardensList.filter((w) => {
+    if (!wardenSearch.trim()) return true;
+    const q = wardenSearch.toLowerCase();
+    return (
+      w.name?.toLowerCase().includes(q) ||
+      w.email?.toLowerCase().includes(q) ||
+      w.hostelName?.toLowerCase().includes(q) ||
+      w.gender?.toLowerCase().includes(q) ||
+      w.mobileNumber?.toLowerCase().includes(q)
     );
   });
 
@@ -263,6 +308,85 @@ export default function UserManagementPage() {
       setErrorMsg(err.response?.data?.message || 'Failed to update staff member.');
     } finally {
       setEditStaffLoading(false);
+    }
+  };
+
+  // Handle Add Warden Submit
+  const handleAddWardenSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    const { name, email, password, gender, hostelName, mobileNumber } = addWardenForm;
+
+    if (!name.trim() || !email.trim() || !password || !gender) {
+      setErrorMsg('Full name, email, password, and gender are required.');
+      return;
+    }
+
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setErrorMsg('Please enter a valid email address.');
+      return;
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setErrorMsg(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+      return;
+    }
+
+    const assignedHostel = user?.hostelName || hostelName;
+    if (!assignedHostel) {
+      setErrorMsg('Assigned hostel is required.');
+      return;
+    }
+
+    setAddWardenLoading(true);
+    try {
+      await userService.createWarden({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        gender,
+        hostelName: assignedHostel,
+        mobileNumber: mobileNumber.trim() || null,
+      });
+
+      setSuccessMsg(`Warden account for "${name.trim()}" created successfully!`);
+      setAddWardenModalOpen(false);
+      setAddWardenForm({
+        name: '',
+        email: '',
+        password: '',
+        gender: 'MALE',
+        hostelName: user?.hostelName || 'Sarabhai Hostel',
+        mobileNumber: '',
+      });
+      await loadWardens();
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to create warden account.');
+    } finally {
+      setAddWardenLoading(false);
+    }
+  };
+
+  // Handle Toggle Warden Active Status
+  const handleToggleWardenActive = async (targetWarden) => {
+    if (targetWarden.id === user?.id) {
+      setErrorMsg('You cannot deactivate your own warden account.');
+      return;
+    }
+
+    setErrorMsg('');
+    setSuccessMsg('');
+    try {
+      const nextStatus = !targetWarden.isActive;
+      await userService.updateWarden(targetWarden.id, { isActive: nextStatus });
+      setSuccessMsg(
+        `Warden "${targetWarden.name}" duty status set to ${nextStatus ? 'Active' : 'Inactive'}.`
+      );
+      await loadWardens();
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to update warden status.');
     }
   };
 
@@ -409,6 +533,39 @@ export default function UserManagementPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab('WARDENS')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.55rem 1.15rem',
+                borderRadius: '8px',
+                border: 'none',
+                background: activeTab === 'WARDENS' ? '#c8102e' : 'transparent',
+                color: activeTab === 'WARDENS' ? '#ffffff' : '#6b7280',
+                fontWeight: activeTab === 'WARDENS' ? 700 : 500,
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Shield size={16} />
+              <span>Hostel Wardens</span>
+              <span
+                style={{
+                  background: activeTab === 'WARDENS' ? 'rgba(255,255,255,0.25)' : '#f3f4f6',
+                  color: activeTab === 'WARDENS' ? '#ffffff' : '#374151',
+                  padding: '0.1rem 0.45rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                }}
+              >
+                {wardensList.length}
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('STAFF')}
               style={{
                 display: 'flex',
@@ -442,7 +599,35 @@ export default function UserManagementPage() {
             </button>
           </div>
 
-          {/* Action button: Only on STAFF tab */}
+          {/* Action button: WARDENS tab */}
+          {activeTab === 'WARDENS' && (
+            <button
+              onClick={() => {
+                setErrorMsg('');
+                setAddWardenModalOpen(true);
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.25rem',
+                background: '#c8102e',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                transition: 'background 0.15s ease',
+              }}
+            >
+              <Plus size={16} />
+              <span>Add Warden</span>
+            </button>
+          )}
+
+          {/* Action button: STAFF tab */}
           {activeTab === 'STAFF' && (
             <button
               onClick={() => {
@@ -692,6 +877,280 @@ export default function UserManagementPage() {
                           </td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: HOSTEL WARDENS ─────────────────────────────────────────── */}
+        {activeTab === 'WARDENS' && (
+          <div>
+            {/* Search filter bar */}
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: '12px',
+                padding: '1rem',
+                marginBottom: '1rem',
+                border: '1px solid #e5e7eb',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
+              <Search size={18} color="#9ca3af" />
+              <input
+                type="text"
+                placeholder="Search wardens by name, email, or hostel..."
+                value={wardenSearch}
+                onChange={(e) => setWardenSearch(e.target.value)}
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  width: '100%',
+                  fontSize: '0.9rem',
+                  color: '#171717',
+                  background: 'transparent',
+                }}
+              />
+              {wardenSearch && (
+                <button
+                  onClick={() => setWardenSearch('')}
+                  style={{
+                    background: '#f3f4f6',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '22px',
+                    height: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#6b7280',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Table Container */}
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: '12px',
+                border: '1px solid #e5e7eb',
+                overflow: 'hidden',
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              {wardensLoading ? (
+                <div style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
+                  Loading wardens directory...
+                </div>
+              ) : filteredWardens.length === 0 ? (
+                <div style={{ padding: '3rem 1rem' }}>
+                  <EmptyState
+                    icon={Shield}
+                    title="No Wardens Found"
+                    description={
+                      wardenSearch
+                        ? `No warden accounts match "${wardenSearch}".`
+                        : 'No warden accounts registered yet.'
+                    }
+                    actionText="Add Warden"
+                    onAction={() => setAddWardenModalOpen(true)}
+                  />
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: '#f8f8f8', borderBottom: '1px solid #e5e7eb' }}>
+                        <th style={tableHeaderStyle}>Warden</th>
+                        <th style={tableHeaderStyle}>Gender</th>
+                        <th style={tableHeaderStyle}>Assigned Hostel</th>
+                        <th style={tableHeaderStyle}>Contact Mobile</th>
+                        <th style={tableHeaderStyle}>Status</th>
+                        <th style={{ ...tableHeaderStyle, textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredWardens.map((w, index) => {
+                        const isSelf = w.id === user?.id;
+                        return (
+                          <tr
+                            key={w.id}
+                            style={{
+                              borderBottom: index === filteredWardens.length - 1 ? 'none' : '1px solid #f3f4f6',
+                              transition: 'background 0.15s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fafafa';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }}
+                          >
+                            {/* Warden Name & Email */}
+                            <td style={tableCellStyle}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div
+                                  style={{
+                                    width: '38px',
+                                    height: '38px',
+                                    borderRadius: '10px',
+                                    background: isSelf ? '#fdecef' : '#f3f4f6',
+                                    color: isSelf ? '#c8102e' : '#374151',
+                                    border: isSelf ? '1px solid #fecdd3' : '1px solid #e5e7eb',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 700,
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {(w.name || 'W')
+                                    .split(' ')
+                                    .filter(Boolean)
+                                    .slice(0, 2)
+                                    .map((n) => n[0].toUpperCase())
+                                    .join('')}
+                                </div>
+                                <div>
+                                  <div style={{ fontWeight: 600, color: '#171717', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                    <span>{w.name}</span>
+                                    {isSelf && (
+                                      <span
+                                        style={{
+                                          fontSize: '0.68rem',
+                                          background: '#fdecef',
+                                          color: '#c8102e',
+                                          padding: '0.1rem 0.4rem',
+                                          borderRadius: '9999px',
+                                          fontWeight: 700,
+                                        }}
+                                      >
+                                        You
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                                    {w.email}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Gender */}
+                            <td style={tableCellStyle}>
+                              <span
+                                style={{
+                                  background: w.gender === 'FEMALE' ? '#fdf2f8' : '#eff6ff',
+                                  color: w.gender === 'FEMALE' ? '#db2777' : '#2563eb',
+                                  border: w.gender === 'FEMALE' ? '1px solid #fbcfe8' : '1px solid #bfdbfe',
+                                  padding: '0.2rem 0.55rem',
+                                  borderRadius: '6px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {w.gender === 'FEMALE' ? 'Female' : 'Male'}
+                              </span>
+                            </td>
+
+                            {/* Assigned Hostel */}
+                            <td style={tableCellStyle}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#374151', fontSize: '0.85rem', fontWeight: 500 }}>
+                                <Building2 size={15} color="#c8102e" />
+                                <span>{w.hostelName || 'General Administration'}</span>
+                              </div>
+                            </td>
+
+                            {/* Mobile */}
+                            <td style={tableCellStyle}>
+                              <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+                                {w.mobileNumber || '—'}
+                              </span>
+                            </td>
+
+                            {/* Status */}
+                            <td style={tableCellStyle}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  background: w.isActive ? '#ecfdf5' : '#f3f4f6',
+                                  color: w.isActive ? '#065f46' : '#6b7280',
+                                  border: w.isActive ? '1px solid #a7f3d0' : '1px solid #e5e7eb',
+                                  padding: '0.15rem 0.55rem',
+                                  borderRadius: '9999px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    borderRadius: '50%',
+                                    background: w.isActive ? '#10b981' : '#9ca3af',
+                                  }}
+                                />
+                                {w.isActive ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+
+                            {/* Actions: Toggle Duty Status */}
+                            <td style={{ ...tableCellStyle, textAlign: 'right' }}>
+                              {isSelf ? (
+                                <span
+                                  style={{
+                                    fontSize: '0.75rem',
+                                    color: '#9ca3af',
+                                    fontWeight: 500,
+                                    fontStyle: 'italic',
+                                  }}
+                                >
+                                  Current Session
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleToggleWardenActive(w)}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    padding: '0.45rem 0.75rem',
+                                    background: '#f8f8f8',
+                                    color: w.isActive ? '#b91c1c' : '#15803d',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '6px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = w.isActive ? '#fef2f2' : '#f0fdf4';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#f8f8f8';
+                                  }}
+                                >
+                                  <span>{w.isActive ? 'Deactivate' : 'Activate'}</span>
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -1385,6 +1844,164 @@ export default function UserManagementPage() {
               }}
             >
               {editStaffLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* ── MODAL 4: ADD HOSTEL WARDEN ───────────────────────────────────── */}
+      <Modal
+        isOpen={addWardenModalOpen}
+        onClose={() => setAddWardenModalOpen(false)}
+        title="Add Hostel Warden"
+        subtitle="Provision an official warden account with residence hall management access"
+      >
+        <form onSubmit={handleAddWardenSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={fieldLabelStyle}>Full Name *</label>
+            <div style={{ position: 'relative' }}>
+              <div style={iconWrapperStyle}><User size={15} /></div>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Dr. Rajesh Kumar"
+                value={addWardenForm.name}
+                onChange={(e) => setAddWardenForm({ ...addWardenForm, name: e.target.value })}
+                style={modalInputStyle}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={fieldLabelStyle}>Official Email *</label>
+            <div style={{ position: 'relative' }}>
+              <div style={iconWrapperStyle}><Mail size={15} /></div>
+              <input
+                type="email"
+                required
+                placeholder="warden@hostelfix.demo"
+                value={addWardenForm.email}
+                onChange={(e) => setAddWardenForm({ ...addWardenForm, email: e.target.value })}
+                style={modalInputStyle}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={fieldLabelStyle}>Initial Password *</label>
+            <div style={{ position: 'relative' }}>
+              <div style={iconWrapperStyle}><Lock size={15} /></div>
+              <input
+                type="password"
+                required
+                placeholder="Min 6 characters"
+                value={addWardenForm.password}
+                onChange={(e) => setAddWardenForm({ ...addWardenForm, password: e.target.value })}
+                style={modalInputStyle}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={fieldLabelStyle}>Gender *</label>
+              <select
+                value={addWardenForm.gender}
+                onChange={(e) => {
+                  const newGender = e.target.value;
+                  const available = getHostelsByGender(newGender);
+                  setAddWardenForm({
+                    ...addWardenForm,
+                    gender: newGender,
+                    hostelName: user?.hostelName || available[0] || '',
+                  });
+                }}
+                style={modalSelectStyle}
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={fieldLabelStyle}>Contact Mobile</label>
+              <div style={{ position: 'relative' }}>
+                <div style={iconWrapperStyle}><Phone size={15} /></div>
+                <input
+                  type="tel"
+                  placeholder="e.g. 9876543210"
+                  value={addWardenForm.mobileNumber}
+                  onChange={(e) => setAddWardenForm({ ...addWardenForm, mobileNumber: e.target.value })}
+                  style={modalInputStyle}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label style={fieldLabelStyle}>Assigned Hostel *</label>
+            {user?.hostelName ? (
+              <div>
+                <div style={{ position: 'relative' }}>
+                  <div style={iconWrapperStyle}><Building2 size={15} /></div>
+                  <input
+                    type="text"
+                    disabled
+                    value={user.hostelName}
+                    style={{ ...modalInputStyle, background: '#f8f8f8', color: '#6b7280', cursor: 'not-allowed' }}
+                  />
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#6b7280', marginTop: '0.3rem' }}>
+                  Jurisdiction Policy: Peer wardens are scoped to your managed residence ({user.hostelName}).
+                </div>
+              </div>
+            ) : (
+              <select
+                value={addWardenForm.hostelName}
+                onChange={(e) => setAddWardenForm({ ...addWardenForm, hostelName: e.target.value })}
+                style={modalSelectStyle}
+              >
+                {getHostelsByGender(addWardenForm.gender).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.75rem' }}>
+            <button
+              type="button"
+              onClick={() => setAddWardenModalOpen(false)}
+              style={{
+                padding: '0.55rem 1rem',
+                background: '#f1f5f9',
+                color: '#475569',
+                border: 'none',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={addWardenLoading}
+              style={{
+                padding: '0.55rem 1.25rem',
+                background: '#c8102e',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                cursor: addWardenLoading ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {addWardenLoading ? 'Provisioning...' : 'Create Warden Account'}
             </button>
           </div>
         </form>

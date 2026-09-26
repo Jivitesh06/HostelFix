@@ -81,6 +81,33 @@ export const userService = {
     const res = await api.put(`/users/staff/${id}`, data);
     return res.data.data;
   },
+
+  /**
+   * Fetch list of all wardens for directory and management.
+   * Access: WARDEN
+   */
+  getWardens: async () => {
+    const res = await api.get('/users/wardens');
+    return res.data.data;
+  },
+
+  /**
+   * Provision a new Warden account.
+   * Access: WARDEN
+   */
+  createWarden: async (data) => {
+    const res = await api.post('/users/warden', data);
+    return res.data.data;
+  },
+
+  /**
+   * Update an existing warden's details or active status.
+   * Access: WARDEN
+   */
+  updateWarden: async (id, data) => {
+    const res = await api.put(`/users/wardens/${id}`, data);
+    return res.data.data;
+  },
 };
 
 export default userService;
