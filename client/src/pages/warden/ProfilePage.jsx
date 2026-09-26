@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import userService from '../../services/userService';
 import AppShell from '../../components/AppShell';
 import Modal from '../../components/Modal';
+import ChangePasswordModal from '../../components/ChangePasswordModal';
 import {
   User,
   Mail,
@@ -15,6 +16,8 @@ import {
   Calendar,
   Shield,
   Briefcase,
+  Lock,
+  KeyRound,
 } from 'lucide-react';
 import { getHostelsByGender } from '../../constants/hostelConfig';
 
@@ -30,6 +33,7 @@ export default function WardenProfilePage() {
 
   // Edit Modal State
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState('');
   const [formData, setFormData] = useState({
@@ -141,7 +145,69 @@ export default function WardenProfilePage() {
     : 'Recently';
 
   return (
-    <AppShell title="Warden Profile">
+    <AppShell
+      title="Warden Profile"
+      subtitle="View administrative jurisdiction, contact info, and manage your account credentials"
+      actions={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <button
+            type="button"
+            onClick={() => setChangePasswordOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              background: '#ffffff',
+              color: '#374151',
+              padding: '0.625rem 1rem',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c8102e';
+              e.currentTarget.style.color = '#c8102e';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#e5e7eb';
+              e.currentTarget.style.color = '#374151';
+            }}
+          >
+            <KeyRound size={15} />
+            <span>Change Password</span>
+          </button>
+
+          <button
+            onClick={openEditModal}
+            disabled={loading || !profile}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: '#c8102e',
+              color: '#ffffff',
+              padding: '0.625rem 1.25rem',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              border: 'none',
+              boxShadow: '0 1px 2px rgba(200, 16, 46, 0.2)',
+              transition: 'background-color 0.15s ease',
+            }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a50d25')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c8102e')}
+          >
+            <Edit3 size={16} />
+            <span>Edit Profile</span>
+          </button>
+        </div>
+      }
+    >
       <div style={{ maxWidth: '960px', margin: '0 auto', paddingBottom: '3rem' }}>
         {/* Alerts */}
         {successMsg && (
@@ -565,9 +631,87 @@ export default function WardenProfilePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Card 3: Account Security & Password */}
+              <div
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: '1px solid #e5e7eb',
+                  padding: '1.5rem',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                  marginTop: '1.5rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '10px',
+                      background: '#fdecef',
+                      color: '#c8102e',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Lock size={18} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#171717', margin: 0 }}>
+                      Account Security &amp; Password
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                      Administrative account password is encrypted with bcrypt. Keep your credentials secure.
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setChangePasswordOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '0.55rem 1rem',
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#374151',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#c8102e';
+                    e.currentTarget.style.color = '#c8102e';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e5e7eb';
+                    e.currentTarget.style.color = '#374151';
+                  }}
+                >
+                  <KeyRound size={15} />
+                  <span>Change Password</span>
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
+
+        {/* Change Password Modal */}
+        <ChangePasswordModal
+          isOpen={changePasswordOpen}
+          onClose={() => setChangePasswordOpen(false)}
+        />
 
         {/* Edit Warden Profile Modal */}
         <Modal

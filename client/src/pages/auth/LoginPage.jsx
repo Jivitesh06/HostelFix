@@ -429,17 +429,37 @@ export default function LoginPage() {
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label
+              <div
                 style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: '#374151',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   marginBottom: '0.4rem',
                 }}
               >
-                Password
-              </label>
+                <label
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                  }}
+                >
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: '#c8102e',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <div style={{ position: 'relative' }}>
                 <div
                   style={{

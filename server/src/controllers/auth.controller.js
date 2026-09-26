@@ -8,6 +8,7 @@ const {
   sendError,
   sendUnauthorized,
   sendForbidden,
+  sendNotFound,
 } = require('../utils/response');
 const {
   GENDERS,
@@ -21,7 +22,16 @@ const {
   recordTestOtp,
 } = require('../services/otp.service');
 const {
+  generateResetToken,
+  hashResetToken,
+  verifyResetTokenHash,
+  recordTestResetToken,
+  RESET_TOKEN_EXPIRY_MINUTES,
+  RESET_COOLDOWN_MS,
+} = require('../services/passwordReset.service');
+const {
   sendVerificationOtpEmail,
+  sendPasswordResetEmail,
   maskEmail,
 } = require('../services/email.service');
 
@@ -649,6 +659,217 @@ const staffRegister = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/auth/forgot-password
+ * Public endpoint for password reset initiation (STUDENT, WARDEN, STAFF).
+ * Always returns a generic response to prevent user enumeration attacks.
+ * Dispatches a password reset link to the user's email if the account exists.
+ */
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const GENERIC_RESPONSE = 'If an account exists with this email, a password reset link has been sent.';
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return sendError(res, 'Email address is required', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return sendError(res, 'Please provide a valid email address', 400);
+    }
+
+    // Look up user by email
+    const user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user) {
+      // Do not reveal whether user exists - return generic success
+      return sendSuccess(res, { message: GENERIC_RESPONSE });
+    }
+
+    // Cooldown check: if requested within last 60s, don't spam emails, return generic success
+    if (user.passwordResetLastSentAt) {
+      const msSinceLast = Date.now() - new Date(user.passwordResetLastSentAt).getTime();
+      if (msSinceLast < RESET_COOLDOWN_MS) {
+        return sendSuccess(res, { message: GENERIC_RESPONSE });
+      }
+    }
+
+    // Generate cryptographically secure token & SHA-256 hash
+    const rawToken = generateResetToken();
+    const tokenHash = hashResetToken(rawToken);
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_EXPIRY_MINUTES * 60 * 1000);
+
+    // Persist hash in database
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetTokenHash: tokenHash,
+        passwordResetExpiresAt: expiresAt,
+        passwordResetLastSentAt: new Date(),
+      },
+    });
+
+    // Record for tests in test environment
+    recordTestResetToken(cleanEmail, rawToken);
+
+    // Build reset URL
+    const frontendBaseUrl = config.clientUrl || 'http://localhost:5173';
+    const resetUrl = `${frontendBaseUrl}/reset-password?token=${rawToken}`;
+
+    // Send email via Gmail API
+    await sendPasswordResetEmail({
+      to: user.email,
+      userName: user.name,
+      resetUrl,
+      expiryMinutes: RESET_TOKEN_EXPIRY_MINUTES,
+    });
+
+    return sendSuccess(res, { message: GENERIC_RESPONSE });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/reset-password
+ * Public endpoint to reset password using a valid, unexpired token.
+ * Single-use token: immediately cleared upon successful reset.
+ */
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || typeof token !== 'string' || !token.trim()) {
+      return sendError(res, 'Reset token is required', 400);
+    }
+
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+      return sendError(
+        res,
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+        400
+      );
+    }
+
+    const cleanToken = token.trim();
+    const tokenHash = hashResetToken(cleanToken);
+
+    const user = await prisma.user.findFirst({
+      where: {
+        passwordResetTokenHash: tokenHash,
+      },
+    });
+
+    if (!user) {
+      return sendError(
+        res,
+        'Invalid or expired password reset link. Please request a new link.',
+        400
+      );
+    }
+
+    // Check expiration
+    if (!user.passwordResetExpiresAt || new Date() > new Date(user.passwordResetExpiresAt)) {
+      // Clear expired token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordResetTokenHash: null,
+          passwordResetExpiresAt: null,
+        },
+      });
+      return sendError(
+        res,
+        'Password reset link has expired (valid for 15 minutes). Please request a new link.',
+        400
+      );
+    }
+
+    // Hash new password using bcrypt
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    // Invalidate token immediately and update password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        passwordResetTokenHash: null,
+        passwordResetExpiresAt: null,
+      },
+    });
+
+    return sendSuccess(res, {
+      message: 'Password has been successfully reset. You can now log in with your new password.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PUT /api/auth/change-password
+ * Authenticated endpoint for logged in users (STUDENT, WARDEN, STAFF).
+ * Verifies current password before updating to new password.
+ */
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || typeof currentPassword !== 'string') {
+      return sendError(res, 'Current password is required', 400);
+    }
+
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
+      return sendError(
+        res,
+        `New password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+        400
+      );
+    }
+
+    // Fetch user with current passwordHash
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+    });
+
+    if (!user) {
+      return sendNotFound(res, 'User not found');
+    }
+
+    // Verify current password
+    const isCurrentValid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isCurrentValid) {
+      return sendError(res, 'Incorrect current password. Please try again.', 400);
+    }
+
+    // Prevent reusing current password
+    const isSamePassword = await bcrypt.compare(newPassword, user.passwordHash);
+    if (isSamePassword) {
+      return sendError(res, 'New password cannot be the same as your current password.', 400);
+    }
+
+    // Hash new password
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+      },
+    });
+
+    return sendSuccess(res, {
+      message: 'Password updated successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   verifyEmail,
@@ -656,4 +877,8 @@ module.exports = {
   staffRegister,
   login,
   getMe,
+  forgotPassword,
+  resetPassword,
+  changePassword,
 };
+

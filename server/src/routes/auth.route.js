@@ -12,7 +12,12 @@ router.post('/resend-verification', authController.resendVerification);
 router.post('/staff-register', authController.staffRegister);
 router.post('/login', authController.login);
 
+// Public password recovery
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
 // Protected routes
 router.get('/me', verifyToken, authController.getMe);
+router.put('/change-password', verifyToken, authController.changePassword);
 
 module.exports = router;

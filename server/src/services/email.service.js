@@ -305,9 +305,113 @@ const sendSlaEscalationEmail = async ({ to, wardenName, complaint, frontendBaseU
   }
 };
 
+/**
+ * Sends a password reset email to a user (Student, Warden, or Staff).
+ * Contains a secure single-use link with 15-minute expiration.
+ *
+ * @param {object} params
+ * @param {string} params.to - Recipient email address
+ * @param {string} params.userName - Recipient display name
+ * @param {string} params.resetUrl - Full reset URL with raw token
+ * @param {number} [params.expiryMinutes=15] - Token validity in minutes
+ */
+const sendPasswordResetEmail = async ({ to, userName, resetUrl, expiryMinutes = 15 }) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  const fromEmail = process.env.EMAIL_FROM;
+
+  const subject = 'HostelFix — Password Reset Request';
+
+  const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8f8f8; color: #171717; margin: 0; padding: 24px; }
+    .container { max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    .header { text-align: center; margin-bottom: 24px; }
+    .badge { display: inline-block; background: #FDECEF; color: #C8102E; font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 4px 12px; border-radius: 9999px; letter-spacing: 0.05em; }
+    .title { font-size: 20px; font-weight: 800; color: #171717; margin-top: 12px; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #6b7280; line-height: 1.5; margin: 0 0 24px 0; }
+    .btn-container { text-align: center; margin: 28px 0; }
+    .reset-btn { display: inline-block; background-color: #C8102E; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 15px; box-shadow: 0 2px 4px rgba(200, 16, 46, 0.25); }
+    .info-card { background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; padding: 16px; margin-bottom: 24px; font-size: 13px; color: #4b5563; line-height: 1.6; }
+    .link-alt { word-break: break-all; color: #C8102E; text-decoration: underline; font-size: 12px; }
+    .warning { font-size: 12px; color: #9ca3af; line-height: 1.5; border-top: 1px solid #f3f4f6; padding-top: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="badge">HostelFix Security</span>
+      <h1 class="title">Reset Your Password</h1>
+      <p class="subtitle">Hello ${userName || 'there'}, we received a request to reset the password for your HostelFix account.</p>
+    </div>
+
+    <div class="btn-container">
+      <a href="${resetUrl}" class="reset-btn" target="_blank" rel="noopener noreferrer">Reset Password &rarr;</a>
+    </div>
+
+    <div class="info-card">
+      <strong>Important Security Details:</strong><br>
+      &bull; This link is valid for <strong>${expiryMinutes} minutes</strong> only.<br>
+      &bull; This link can only be used once.<br>
+      &bull; If the button above does not work, copy and paste this link into your browser:<br>
+      <a href="${resetUrl}" class="link-alt">${resetUrl}</a>
+    </div>
+
+    <div class="warning">
+      If you did not request a password reset, you can safely ignore this email. Your current password remains active and secure. Never forward this email or share this link with anyone.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+  const textBody = `HostelFix — Password Reset Request\n\nHello ${userName || 'there'},\n\nWe received a request to reset the password for your HostelFix account.\n\nPlease visit the link below to set a new password:\n${resetUrl}\n\nThis link is valid for ${expiryMinutes} minutes only and can be used once.\n\nIf you did not request this, please ignore this email. Your password will remain unchanged.`;
+
+  // If Gmail API credentials are not configured, safely simulate delivery
+  if (!clientId || !clientSecret || !refreshToken) {
+    console.log(`[Email Service] Mock delivery: password reset link dispatched to ${maskEmail(to)} (Gmail API credentials not configured)`);
+    return { success: true, simulated: true };
+  }
+
+  if (!fromEmail) {
+    console.error('[Email Service] EMAIL_FROM environment variable is not set. Cannot send password reset email.');
+    return { success: false, error: 'EMAIL_FROM not configured' };
+  }
+
+  try {
+    const gmail = createGmailClient();
+    const raw = buildMimeMessage({
+      from: `HostelFix <${fromEmail}>`,
+      to,
+      subject,
+      htmlBody,
+      textBody,
+    });
+
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: { raw },
+    });
+
+    console.log(`[Email Service] Password reset email successfully delivered via Gmail API to ${maskEmail(to)}`);
+    return { success: true };
+  } catch (err) {
+    const safeMessage = err.message || 'Unknown Gmail API error';
+    console.error(`[Email Service] Gmail API error dispatching password reset email to ${maskEmail(to)}: ${safeMessage}`);
+    return { success: false, error: safeMessage };
+  }
+};
+
 module.exports = {
   sendVerificationOtpEmail,
   sendSlaEscalationEmail,
+  sendPasswordResetEmail,
   maskEmail,
   buildMimeMessage,
 };
+

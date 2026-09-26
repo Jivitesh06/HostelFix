@@ -7,6 +7,8 @@ import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import VerifyEmailPage from '../pages/auth/VerifyEmailPage';
 import StaffRegisterPage from '../pages/auth/StaffRegisterPage';
+import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 
 // Student pages
 import StudentDashboard from '../pages/student/DashboardPage';
@@ -28,6 +30,7 @@ import WardenUsersPage from '../pages/warden/UserManagementPage';
 import StaffDashboard from '../pages/staff/DashboardPage';
 import StaffComplaints from '../pages/staff/ComplaintsPage';
 import StaffComplaintDetail from '../pages/staff/ComplaintDetailPage';
+import StaffProfilePage from '../pages/staff/ProfilePage';
 
 export default function AppRoutes() {
   return (
@@ -36,6 +39,8 @@ export default function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       {/* Secure administrative onboarding for wardens and staff/workers */}
       <Route path="/admin/staff-register" element={<StaffRegisterPage />} />
       <Route path="/staff-portal/register" element={<StaffRegisterPage />} />
@@ -162,6 +167,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute role="STAFF"><StaffComplaintDetail /></RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/staff/profile"
+        element={
+          <ProtectedRoute>
+            <RoleRoute role="STAFF"><StaffProfilePage /></RoleRoute>
           </ProtectedRoute>
         }
       />

@@ -35,7 +35,17 @@ api.interceptors.response.use(
 
       // Only redirect if not already on an authentication page
       const currentPath = window.location.pathname;
-      if (currentPath !== '/login' && currentPath !== '/register') {
+      const isPublicAuthPage = [
+        '/login',
+        '/register',
+        '/verify-email',
+        '/forgot-password',
+        '/reset-password',
+        '/admin/staff-register',
+        '/staff-portal/register',
+      ].includes(currentPath);
+
+      if (!isPublicAuthPage) {
         window.location.href = '/login';
       }
     }

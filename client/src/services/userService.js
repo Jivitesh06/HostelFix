@@ -47,6 +47,24 @@ export const userService = {
   },
 
   /**
+   * Fetch current authenticated staff's profile.
+   * Access: STAFF
+   */
+  getStaffProfile: async () => {
+    const res = await api.get('/users/staff/profile');
+    return res.data.data;
+  },
+
+  /**
+   * Update current authenticated staff's profile.
+   * Access: STAFF
+   */
+  updateStaffProfile: async (data) => {
+    const res = await api.put('/users/staff/profile', data);
+    return res.data.data;
+  },
+
+  /**
    * Fetch list of maintenance staff members.
    * Access: WARDEN
    */

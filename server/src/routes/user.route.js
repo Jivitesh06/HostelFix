@@ -294,6 +294,100 @@ router.put('/warden/profile', verifyToken, requireRole('WARDEN'), async (req, re
 });
 
 /**
+ * GET /api/users/staff/profile
+ * Returns the current authenticated staff member's profile.
+ * Access: STAFF only
+ */
+router.get('/staff/profile', verifyToken, requireRole('STAFF'), async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        staffCategory: true,
+        mobileNumber: true,
+        gender: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return sendNotFound(res, 'Staff profile not found');
+    }
+
+    return sendSuccess(res, user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PUT /api/users/staff/profile
+ * Updates the current authenticated staff member's profile.
+ * Access: STAFF only
+ */
+router.put('/staff/profile', verifyToken, requireRole('STAFF'), async (req, res, next) => {
+  try {
+    const { name, mobileNumber, gender } = req.body;
+    const dataToUpdate = {};
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || !name.trim()) {
+        return sendError(res, 'Name cannot be empty', 400);
+      }
+      dataToUpdate.name = name.trim();
+    }
+
+    if (gender !== undefined) {
+      if (gender !== null && gender !== '') {
+        const cleanGender = gender.toString().trim().toUpperCase();
+        if (!GENDERS.includes(cleanGender)) {
+          return sendError(res, 'Invalid gender. Allowed values: MALE, FEMALE', 400);
+        }
+        dataToUpdate.gender = cleanGender;
+      } else {
+        dataToUpdate.gender = null;
+      }
+    }
+
+    if (mobileNumber !== undefined) {
+      if (mobileNumber !== null && mobileNumber !== '') {
+        if (typeof mobileNumber !== 'string' || !PHONE_REGEX.test(mobileNumber.trim())) {
+          return sendError(res, 'Please provide a valid contact mobile number (7-15 digits)', 400);
+        }
+        dataToUpdate.mobileNumber = mobileNumber.trim();
+      } else {
+        dataToUpdate.mobileNumber = null;
+      }
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: req.user.id },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        staffCategory: true,
+        mobileNumber: true,
+        gender: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return sendSuccess(res, updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
  * GET /api/users/students
  * Returns a list of students scoped to the warden's assigned hostel.
  * Access: WARDEN only

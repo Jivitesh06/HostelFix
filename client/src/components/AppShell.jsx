@@ -36,6 +36,7 @@ export default function AppShell({ children, title, subtitle, actions }) {
       return [
         { label: 'Dashboard', path: '/staff/dashboard', icon: LayoutDashboard },
         { label: 'My Work Tasks', path: '/staff/complaints', icon: Wrench },
+        { label: 'My Profile', path: '/staff/profile', icon: User },
       ];
     }
     // Default: STUDENT
