@@ -4,6 +4,7 @@ const config = require('./config/env'); // validates env on startup
 const routes = require('./routes/index');
 const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
+const { startSlaCron } = require('./services/sla.service');
 
 const app = express();
 
@@ -78,6 +79,9 @@ const startServer = async () => {
     console.log(`[Server] HostelFix API running on http://${HOST}:${config.port}`);
     console.log(`[Server] Environment: ${config.nodeEnv}`);
     console.log(`[Server] Health check: http://localhost:${config.port}/api/health`);
+
+    // Start SLA escalation cron (every 5 minutes)
+    startSlaCron();
   });
 };
 

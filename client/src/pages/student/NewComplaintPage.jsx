@@ -34,6 +34,7 @@ export default function NewComplaintPage() {
     category: 'ELECTRICAL',
     description: '',
     imageUrl: '',
+    imagePublicId: '',
   });
 
   const [error, setError] = useState('');
@@ -65,6 +66,7 @@ export default function NewComplaintPage() {
         category: form.category,
         description: form.description.trim(),
         imageUrl: form.imageUrl.trim() || null,
+        imagePublicId: form.imagePublicId.trim() || null,
       });
 
       navigate('/student/complaints', {
@@ -79,6 +81,7 @@ export default function NewComplaintPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <AppShell
@@ -274,7 +277,7 @@ export default function NewComplaintPage() {
               label="Issue Photo"
               folder="complaints/issues"
               value={form.imageUrl}
-              onChange={(url) => setForm((prev) => ({ ...prev, imageUrl: url }))}
+              onChange={({ url, publicId }) => setForm((prev) => ({ ...prev, imageUrl: url, imagePublicId: publicId }))}
               helpText="Upload an optional photo showing the maintenance problem (JPG, PNG, WEBP up to 5MB)"
             />
           </div>

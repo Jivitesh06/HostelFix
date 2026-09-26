@@ -96,21 +96,27 @@ model User {
 //                          IN_PROGRESS → RESOLVED → CLOSED
 // Alternative:             PENDING → REJECTED (terminal)
 // rejectionReason: nullable; must be set when status = REJECTED
-// deadlineAt: nullable; reserved for future SLA feature (not implemented)
+// imageUrl: optional photo attached by student at complaint creation
+// imagePublicId: Cloudinary public_id for cleanup on failure
+// completionPhotoUrl: required proof photo when staff marks RESOLVED
+// slaDeadline: computed at creation (createdAt + SLA hours per category)
+// slaAlertSentAt: set when warden SLA escalation email is sent; null = not yet sent
 // ─────────────────────────────────────────────────────────────────────────────
 model Complaint {
-  id              String            @id @default(cuid())
-  studentId       String
-  category        ComplaintCategory
-  description     String
+  id                 String            @id @default(cuid())
+  studentId          String
+  category           ComplaintCategory
+  description        String
   imageUrl           String?
+  imagePublicId      String?
   completionPhotoUrl String?
-  status          ComplaintStatus   @default(PENDING)
-  rejectionReason String?
-  assignedStaffId String?
-  deadlineAt      DateTime?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  status             ComplaintStatus   @default(PENDING)
+  rejectionReason    String?
+  assignedStaffId    String?
+  slaDeadline        DateTime?
+  slaAlertSentAt     DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   student       User        @relation("StudentComplaints", fields: [studentId], references: [id])
   assignedStaff User?       @relation("StaffAssignedComplaints", fields: [assignedStaffId], references: [id])
@@ -120,6 +126,8 @@ model Complaint {
   @@index([status])
   @@index([assignedStaffId])
   @@index([createdAt])
+  @@index([slaDeadline])
+  @@index([slaAlertSentAt])
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

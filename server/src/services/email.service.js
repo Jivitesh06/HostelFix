@@ -182,8 +182,132 @@ const sendVerificationOtpEmail = async ({ to, otp, expiryMinutes = 10 }) => {
   }
 };
 
+/**
+ * Sends an SLA escalation alert email to a hostel warden.
+ * Called by the SLA cron job when a complaint has exceeded its SLA deadline.
+ *
+ * @param {object} params
+ * @param {string} params.to - Warden email address
+ * @param {string} params.wardenName - Warden display name
+ * @param {object} params.complaint - Complaint record with student relation
+ * @param {string} params.frontendBaseUrl - Base URL of the frontend for deep link
+ */
+const sendSlaEscalationEmail = async ({ to, wardenName, complaint, frontendBaseUrl = 'http://localhost:5173' }) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  const fromEmail = process.env.EMAIL_FROM;
+
+  const complaintLink = `${frontendBaseUrl}/warden/complaints/${complaint.id}`;
+  const createdAt = new Date(complaint.createdAt).toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Kolkata',
+  });
+  const slaDeadline = new Date(complaint.slaDeadline).toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Kolkata',
+  });
+
+  const subject = `HostelFix SLA Alert — Complaint #${complaint.id.slice(-6).toUpperCase()} Requires Attention`;
+
+  const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8f8f8; color: #171717; margin: 0; padding: 24px; }
+    .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .alert-banner { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+    .alert-icon { color: #C8102E; font-size: 20px; font-weight: 800; }
+    .alert-text { color: #9f1239; font-size: 14px; font-weight: 600; }
+    .title { font-size: 18px; font-weight: 800; color: #171717; margin: 0 0 8px 0; }
+    .subtitle { font-size: 14px; color: #6b7280; margin: 0 0 24px 0; line-height: 1.5; }
+    .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .detail-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+    .detail-table td:first-child { color: #6b7280; font-weight: 600; width: 38%; }
+    .detail-table td:last-child { color: #171717; }
+    .sla-breached { color: #C8102E; font-weight: 700; }
+    .cta-btn { display: inline-block; background: #C8102E; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; margin: 8px 0 24px 0; }
+    .description-box { background: #f8f8f8; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 24px; }
+    .footer { font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 16px; text-align: center; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="alert-banner">
+      <span class="alert-icon">⚠</span>
+      <span class="alert-text">SLA Deadline Breached — Action Required</span>
+    </div>
+    <h1 class="title">HostelFix — SLA Escalation Alert</h1>
+    <p class="subtitle">Dear ${wardenName}, a complaint in your hostel has exceeded its SLA response time and requires your immediate attention.</p>
+
+    <table class="detail-table">
+      <tr><td>Complaint ID</td><td><strong>#${complaint.id.slice(-6).toUpperCase()}</strong></td></tr>
+      <tr><td>Category</td><td>${complaint.category}</td></tr>
+      <tr><td>Current Status</td><td>${complaint.status}</td></tr>
+      <tr><td>Hostel</td><td>${complaint.student?.hostelName || 'N/A'}</td></tr>
+      <tr><td>Student Name</td><td>${complaint.student?.name || 'N/A'}</td></tr>
+      <tr><td>Submitted On</td><td>${createdAt}</td></tr>
+      <tr><td>SLA Deadline</td><td class="sla-breached">${slaDeadline} (OVERDUE)</td></tr>
+    </table>
+
+    <p style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px;">Complaint Description:</p>
+    <div class="description-box">${complaint.description}</div>
+
+    <a href="${complaintLink}" class="cta-btn">View Complaint in Dashboard →</a>
+
+    <div class="footer">
+      This is an automated SLA alert from HostelFix. Do not reply to this email.<br>
+      If you believe this complaint has already been handled, please update its status in the dashboard.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+  const textBody = `HostelFix SLA Escalation Alert\n\nDear ${wardenName},\n\nA complaint in your hostel has exceeded its SLA response deadline.\n\nComplaint ID: #${complaint.id.slice(-6).toUpperCase()}\nCategory: ${complaint.category}\nStatus: ${complaint.status}\nHostel: ${complaint.student?.hostelName || 'N/A'}\nStudent: ${complaint.student?.name || 'N/A'}\nSubmitted: ${createdAt}\nSLA Deadline: ${slaDeadline} (OVERDUE)\n\nDescription:\n${complaint.description}\n\nView complaint: ${complaintLink}\n\nThis is an automated alert. Please log in to the HostelFix dashboard to take action.`;
+
+  // If Gmail API credentials are not configured, safely simulate delivery
+  if (!clientId || !clientSecret || !refreshToken) {
+    console.log(`[Email Service] Mock SLA alert: escalation email dispatched to ${maskEmail(to)} for complaint #${complaint.id.slice(-6).toUpperCase()} (Gmail API credentials not configured)`);
+    return { success: true, simulated: true };
+  }
+
+  if (!fromEmail) {
+    console.error('[Email Service] EMAIL_FROM environment variable is not set. Cannot send SLA alert email.');
+    return { success: false, error: 'EMAIL_FROM not configured' };
+  }
+
+  try {
+    const gmail = createGmailClient();
+    const raw = buildMimeMessage({
+      from: `HostelFix <${fromEmail}>`,
+      to,
+      subject,
+      htmlBody,
+      textBody,
+    });
+
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: { raw },
+    });
+
+    console.log(`[Email Service] SLA escalation email successfully delivered via Gmail API to ${maskEmail(to)} for complaint #${complaint.id.slice(-6).toUpperCase()}`);
+    return { success: true };
+  } catch (err) {
+    const safeMessage = err.message || 'Unknown Gmail API error';
+    console.error(`[Email Service] Gmail API error dispatching SLA alert to ${maskEmail(to)}: ${safeMessage}`);
+    return { success: false, error: safeMessage };
+  }
+};
+
 module.exports = {
   sendVerificationOtpEmail,
+  sendSlaEscalationEmail,
   maskEmail,
   buildMimeMessage,
 };

@@ -47,8 +47,10 @@ export default function ImageUpload({
       });
 
       const uploadedUrl = res.data?.data?.url;
+      const uploadedPublicId = res.data?.data?.publicId || '';
       if (uploadedUrl) {
-        onChange(uploadedUrl);
+        // Pass { url, publicId } so parent can store publicId for backend cleanup
+        onChange({ url: uploadedUrl, publicId: uploadedPublicId });
       } else {
         throw new Error('Upload succeeded but no URL was returned.');
       }
@@ -60,6 +62,7 @@ export default function ImageUpload({
       setLoading(false);
     }
   };
+
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -79,7 +82,7 @@ export default function ImageUpload({
   };
 
   const handleRemove = () => {
-    onChange('');
+    onChange({ url: '', publicId: '' });
     setError('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';

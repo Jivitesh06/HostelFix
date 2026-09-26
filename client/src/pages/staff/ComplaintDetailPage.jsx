@@ -620,7 +620,7 @@ export default function StaffComplaintDetail() {
             label="Work Completion Photo"
             folder="complaints/completions"
             value={completionPhotoUrl}
-            onChange={(url) => {
+            onChange={({ url }) => {
               setCompletionPhotoUrl(url);
               if (resolveError) setResolveError('');
             }}

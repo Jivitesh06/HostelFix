@@ -11,34 +11,44 @@ const {
   COMPLAINT_STATUSES,
   isValidTransition,
 } = require('../utils/complaintWorkflow');
+const { computeSlaDeadline } = require('../utils/slaConfig');
+const { cloudinary, isConfigured: cloudinaryConfigured } = require('../config/cloudinary');
 
 /**
  * POST /api/complaints
  * Creates a new complaint for the authenticated student.
  * Role: STUDENT
+ *
+ * Body: { category, description, imageUrl?, imagePublicId? }
+ * - imageUrl and imagePublicId come from a prior POST /api/upload call.
+ * - If the DB transaction fails and imagePublicId is present, the already-uploaded
+ *   Cloudinary asset is deleted to avoid orphaned uploads.
  */
 const createComplaint = async (req, res, next) => {
+  const { category, description, imageUrl, imagePublicId } = req.body;
+
+  // Validate category
+  if (!category || !COMPLAINT_CATEGORIES.includes(category)) {
+    return sendError(
+      res,
+      `Invalid category. Allowed categories: ${COMPLAINT_CATEGORIES.join(', ')}`,
+      400
+    );
+  }
+
+  // Validate description
+  if (!description || typeof description !== 'string' || !description.trim()) {
+    return sendError(res, 'Complaint description is required', 400);
+  }
+
+  if (description.trim().length < 5) {
+    return sendError(res, 'Description must be at least 5 characters long', 400);
+  }
+
+  // Compute SLA deadline (createdAt + SLA hours for this category)
+  const slaDeadline = computeSlaDeadline(category);
+
   try {
-    const { category, description, imageUrl } = req.body;
-
-    // Validate category
-    if (!category || !COMPLAINT_CATEGORIES.includes(category)) {
-      return sendError(
-        res,
-        `Invalid category. Allowed categories: ${COMPLAINT_CATEGORIES.join(', ')}`,
-        400
-      );
-    }
-
-    // Validate description
-    if (!description || typeof description !== 'string' || !description.trim()) {
-      return sendError(res, 'Complaint description is required', 400);
-    }
-
-    if (description.trim().length < 5) {
-      return sendError(res, 'Description must be at least 5 characters long', 400);
-    }
-
     // Atomic transaction: create complaint and initial StatusLog
     const result = await prisma.$transaction(async (tx) => {
       const complaint = await tx.complaint.create({
@@ -47,11 +57,13 @@ const createComplaint = async (req, res, next) => {
           category,
           description: description.trim(),
           imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : null,
+          imagePublicId: imagePublicId && typeof imagePublicId === 'string' ? imagePublicId.trim() : null,
           status: 'PENDING',
+          slaDeadline,
         },
       });
 
-      const statusLog = await tx.statusLog.create({
+      await tx.statusLog.create({
         data: {
           complaintId: complaint.id,
           oldStatus: null,
@@ -61,14 +73,25 @@ const createComplaint = async (req, res, next) => {
         },
       });
 
-      return { complaint, statusLog };
+      return complaint;
     });
 
-    return sendCreated(res, result.complaint);
+    return sendCreated(res, result);
   } catch (error) {
+    // If DB transaction failed and student had already uploaded a photo,
+    // clean up the orphaned Cloudinary asset to avoid storage waste.
+    if (imagePublicId && cloudinaryConfigured) {
+      try {
+        await cloudinary.uploader.destroy(imagePublicId);
+        console.log(`[Complaint] Cleaned up orphaned Cloudinary asset: ${imagePublicId}`);
+      } catch (cleanupErr) {
+        console.error(`[Complaint] Failed to cleanup orphaned Cloudinary asset ${imagePublicId}:`, cleanupErr.message);
+      }
+    }
     next(error);
   }
 };
+
 
 /**
  * GET /api/complaints
