@@ -1,4 +1,6 @@
-const Tesseract = require('tesseract.js');
+// tesseract.js is lazy-loaded inside extractMenuFromImage() to prevent server crash
+// if the module is unavailable (e.g. during Render cold start before npm install completes).
+// All other exports (parseMenuText, getDefaultEmptyMenu, DAYS, MEALS) work without Tesseract.
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS = ['BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER'];
@@ -171,6 +173,20 @@ function getDefaultEmptyMenu() {
  * @returns {Promise<{ success: boolean, menu: Array, rawText: string, uncertainCount: number, error?: string }>}
  */
 async function extractMenuFromImage(imageSource) {
+  let Tesseract;
+  try {
+    Tesseract = require('tesseract.js');
+  } catch (loadErr) {
+    console.error('[MenuOCR] tesseract.js module not found:', loadErr.message);
+    return {
+      success: false,
+      error: 'OCR engine not available. Please contact the administrator.',
+      menu: getDefaultEmptyMenu(),
+      rawText: '',
+      uncertainCount: 28,
+    };
+  }
+
   try {
     const ocrResult = await Tesseract.recognize(imageSource, 'eng');
     const rawText = ocrResult.data?.text || '';
