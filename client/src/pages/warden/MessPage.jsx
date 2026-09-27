@@ -17,7 +17,9 @@ import {
   AlertCircle,
   MessageSquare,
   Calendar,
+  Camera,
 } from 'lucide-react';
+import MenuPhotoUpdateModal from '../../components/MenuPhotoUpdateModal';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS = ['BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER'];
@@ -42,6 +44,7 @@ export default function WardenMessPage() {
   const [successMsg, setSuccessMsg] = useState('');
 
   // Modals state
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addForm, setAddForm] = useState({
     dayOfWeek: 'Monday',
@@ -147,7 +150,35 @@ export default function WardenMessPage() {
       title="Mess & Dining Administration"
       subtitle="Publish and update weekly meal menus, and monitor verified resident quality reviews"
       actions={
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setPhotoModalOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              backgroundColor: '#ffffff',
+              color: '#c8102e',
+              border: '1.5px solid #c8102e',
+              padding: '0.6rem 1.15rem',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#fdecef';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+            }}
+          >
+            <Camera size={16} />
+            <span>Update Menu from Photo</span>
+          </button>
+
           <button
             onClick={() => {
               setAddForm({ dayOfWeek: selectedDay, mealType: 'BREAKFAST', items: '' });
@@ -842,6 +873,16 @@ export default function WardenMessPage() {
           </button>
         </div>
       </Modal>
+
+      {/* ── Modal 4: Update Menu from Photo (OCR) ────────────────────── */}
+      <MenuPhotoUpdateModal
+        isOpen={photoModalOpen}
+        onClose={() => setPhotoModalOpen(false)}
+        onPublished={() => {
+          loadAll();
+          setSuccessMsg('Weekly mess menu published successfully from photo review!');
+        }}
+      />
     </AppShell>
   );
 }

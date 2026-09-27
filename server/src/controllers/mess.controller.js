@@ -5,6 +5,8 @@ const {
   sendError,
   sendNotFound,
 } = require('../utils/response');
+const { uploadToCloudinary } = require('../config/cloudinary');
+const { extractMenuFromImage, getDefaultEmptyMenu } = require('../services/menuOcr.service');
 
 const VALID_MEAL_TYPES = ['BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER'];
 const VALID_DAYS = [
@@ -291,6 +293,206 @@ const getFeedback = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/mess/extract-menu-photo
+ * Warden uploads a photo/screenshot of the weekly mess menu.
+ * Cloudinary stores image, Tesseract extracts text and structures into 28 slots.
+ * Does NOT publish to production. Returns editable preview structure.
+ * Role: WARDEN
+ */
+const extractMenuFromPhoto = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return sendError(res, 'Please upload a menu image file (JPG, PNG, or WEBP)', 400);
+    }
+
+    // 1. Upload to Cloudinary for reference storage
+    let uploadResult;
+    try {
+      uploadResult = await uploadToCloudinary(req.file.buffer, {
+        folder: 'mess_menus',
+        mimeType: req.file.mimetype,
+      });
+    } catch (uploadErr) {
+      console.warn('[MessController] Cloudinary upload error:', uploadErr.message);
+      uploadResult = {
+        url: `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`,
+      };
+    }
+
+    // 2. Perform OCR on image buffer
+    const ocrResult = await extractMenuFromImage(req.file.buffer);
+
+    // 3. Compute week of current Monday
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(today.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+
+    return sendSuccess(res, {
+      imageUrl: uploadResult.url,
+      menu: ocrResult.menu, // 28 slots
+      uncertainCount: ocrResult.uncertainCount,
+      rawText: ocrResult.rawText,
+      weekOf: monday.toISOString().split('T')[0],
+      ocrSuccess: ocrResult.success,
+      warning: ocrResult.success ? null : ocrResult.error,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/mess/publish-weekly-menu
+ * Warden confirms and publishes the reviewed 28-slot weekly menu.
+ * Role: WARDEN
+ */
+const publishWeeklyMenu = async (req, res, next) => {
+  try {
+    const { menu, weekOf, imageUrl } = req.body;
+
+    if (!Array.isArray(menu) || menu.length !== 28) {
+      return sendError(res, 'A complete weekly menu of exactly 28 meal entries (7 days × 4 meals) is required', 400);
+    }
+
+    // Server-side validation of every slot
+    const coveredSlots = new Set();
+    const validatedMenu = [];
+
+    for (let i = 0; i < menu.length; i++) {
+      const slot = menu[i];
+      if (!slot || typeof slot !== 'object') {
+        return sendError(res, `Invalid slot at index ${i}`, 400);
+      }
+
+      const day = typeof slot.dayOfWeek === 'string' ? slot.dayOfWeek.trim() : '';
+      const meal = typeof slot.mealType === 'string' ? slot.mealType.trim().toUpperCase() : '';
+      const items = typeof slot.items === 'string' ? slot.items.trim() : '';
+
+      if (!VALID_DAYS.includes(day)) {
+        return sendError(res, `Invalid day "${day}" at entry ${i + 1}. Allowed: ${VALID_DAYS.join(', ')}`, 400);
+      }
+
+      if (!VALID_MEAL_TYPES.includes(meal)) {
+        return sendError(res, `Invalid meal type "${meal}" at entry ${i + 1}. Allowed: ${VALID_MEAL_TYPES.join(', ')}`, 400);
+      }
+
+      if (!items || items.length < 2) {
+        return sendError(res, `Meal items cannot be empty for ${day} ${meal}`, 400);
+      }
+
+      if (items.length > 500) {
+        return sendError(res, `Meal items text too long for ${day} ${meal} (max 500 characters)`, 400);
+      }
+
+      const key = `${day}:${meal}`;
+      if (coveredSlots.has(key)) {
+        return sendError(res, `Duplicate meal entry detected for ${day} ${meal}`, 400);
+      }
+      coveredSlots.add(key);
+
+      validatedMenu.push({
+        dayOfWeek: day,
+        mealType: meal,
+        items,
+      });
+    }
+
+    // Verify all 7 days x 4 meals are present
+    for (const d of VALID_DAYS) {
+      for (const m of VALID_MEAL_TYPES) {
+        if (!coveredSlots.has(`${d}:${m}`)) {
+          return sendError(res, `Missing meal slot for ${d} ${m}`, 400);
+        }
+      }
+    }
+
+    // Determine weekOf Monday date
+    let targetWeekDate;
+    if (weekOf) {
+      const parsedDate = new Date(weekOf);
+      if (isNaN(parsedDate.getTime())) {
+        return sendError(res, 'Invalid weekOf date format', 400);
+      }
+      const day = parsedDate.getDay();
+      const diff = parsedDate.getDate() - day + (day === 0 ? -6 : 1);
+      targetWeekDate = new Date(parsedDate.setDate(diff));
+      targetWeekDate.setHours(0, 0, 0, 0);
+    } else {
+      const today = new Date();
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+      targetWeekDate = new Date(today.setDate(diff));
+      targetWeekDate.setHours(0, 0, 0, 0);
+    }
+
+    // Perform idempotent database upsert across all 28 slots
+    let updatedCount = 0;
+    let createdCount = 0;
+
+    for (const slot of validatedMenu) {
+      const existingRecords = await prisma.messMenu.findMany({
+        where: {
+          dayOfWeek: slot.dayOfWeek,
+          mealType: slot.mealType,
+        },
+        orderBy: { weekOf: 'desc' },
+      });
+
+      if (existingRecords.length > 0) {
+        const primary = existingRecords[0];
+        await prisma.messMenu.update({
+          where: { id: primary.id },
+          data: {
+            items: slot.items,
+            weekOf: targetWeekDate,
+          },
+        });
+        updatedCount++;
+
+        // Clean up any extra duplicates, safely re-linking feedback to primary slot
+        if (existingRecords.length > 1) {
+          for (let k = 1; k < existingRecords.length; k++) {
+            const dup = existingRecords[k];
+            await prisma.menuFeedback.updateMany({
+              where: { messMenuId: dup.id },
+              data: { messMenuId: primary.id },
+            });
+            await prisma.messMenu.delete({
+              where: { id: dup.id },
+            });
+          }
+        }
+      } else {
+        await prisma.messMenu.create({
+          data: {
+            dayOfWeek: slot.dayOfWeek,
+            mealType: slot.mealType,
+            items: slot.items,
+            weekOf: targetWeekDate,
+          },
+        });
+        createdCount++;
+      }
+    }
+
+    const totalSlots = await prisma.messMenu.count();
+
+    return sendSuccess(res, {
+      message: 'Weekly mess menu published successfully',
+      updatedCount,
+      createdCount,
+      totalSlots,
+      weekOf: targetWeekDate.toISOString(),
+      imageUrl: imageUrl || null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getMenu,
   createMenuItem,
@@ -298,4 +500,6 @@ module.exports = {
   deleteMenuItem,
   submitFeedback,
   getFeedback,
+  extractMenuFromPhoto,
+  publishWeeklyMenu,
 };

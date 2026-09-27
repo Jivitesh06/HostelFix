@@ -36,6 +36,24 @@ export const messService = {
     const res = await api.get('/mess/feedback');
     return res.data.data;
   },
+
+  // Warden extracts 28-slot menu preview from uploaded photo/screenshot (does not publish)
+  extractMenuFromPhoto: async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await api.post('/mess/extract-menu-photo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data.data;
+  },
+
+  // Warden publishes confirmed 28-slot menu
+  publishWeeklyMenu: async ({ menu, weekOf, imageUrl }) => {
+    const res = await api.post('/mess/publish-weekly-menu', { menu, weekOf, imageUrl });
+    return res.data;
+  },
 };
 
 export default messService;
