@@ -34,9 +34,11 @@
  */
 
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const prisma = require('./src/config/prisma');
 const app = require('./src/server');
-const { parseMenuText, getDefaultEmptyMenu, DAYS, MEALS } = require('./src/services/menuOcr.service');
+const { parseMenuText, getDefaultEmptyMenu, DAYS, MEALS, extractMenuFromImage } = require('./src/services/menuOcr.service');
 
 const TEST_PORT = 5098;
 const BASE_URL = `http://localhost:${TEST_PORT}`;
@@ -289,6 +291,22 @@ Dinner: Paneer Butter Masala, Roti, Pulao, Kheer
     assert(validUploadRes.body.data.menu.length === 28, 'Returns exactly 28 slots for review');
     assert(Boolean(validUploadRes.body.data.imageUrl), 'Returns uploaded image reference URL');
     assert(Boolean(validUploadRes.body.data.weekOf), 'Returns current week Monday date');
+
+    // 4B. Live Image OCR Smoke Test with Text Image
+    const textImageBuffer = fs.readFileSync(path.join(__dirname, 'test-simple-menu.png'));
+    const textUploadRes = await sendMultipart(
+      '/api/mess/extract-menu-photo',
+      'test-simple-menu.png',
+      'image/png',
+      textImageBuffer,
+      wardenToken
+    );
+    assert(textUploadRes.status === 200, 'Upload image with text returns 200');
+    assert(textUploadRes.body.data.ocrSuccess === true, 'OCR marked as successful');
+    assert(Boolean(textUploadRes.body.data.rawText && textUploadRes.body.data.rawText.length > 0), 'Raw OCR text is non-empty');
+    assert(textUploadRes.body.data.rawText.includes('MONDAY'), 'Raw OCR text recognizes MONDAY');
+    const monBfast = textUploadRes.body.data.menu.find((s) => s.dayOfWeek === 'Monday' && s.mealType === 'BREAKFAST');
+    assert(Boolean(monBfast && monBfast.items.includes('Aloo Paratha')), 'Monday Breakfast parsed accurately from image');
 
     // ── 5. Server-side Validation on publish-weekly-menu ────────────────────
     console.log('\n--- 5. Server-side Validation on publish-weekly-menu ---');

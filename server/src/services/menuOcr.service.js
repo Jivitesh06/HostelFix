@@ -2,17 +2,24 @@
 // if the module is unavailable (e.g. during Render cold start before npm install completes).
 // All other exports (parseMenuText, getDefaultEmptyMenu, DAYS, MEALS) work without Tesseract.
 
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+
+// Path to bundled language models directory (contains eng.traineddata.gz)
+const TESSDATA_DIR = path.resolve(__dirname, '../../tessdata');
+
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS = ['BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER'];
 
 const DAY_PATTERNS = [
-  { day: 'Monday', regex: /(?:^|\b|\n)(?:MONDAY|MON)\b/i },
-  { day: 'Tuesday', regex: /(?:^|\b|\n)(?:TUESDAY|TUE|TUES)\b/i },
-  { day: 'Wednesday', regex: /(?:^|\b|\n)(?:WEDNESDAY|WED)\b/i },
-  { day: 'Thursday', regex: /(?:^|\b|\n)(?:THURSDAY|THU|THUR|THURS)\b/i },
-  { day: 'Friday', regex: /(?:^|\b|\n)(?:FRIDAY|FRI)\b/i },
-  { day: 'Saturday', regex: /(?:^|\b|\n)(?:SATURDAY|SAT)\b/i },
-  { day: 'Sunday', regex: /(?:^|\b|\n)(?:SUNDAY|SUN)\b/i },
+  { day: 'Monday', regex: /(?:^|\b|\n)(?:MONDAY|MON|MOND)\b/i },
+  { day: 'Tuesday', regex: /(?:^|\b|\n)(?:TUESDAY|TUE|TUES|TURSDAY|TUESD)\b/i },
+  { day: 'Wednesday', regex: /(?:^|\b|\n)(?:WEDNESDAY|WED|WEDS|WEDNES|WENSDAY|WEONESOAY|WENES|WEDN)\b/i },
+  { day: 'Thursday', regex: /(?:^|\b|\n)(?:THURSDAY|THU|THUR|THURS|RHURSDAY|rHURSDAY)\b/i },
+  { day: 'Friday', regex: /(?:^|\b|\n)(?:FRIDAY|FRI|RIDAY|IRIDAY)\b/i },
+  { day: 'Saturday', regex: /(?:^|\b|\n)(?:SATURDAY|SAT|SATUR|JATURDAY)\b/i },
+  { day: 'Sunday', regex: /(?:^|\b|\n)(?:SUNDAY|SUN|SUNDA|UNDAY)\b/i },
 ];
 
 const MEAL_PATTERNS = [
@@ -28,14 +35,25 @@ const MEAL_PATTERNS = [
 function sanitizeMealText(text) {
   if (!text) return '';
   return text
-    .replace(/^[:\-\–\—\s|•*~]+/, '') // leading punctuation
-    .replace(/[:\-\–\—\s|•*~]+$/, '') // trailing punctuation
-    .replace(/\s+/g, ' ')             // collapse whitespace
+    .replace(/^[:\-\–\—\s|•*~\[\]()/\\{}0-9.,]+/, '') // leading punctuation/delimiters
+    .replace(/[:\-\–\—\s|•*~\[\]()/\\{}0-9.,]+$/, '') // trailing punctuation/delimiters
+    .replace(/\s+/g, ' ')                             // collapse whitespace
     .trim();
 }
 
 /**
+ * Helper to test if a short string is merely a day name label.
+ */
+function isDayLabel(text) {
+  for (const dp of DAY_PATTERNS) {
+    if (dp.regex.test(text) && text.length <= 15) return true;
+  }
+  return false;
+}
+
+/**
  * Parses raw OCR text into standard 28-slot weekly menu structure.
+ * Supports both label-based lists and grid/table-based layouts.
  * 
  * @param {string} text - Raw OCR text
  * @returns {{ menu: Array, uncertainCount: number, rawText: string }}
@@ -86,26 +104,21 @@ function parseMenuText(text) {
   for (const day of DAYS) {
     const block = dayBlocks[day] || '';
     const lines = block ? block.split(/\r?\n/).map((l) => l.trim()).filter(Boolean) : [];
+    const dayMealSlots = {};
 
+    // Strategy 1: Label-based extraction (Breakfast: ..., Lunch: ...)
     for (const meal of MEALS) {
       const mealPattern = MEAL_PATTERNS.find((m) => m.type === meal);
-      let items = '';
-      let confidence = 0;
-
       if (block && mealPattern) {
-        // Find line matching meal label
         for (let li = 0; li < lines.length; li++) {
           const line = lines[li];
           if (mealPattern.regex.test(line)) {
-            // Option A: items on same line after meal label (e.g. "Breakfast: Aloo Paratha, Curd")
             let inlineText = line.replace(mealPattern.regex, '');
             inlineText = sanitizeMealText(inlineText);
 
             if (inlineText.length >= 3) {
-              items = inlineText;
-              confidence = 90;
+              dayMealSlots[meal] = { items: inlineText, confidence: 90 };
             } else {
-              // Option B: items on subsequent line(s) until next meal label or day label
               const subsequent = [];
               for (let k = li + 1; k < lines.length; k++) {
                 const nextLine = lines[k];
@@ -115,16 +128,39 @@ function parseMenuText(text) {
                 subsequent.push(nextLine);
               }
               if (subsequent.length > 0) {
-                items = sanitizeMealText(subsequent.join(', '));
-                confidence = 85;
+                dayMealSlots[meal] = { items: sanitizeMealText(subsequent.join(', ')), confidence: 85 };
               }
             }
             break;
           }
         }
       }
+    }
 
-      // Check if text is valid or uncertain
+    // Strategy 2: Table / Grid fallback
+    // If fewer than 2 meals were found via explicit labels, extract cells partitioned by delimiters
+    const matchedCount = Object.keys(dayMealSlots).length;
+    if (matchedCount < 2 && block) {
+      // Clean leading day name if present
+      const cleanBlock = block.replace(/^(?:MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY|MON|TUE|WED|THU|FRI|SAT|SUN|RIDAY|TURSDAY|JATURDAY|rHURSDAY|UNDA)\b/i, '');
+      const cells = cleanBlock
+        .split(/[|\[\]\t;/\n]+/)
+        .map(sanitizeMealText)
+        .filter((c) => c.length >= 3 && !isDayLabel(c) && !/^(?:DAYS?|BREAK\s*FAST|LUNCH|SNACKS?|DINNER)$/i.test(c));
+
+      const emptyMeals = MEALS.filter((m) => !dayMealSlots[m]);
+      for (let ci = 0; ci < Math.min(cells.length, emptyMeals.length); ci++) {
+        dayMealSlots[emptyMeals[ci]] = {
+          items: cells[ci],
+          confidence: 70,
+        };
+      }
+    }
+
+    // Assemble final 4 meal slots for this day
+    for (const meal of MEALS) {
+      const slot = dayMealSlots[meal];
+      const items = slot ? slot.items : '';
       const isUncertain = !items || items.length < 3;
       if (isUncertain) {
         uncertainCount++;
@@ -135,7 +171,7 @@ function parseMenuText(text) {
         mealType: meal,
         items: items || '',
         isUncertain,
-        confidence: isUncertain ? (items ? 40 : 0) : confidence,
+        confidence: isUncertain ? (items ? 40 : 0) : slot.confidence,
       });
     }
   }
@@ -168,6 +204,7 @@ function getDefaultEmptyMenu() {
 
 /**
  * Runs OCR on an image buffer or file path and extracts the weekly mess menu.
+ * Uses local bundled traineddata to avoid network calls and timeouts on Render.
  * 
  * @param {Buffer|string} imageSource - Image buffer or path
  * @returns {Promise<{ success: boolean, menu: Array, rawText: string, uncertainCount: number, error?: string }>}
@@ -187,8 +224,20 @@ async function extractMenuFromImage(imageSource) {
     };
   }
 
+  let worker = null;
   try {
-    const ocrResult = await Tesseract.recognize(imageSource, 'eng');
+    const tessOptions = {
+      gzip: true,
+      cachePath: os.tmpdir(),
+    };
+
+    // Use local bundled traineddata if present to prevent any remote CDN fetch
+    if (fs.existsSync(TESSDATA_DIR)) {
+      tessOptions.langPath = TESSDATA_DIR;
+    }
+
+    worker = await Tesseract.createWorker('eng', 1, tessOptions);
+    const ocrResult = await worker.recognize(imageSource);
     const rawText = ocrResult.data?.text || '';
     const parsed = parseMenuText(rawText);
 
@@ -207,6 +256,12 @@ async function extractMenuFromImage(imageSource) {
       rawText: '',
       uncertainCount: 28,
     };
+  } finally {
+    if (worker) {
+      try {
+        await worker.terminate();
+      } catch (_) {}
+    }
   }
 }
 
@@ -217,3 +272,4 @@ module.exports = {
   DAYS,
   MEALS,
 };
+
