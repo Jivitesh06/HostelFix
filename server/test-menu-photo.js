@@ -38,7 +38,7 @@ const fs = require('fs');
 const path = require('path');
 const prisma = require('./src/config/prisma');
 const app = require('./src/server');
-const { parseMenuText, getDefaultEmptyMenu, DAYS, MEALS, extractMenuFromImage } = require('./src/services/menuOcr.service');
+const { parseMenuText, normalizeDayName, getDefaultEmptyMenu, DAYS, MEALS, extractMenuFromImage } = require('./src/services/menuOcr.service');
 
 const TEST_PORT = 5098;
 const BASE_URL = `http://localhost:${TEST_PORT}`;
@@ -421,6 +421,50 @@ Dinner: Paneer Butter Masala, Roti, Pulao, Kheer
     }
     const allDaysHave4 = DAYS.every((d) => daysCount[d] === 4);
     assert(allDaysHave4, 'All 7 days have exactly 4 meal entries');
+
+    // ── 8. OCR Accuracy & Table Parsing Regression Tests ────────────────────
+    console.log('\n--- 8. OCR Accuracy & Table Parsing Regression Tests ---');
+    
+    // Fuzzy day normalization tests
+    assert(normalizeDayName('TURSDAY') === 'Thursday', 'TURSDAY normalizes to Thursday');
+    assert(normalizeDayName('URSDAY') === 'Thursday', 'URSDAY normalizes to Thursday');
+    assert(normalizeDayName("'URSDAY") === 'Thursday', 'Single-quote-URSDAY normalizes to Thursday');
+    assert(normalizeDayName('RIDAY') === 'Friday', 'RIDAY normalizes to Friday');
+    assert(normalizeDayName('JATURDAY') === 'Saturday', 'JATURDAY normalizes to Saturday');
+    assert(normalizeDayName('WEONESOAY') === 'Wednesday', 'WEONESOAY normalizes to Wednesday');
+    assert(normalizeDayName('TUESDAY') === 'Tuesday', 'TUESDAY normalizes to Tuesday');
+    assert(normalizeDayName('SUNDAY') === 'Sunday', 'SUNDAY normalizes to Sunday');
+
+    // Table column separation test: Ensure adjacent columns are NOT merged
+    const sampleTableRow = `
+      FRIDAY | Paratha, Aloo Masala, Pickle | Black Chana, Kadhi, Poori | Tea & Samosa | Matar Paneer, Roti
+    `;
+    const parsedRow = parseMenuText(sampleTableRow);
+    const friBfast = parsedRow.menu.find(s => s.dayOfWeek === 'Friday' && s.mealType === 'BREAKFAST');
+    const friLunch = parsedRow.menu.find(s => s.dayOfWeek === 'Friday' && s.mealType === 'LUNCH');
+    const friSnacks = parsedRow.menu.find(s => s.dayOfWeek === 'Friday' && s.mealType === 'SNACKS');
+    const friDinner = parsedRow.menu.find(s => s.dayOfWeek === 'Friday' && s.mealType === 'DINNER');
+
+    assert(Boolean(friBfast && friBfast.items.includes('Paratha')), 'Friday Breakfast parsed from table column');
+    assert(!friBfast.items.includes('Black Chana'), 'Friday Breakfast does not merge into Lunch column');
+    assert(Boolean(friLunch && friLunch.items.includes('Black Chana')), 'Friday Lunch parsed from table column');
+    assert(!friLunch.items.includes('Tea & Samosa'), 'Friday Lunch does not merge into Snacks column');
+    assert(Boolean(friSnacks && friSnacks.items.includes('Tea & Samosa')), 'Friday Snacks parsed from table column');
+    assert(Boolean(friDinner && friDinner.items.includes('Matar Paneer')), 'Friday Dinner parsed from table column');
+
+    // Multi-line meal text preservation within same cell test
+    const multiLineCellText = `
+      SUNDAY
+      BREAKFAST: Poha, Cornflakes With Milk,
+      Sweet Daliya, Tea
+      LUNCH: Chana Amritsari, Bhature, Rice
+      SNACKS: Cold Coffee
+      DINNER: Dal Makhani, Roti
+    `;
+    const parsedMultiLine = parseMenuText(multiLineCellText);
+    const sunBfast = parsedMultiLine.menu.find(s => s.dayOfWeek === 'Sunday' && s.mealType === 'BREAKFAST');
+    assert(Boolean(sunBfast && sunBfast.items.includes('Sweet Daliya')), 'Multi-line food items preserved within same meal slot');
+    assert(parsedMultiLine.menu.length === 28, 'Always returns exactly 28 slots');
 
     console.log('\n══════════════════════════════════════════════════════════════════');
     console.log(` Results: ${passed}/${total} assertions passed`);
