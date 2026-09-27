@@ -14,6 +14,8 @@ router.post('/login', authController.login);
 
 // Public password recovery
 router.post('/forgot-password', authController.forgotPassword);
+router.post('/verify-reset-otp', authController.verifyResetOtp);
+router.post('/resend-reset-otp', authController.resendResetOtp);
 router.post('/reset-password', authController.resetPassword);
 
 // Protected routes

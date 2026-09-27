@@ -22,16 +22,22 @@ const {
   recordTestOtp,
 } = require('../services/otp.service');
 const {
-  generateResetToken,
-  hashResetToken,
-  verifyResetTokenHash,
-  recordTestResetToken,
-  RESET_TOKEN_EXPIRY_MINUTES,
+  generateResetOtp,
+  hashResetOtp,
+  verifyResetOtpHash,
+  generateVerificationToken,
+  hashVerificationToken,
+  verifyVerificationTokenHash,
+  recordTestResetOtp,
+  recordTestVerificationToken,
+  RESET_OTP_EXPIRY_MINUTES,
+  RESET_SESSION_EXPIRY_MINUTES,
   RESET_COOLDOWN_MS,
+  MAX_VERIFICATION_ATTEMPTS: MAX_RESET_ATTEMPTS,
 } = require('../services/passwordReset.service');
 const {
   sendVerificationOtpEmail,
-  sendPasswordResetEmail,
+  sendPasswordResetOtpEmail,
   maskEmail,
 } = require('../services/email.service');
 
@@ -662,14 +668,13 @@ const staffRegister = async (req, res, next) => {
 /**
  * POST /api/auth/forgot-password
  * Public endpoint for password reset initiation (STUDENT, WARDEN, STAFF).
+ * Dispatches a 6-digit numeric OTP to the user's email via Gmail API.
  * Always returns a generic response to prevent user enumeration attacks.
- * Dispatches a password reset link to the user's email if the account exists.
  */
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-
-    const GENERIC_RESPONSE = 'If an account exists with this email, a password reset link has been sent.';
+    const GENERIC_RESPONSE = 'If an account exists with this email, a password reset OTP has been sent.';
 
     if (!email || typeof email !== 'string' || !email.trim()) {
       return sendError(res, 'Email address is required', 400);
@@ -690,44 +695,44 @@ const forgotPassword = async (req, res, next) => {
       return sendSuccess(res, { message: GENERIC_RESPONSE });
     }
 
-    // Cooldown check: if requested within last 60s, don't spam emails, return generic success
+    // Cooldown check: if requested within last 60s, return 429
     if (user.passwordResetLastSentAt) {
       const msSinceLast = Date.now() - new Date(user.passwordResetLastSentAt).getTime();
       if (msSinceLast < RESET_COOLDOWN_MS) {
-        return sendSuccess(res, { message: GENERIC_RESPONSE });
+        return sendError(
+          res,
+          'Please wait 60 seconds before requesting another password reset OTP.',
+          429
+        );
       }
     }
 
-    // Generate cryptographically secure token & SHA-256 hash
-    const rawToken = generateResetToken();
-    const tokenHash = hashResetToken(rawToken);
-    const expiresAt = new Date(Date.now() + RESET_TOKEN_EXPIRY_MINUTES * 60 * 1000);
+    // Generate cryptographically secure 6-digit OTP & SHA-256 hash
+    const rawOtp = generateResetOtp();
+    const otpHash = hashResetOtp(rawOtp);
+    // Format stored in passwordResetTokenHash: `${otpHash}:0` (0 failed attempts initially)
+    const storedHashWithAttempts = `${otpHash}:0`;
+    const expiresAt = new Date(Date.now() + RESET_OTP_EXPIRY_MINUTES * 60 * 1000);
 
     // Persist hash in database
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        passwordResetTokenHash: tokenHash,
+        passwordResetTokenHash: storedHashWithAttempts,
         passwordResetExpiresAt: expiresAt,
         passwordResetLastSentAt: new Date(),
       },
     });
 
     // Record for tests in test environment
-    recordTestResetToken(cleanEmail, rawToken);
-
-    // Build reset URL: ensure strictly ${FRONTEND_URL || CLIENT_URL}/reset-password?token=<raw-token>
-    // Strips any accidental trailing slash or /login subpath from the configured CLIENT_URL / FRONTEND_URL
-    const rawBaseUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || config.clientUrl || 'http://localhost:5173';
-    const cleanBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '').replace(/\/login\/?$/i, '');
-    const resetUrl = `${cleanBaseUrl}/reset-password?token=${rawToken}`;
+    recordTestResetOtp(cleanEmail, rawOtp);
 
     // Send email via Gmail API
-    await sendPasswordResetEmail({
+    await sendPasswordResetOtpEmail({
       to: user.email,
       userName: user.name,
-      resetUrl,
-      expiryMinutes: RESET_TOKEN_EXPIRY_MINUTES,
+      otp: rawOtp,
+      expiryMinutes: RESET_OTP_EXPIRY_MINUTES,
     });
 
     return sendSuccess(res, { message: GENERIC_RESPONSE });
@@ -737,16 +742,220 @@ const forgotPassword = async (req, res, next) => {
 };
 
 /**
+ * POST /api/auth/verify-reset-otp
+ * Public endpoint to verify the 6-digit password reset OTP.
+ * Enforces max 5 failed attempts and 10-minute expiry.
+ * Upon success, generates a single-use verificationToken session proof.
+ */
+const verifyResetOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return sendError(res, 'Email address is required', 400);
+    }
+
+    if (!otp || typeof otp !== 'string' || !/^\d{6}$/.test(otp.trim())) {
+      return sendError(res, 'A valid 6-digit numeric OTP is required', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanOtp = otp.trim();
+
+    const user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user || !user.passwordResetTokenHash) {
+      return sendError(res, 'Invalid or expired OTP. Please request a new code.', 400);
+    }
+
+    // If already verified
+    if (user.passwordResetTokenHash.startsWith('verified:')) {
+      return sendError(res, 'OTP has already been verified. Please proceed to set a new password.', 400);
+    }
+
+    // Parse hash and attempts: format is `${sha256Hash}:${attempts}`
+    const parts = user.passwordResetTokenHash.split(':');
+    const storedOtpHash = parts[0];
+    const currentAttempts = parseInt(parts[1], 10) || 0;
+
+    // Check if attempts exceeded
+    if (currentAttempts >= MAX_RESET_ATTEMPTS) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordResetTokenHash: null,
+          passwordResetExpiresAt: null,
+        },
+      });
+      return sendError(
+        res,
+        'Maximum verification attempts exceeded. Please request a new OTP.',
+        400
+      );
+    }
+
+    // Check expiration
+    if (!user.passwordResetExpiresAt || new Date() > new Date(user.passwordResetExpiresAt)) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordResetTokenHash: null,
+          passwordResetExpiresAt: null,
+        },
+      });
+      return sendError(
+        res,
+        'Password reset OTP has expired (valid for 10 minutes). Please request a new OTP.',
+        400
+      );
+    }
+
+    // Constant-time check
+    const isValid = verifyResetOtpHash(cleanOtp, storedOtpHash);
+
+    if (!isValid) {
+      const newAttempts = currentAttempts + 1;
+      const remainingAttempts = MAX_RESET_ATTEMPTS - newAttempts;
+
+      if (newAttempts >= MAX_RESET_ATTEMPTS) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            passwordResetTokenHash: null,
+            passwordResetExpiresAt: null,
+          },
+        });
+        return sendError(
+          res,
+          'Invalid OTP. Maximum verification attempts exceeded. Please request a new OTP.',
+          400
+        );
+      } else {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            passwordResetTokenHash: `${storedOtpHash}:${newAttempts}`,
+          },
+        });
+        return sendError(
+          res,
+          `Invalid OTP. ${remainingAttempts} ${remainingAttempts === 1 ? 'attempt' : 'attempts'} remaining.`,
+          400
+        );
+      }
+    }
+
+    // OTP is valid! Generate single-use verificationToken
+    const verificationToken = generateVerificationToken();
+    const tokenHash = hashVerificationToken(verificationToken);
+    const sessionExpiresAt = new Date(Date.now() + RESET_SESSION_EXPIRY_MINUTES * 60 * 1000);
+
+    // Store as verified session proof
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetTokenHash: `verified:${tokenHash}`,
+        passwordResetExpiresAt: sessionExpiresAt,
+      },
+    });
+
+    recordTestVerificationToken(cleanEmail, verificationToken);
+
+    return sendSuccess(res, {
+      message: 'OTP verified successfully.',
+      verificationToken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/resend-reset-otp
+ * Public endpoint to resend password reset OTP.
+ * Enforces 60-second cooldown via passwordResetLastSentAt.
+ */
+const resendResetOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const GENERIC_RESPONSE = 'If an account exists with this email, a new password reset OTP has been sent.';
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return sendError(res, 'Email address is required', 400);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return sendError(res, 'Please provide a valid email address', 400);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user) {
+      return sendSuccess(res, { message: GENERIC_RESPONSE });
+    }
+
+    // Check 60s cooldown
+    if (user.passwordResetLastSentAt) {
+      const msSinceLast = Date.now() - new Date(user.passwordResetLastSentAt).getTime();
+      if (msSinceLast < RESET_COOLDOWN_MS) {
+        const waitSeconds = Math.ceil((RESET_COOLDOWN_MS - msSinceLast) / 1000);
+        return sendError(
+          res,
+          `Please wait ${waitSeconds} seconds before requesting a new OTP.`,
+          429
+        );
+      }
+    }
+
+    // Generate new OTP
+    const rawOtp = generateResetOtp();
+    const otpHash = hashResetOtp(rawOtp);
+    const storedHashWithAttempts = `${otpHash}:0`;
+    const expiresAt = new Date(Date.now() + RESET_OTP_EXPIRY_MINUTES * 60 * 1000);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetTokenHash: storedHashWithAttempts,
+        passwordResetExpiresAt: expiresAt,
+        passwordResetLastSentAt: new Date(),
+      },
+    });
+
+    recordTestResetOtp(cleanEmail, rawOtp);
+
+    await sendPasswordResetOtpEmail({
+      to: user.email,
+      userName: user.name,
+      otp: rawOtp,
+      expiryMinutes: RESET_OTP_EXPIRY_MINUTES,
+    });
+
+    return sendSuccess(res, {
+      message: 'A new password reset OTP has been sent.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * POST /api/auth/reset-password
- * Public endpoint to reset password using a valid, unexpired token.
- * Single-use token: immediately cleared upon successful reset.
+ * Public endpoint to set new password using the verified single-use session token.
+ * Requires verificationToken obtained from successful verifyResetOtp.
  */
 const resetPassword = async (req, res, next) => {
   try {
-    const { token, newPassword } = req.body;
+    const { email, verificationToken, token, newPassword } = req.body;
+    const rawToken = (verificationToken || token || '').trim();
 
-    if (!token || typeof token !== 'string' || !token.trim()) {
-      return sendError(res, 'Reset token is required', 400);
+    if (!rawToken) {
+      return sendError(res, 'Verification token is required. Please verify OTP first.', 400);
     }
 
     if (!newPassword || typeof newPassword !== 'string' || newPassword.length < MIN_PASSWORD_LENGTH) {
@@ -757,26 +966,50 @@ const resetPassword = async (req, res, next) => {
       );
     }
 
-    const cleanToken = token.trim();
-    const tokenHash = hashResetToken(cleanToken);
+    let user = null;
+    const cleanEmail = email && typeof email === 'string' && email.trim() ? email.trim().toLowerCase() : null;
 
-    const user = await prisma.user.findFirst({
-      where: {
-        passwordResetTokenHash: tokenHash,
-      },
-    });
+    if (cleanEmail) {
+      user = await prisma.user.findUnique({
+        where: { email: cleanEmail },
+      });
+    } else {
+      // Lookup by verified token hash
+      const candidateTokenHash = hashVerificationToken(rawToken);
+      user = await prisma.user.findFirst({
+        where: { passwordResetTokenHash: `verified:${candidateTokenHash}` },
+      });
+    }
 
-    if (!user) {
+    if (!user || !user.passwordResetTokenHash) {
       return sendError(
         res,
-        'Invalid or expired password reset link. Please request a new link.',
+        'Invalid or expired verification session. Please request a new OTP.',
+        400
+      );
+    }
+
+    if (!user.passwordResetTokenHash.startsWith('verified:')) {
+      return sendError(
+        res,
+        'Please verify your OTP code before attempting to update your password.',
+        400
+      );
+    }
+
+    const storedTokenHash = user.passwordResetTokenHash.replace('verified:', '');
+    const isTokenValid = verifyVerificationTokenHash(rawToken, storedTokenHash);
+
+    if (!isTokenValid) {
+      return sendError(
+        res,
+        'Invalid or expired verification session. Please request a new OTP.',
         400
       );
     }
 
     // Check expiration
     if (!user.passwordResetExpiresAt || new Date() > new Date(user.passwordResetExpiresAt)) {
-      // Clear expired token
       await prisma.user.update({
         where: { id: user.id },
         data: {
@@ -786,7 +1019,7 @@ const resetPassword = async (req, res, next) => {
       });
       return sendError(
         res,
-        'Password reset link has expired (valid for 15 minutes). Please request a new link.',
+        'Verification session has expired (valid for 10 minutes). Please request a new OTP.',
         400
       );
     }
@@ -801,6 +1034,7 @@ const resetPassword = async (req, res, next) => {
         passwordHash,
         passwordResetTokenHash: null,
         passwordResetExpiresAt: null,
+        passwordResetLastSentAt: null,
       },
     });
 
@@ -880,6 +1114,8 @@ module.exports = {
   login,
   getMe,
   forgotPassword,
+  verifyResetOtp,
+  resendResetOtp,
   resetPassword,
   changePassword,
 };
