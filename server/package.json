@@ -11,6 +11,7 @@
     "db:push": "npx prisma db push",
     "db:seed": "node prisma/seed.js",
     "db:seed:demo": "node scripts/seed-demo-accounts.js",
+    "db:update:menu": "node scripts/update-mess-menu.js",
     "db:studio": "npx prisma studio"
   },
   "dependencies": {

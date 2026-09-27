@@ -472,6 +472,68 @@ export default function StudentMessPage() {
         </div>
       )}
 
+      {/* ── Official Campus Dining Notices & Guidelines ──────────────── */}
+      <div
+        style={{
+          marginTop: '2.5rem',
+          background: '#ffffff',
+          borderRadius: '12px',
+          border: '1px solid #e5e7eb',
+          padding: '1.5rem',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f1f5f9' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#c8102e' }} />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#171717', margin: 0 }}>
+              Campus Dining Policies & Operational Guidelines
+            </h3>
+          </div>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', background: '#f8f8f8', padding: '0.25rem 0.6rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+            Office of Food & Beverage
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+          <div style={{ background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '8px', padding: '0.85rem' }}>
+            <strong style={{ display: 'block', fontSize: '0.8rem', color: '#171717', marginBottom: '0.25rem' }}>
+              🍲 Sick Meal Khichadi
+            </strong>
+            <p style={{ margin: 0, fontSize: '0.775rem', color: '#4b5563', lineHeight: 1.5 }}>
+              Provided on the basis of a sick meal slip signed and stamped by the respective hostel warden.
+            </p>
+          </div>
+
+          <div style={{ background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '8px', padding: '0.85rem' }}>
+            <strong style={{ display: 'block', fontSize: '0.8rem', color: '#171717', marginBottom: '0.25rem' }}>
+              🔄 Refilling Policy
+            </strong>
+            <p style={{ margin: 0, fontSize: '0.775rem', color: '#4b5563', lineHeight: 1.5 }}>
+              Paneer dishes and Raita / Curd will be served on a refilling basis during meal service hours.
+            </p>
+          </div>
+
+          <div style={{ background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '8px', padding: '0.85rem' }}>
+            <strong style={{ display: 'block', fontSize: '0.8rem', color: '#171717', marginBottom: '0.25rem' }}>
+              ℹ️ Alternating Rotation (/)
+            </strong>
+            <p style={{ margin: 0, fontSize: '0.775rem', color: '#4b5563', lineHeight: 1.5 }}>
+              Slash ("/") indicates items served on alternative weeks according to seasonal availability.
+            </p>
+          </div>
+
+          <div style={{ background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '8px', padding: '0.85rem' }}>
+            <strong style={{ display: 'block', fontSize: '0.8rem', color: '#171717', marginBottom: '0.25rem' }}>
+              📋 Schedule Notice
+            </strong>
+            <p style={{ margin: 0, fontSize: '0.775rem', color: '#4b5563', lineHeight: 1.5 }}>
+              Menu is subject to operational changes on non-availability of items or exceptional circumstances.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── Rate & Review Modal Dialog ────────────────────────────────── */}
       <Modal
         isOpen={ratingModalOpen}
